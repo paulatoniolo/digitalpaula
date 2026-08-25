@@ -1964,11 +1964,29 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
      a la izquierda (ya no centrado). */
   /* [ GOT PROJECTS ]: Helvetica Heavy 56.27px del svg = 2.69% del ancho, tracking -90,
      y en blanco (antes era el rosa de [ WORK W/ ME ]) */
+  /* ---- El lienzo de LET'S TALK ----
+     Todas las coordenadas de esta seccion salen de medir un mismo artboard, de proporcion
+     1.9128. Pero estaban puestas en % de la SECCION, que adopta la proporcion de la
+     ventana: en un monitor de 16:10 la seccion es mas alta que el artboard, asi que los %
+     verticales se estiraban y la segunda linea (TALK) se iba 20% mas abajo de lo dibujado,
+     mientras los cuerpos -que van en vw- seguian atados al ancho. La composicion se
+     desarmaba sola segun la pantalla.
+     Aca se recrea el artboard: una caja de proporcion fija, del ancho disponible, centrada
+     en la seccion. Adentro, un % vertical vuelve a significar lo mismo que en el svg.
+     El ancho es min(100%, 191.28vh) para que en una pantalla mas ancha que el artboard la
+     caja se limite por el alto en vez de desbordar.
+     container-type:inline-size convierte el lienzo en unidad de medida: los cuerpos pasan
+     de vw a cqw, o sea de "% de la ventana" a "% de la composicion". Es lo que hace que
+     todo escale junto en vez de cada cosa por su lado. */
+  .cs-lienzo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:min(100%,191.28vh);aspect-ratio:1.9128;container-type:inline-size;
+    pointer-events:none;z-index:2}
+  .cs-lienzo>*{pointer-events:auto}
   .contact-tag{position:absolute;left:4.59%;top:10.28%;z-index:3;
-    font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;font-size:2.69vw;
+    font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;font-size:2.69cqw;
     letter-spacing:-.09em;color:#f4f4f4;text-transform:uppercase;white-space:nowrap}
   .contact-mail-copy{flex-shrink:0;align-self:center;display:inline-flex;align-items:center;
-    justify-content:center;width:clamp(16px,1.6vw,28px);height:clamp(16px,1.6vw,28px);
+    justify-content:center;width:clamp(16px,1.6cqw,28px);height:clamp(16px,1.6cqw,28px);
     padding:0;margin-left:.15em;background:none;border:none;color:var(--paper);opacity:.55;
     cursor:pointer;transition:opacity .2s ease,color .2s ease}
   .contact-mail-copy:hover{opacity:1}
@@ -1998,7 +2016,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
   .cs-word{display:contents}
   .cs-ch{position:absolute;display:block;line-height:1;
     font-family:"DigitalPaulaContact",var(--disp);font-weight:400;
-    font-size:min(19.5vw,37.3vh);color:#f4f4f4;letter-spacing:0;
+    font-size:19.5cqw;color:#f4f4f4;letter-spacing:0;
     transform:translate(-.040em,-.100em)}
   .cs-ap{transform:translate(-.035em,-.128em)}
 
@@ -2012,7 +2030,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
      vuelva a medir exactamente el ancho disponible (422px). El cuerpo va en .cs-info-mail (no en el
      <a>) para que el boton de copiar pueda medirse en em y escale junto con el texto. */
   .cs-info-label,.cs-info-mail,.cs-info-tel{
-    font-family:var(--disp);font-size:.816vw;letter-spacing:.459em;text-transform:uppercase;
+    font-family:var(--disp);font-size:.816cqw;letter-spacing:.459em;text-transform:uppercase;
     white-space:nowrap;line-height:1}
   .cs-info .contact-mail{font-size:inherit;letter-spacing:inherit}
   /* el rosa de marca que ya usa el resto del sitio (+88 clients, hover del mail,
@@ -2033,21 +2051,24 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
   .cs-info .contact-mail-copy{width:1em;height:1em;margin-left:0}
 
   .cs-social-label{position:absolute;left:5.77%;top:79.15%;z-index:3;
-    font-family:var(--disp);font-weight:400;font-size:.816vw;letter-spacing:.459em;
+    font-family:var(--disp);font-weight:400;font-size:.816cqw;letter-spacing:.459em;
     text-transform:uppercase;background-image:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;line-height:1}
   /* iconos: cada uno con su alto real del svg y ancho auto, asi ninguno se deforma */
   .cs-social{position:absolute;left:5.66%;top:84.53%;z-index:3;
-    display:flex;align-items:center;gap:2.55vw}
+    display:flex;align-items:center;gap:2.55cqw}
   .cs-social a{display:flex;align-items:center;color:#f4f4f4;opacity:.9;transition:.2s}
   .cs-social a:hover{opacity:1;background-image:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;transform:translateY(-2px)}
   .cs-social .cs-ic{display:block;width:auto}
-  .cs-social a:nth-child(1) .cs-ic{height:1.95vw}
-  .cs-social a:nth-child(2) .cs-ic{height:1.38vw}
-  .cs-social a:nth-child(3) .cs-ic{height:1.58vw}
-  .cs-social a:nth-child(4) .cs-ic{height:1.93vw}
+  .cs-social a:nth-child(1) .cs-ic{height:1.95cqw}
+  .cs-social a:nth-child(2) .cs-ic{height:1.38cqw}
+  .cs-social a:nth-child(3) .cs-ic{height:1.58cqw}
+  .cs-social a:nth-child(4) .cs-ic{height:1.93cqw}
 
   @media(max-width:760px),(min-width:681px) and (max-width:1080px) and (orientation:portrait){
-    /* el scatter absoluto no entra en un viewport angosto: se apila todo en flujo */
+    /* el scatter absoluto no entra en un viewport angosto: se apila todo en flujo.
+       display:contents borra el lienzo del layout, asi el apilado queda igual que antes
+       de que existiera: los hijos vuelven a ser hijos directos de la seccion. */
+    .cs-lienzo{display:contents}
     .cs-type{position:static;display:flex;flex-wrap:wrap;justify-content:center;
       gap:0 .04em;padding:100px 0 30px}
     /* cada PALABRA es el item del flex, no cada letra: antes los 9 caracteres eran items
@@ -3135,6 +3156,7 @@ Gen-4.5"><img src="work/softwares/logo-31.svg" alt=""></div>
          coordenadas CSS de caja, descontando el side-bearing de cada glifo y la distancia
          de la linea de base al top de la caja — por eso los left/top no son numeros
          redondos. El fondo (video + ventana scan) queda intacto, como pidio. -->
+    <div class="cs-lienzo">
     <div class="contact-tag">[ <span data-es="¿TENÉS PROYECTOS?" data-it="HAI PROGETTI?" data-deu="HAST DU PROJEKTE?">GOT PROJECTS?</span> ]</div>
 
     <!-- "LET'S TALK" disperso, mismo criterio que el wordmark del hero: texto vivo
@@ -3164,6 +3186,7 @@ Gen-4.5"><img src="work/softwares/logo-31.svg" alt=""></div>
       <a href="https://www.behance.net/paulatoniolo1" target="_blank" rel="noopener" aria-label="Behance"><svg class="cs-ic" viewBox="0 0 45.1 28.8" fill="currentColor" aria-hidden="true"><g transform="translate(-219.76 -932.13)"><path d="M238.62,945.09c2.6,1.34,3.91,3.32,4.07,6,.31,5.13-3.41,8.99-8.58,9.02l-14.35.09v-28.07s14.93.14,14.93.14c4.39.04,7.54,3.42,7.04,7.73-.02,2.09-.9,3.7-3.12,5.1ZM233.34,943.12c2.22-.02,3.09-1.77,2.92-3.51s-1.63-2.57-3.49-2.57l-7.49.02.05,6.14,8.01-.09ZM236.84,951.48c.03-2.2-1.37-3.58-3.53-3.6l-7.97-.08-.06,7.45,7.78.03c2.28,0,3.75-1.51,3.78-3.8Z"></path> <path d="M254.96,956.5c1.84-.05,3.3-.78,4.09-2.38l5.58-.05c-1.03,4.1-4.84,6.69-9.2,6.8-3.74.09-7.46-1.21-9.56-4.39-1.57-2.38-1.58-5.31-1.46-8.03.25-5.88,4.73-9.68,10.43-9.57,5.28.11,9.4,3.46,9.88,8.94l.09,3.47h-15c-.2,3.09,2.07,5.29,5.15,5.2ZM259.24,947.62c-.17-2.8-2.15-4.18-4.41-4.23-2.71-.32-4.79,1.73-4.88,4.38l9.29-.15Z"></path> <polygon points="260.3 936.54 248.15 936.55 248.14 933.81 260.32 933.82 260.3 936.54"></polygon></g></svg></a>
       <a href="https://www.linkedin.com/in/paula-toniolo-pellegrini/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="cs-ic" viewBox="0 0 32.7 33.1" fill="currentColor" aria-hidden="true"><g transform="translate(-331.99 -928.83)"><path d="M356.47,946.05c-1.36-1-3.51-.77-4.74.23-1.08.88-1.2,2.18-1.42,3.51l-.02,12.1-6.78.02v-21.89s6.56,0,6.56,0c0,.82-.23,1.59.18,2.67,1.64-2.32,4.08-3.33,6.81-3.21,5.01.22,7.05,2.79,7.53,7.72l.07,14.67h-6.71s-.04-12.08-.04-12.08c-.15-1.34-.19-2.82-1.44-3.74Z"></path> <polygon points="339.23 961.88 332.47 961.88 332.46 940.01 339.24 940.01 339.23 961.88"></polygon> <path d="M335.25,929.19c2.32-.36,4.19,1.31,4.47,3.28.31,2.21-1.16,4.13-3.22,4.47-2.2.36-4.12-1.06-4.51-3.13s.95-4.26,3.26-4.62Z"></path></g></svg></a>
       <a href="https://wa.me/5493424064399" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="cs-ic" viewBox="0 0 40.7 40.4" fill="currentColor" aria-hidden="true"><g transform="translate(-443.60 -926.21)"><path d="M466.22,926.21c0,.07.12.15.21.13.39-.09.61.07.93.13,8.65,1.4,15.36,8.16,16.73,16.8l.23.94v4.5l-.22.96c-.62,3.42-1.97,6.61-4.19,9.27l-.42.51c-3.22,3.86-7.79,6.25-12.8,6.87-.47.06-.81.25-1.3.12-.09-.02-.22.08-.21.13h-2.54c-.02-.09-.2-.16-.33-.13-.46.1-.78-.05-1.19-.11-2.47-.39-4.8-1.15-7-2.32-.28-.15-.6-.15-.9-.06l-8.7,2.46c-.12.03-.18.11-.22.16h-.58l2.61-9.28c.15-.53.07-.86-.2-1.32-1.35-2.38-2.1-4.99-2.53-7.61l.07-4.26c.24-1.83.67-3.57,1.37-5.27,2.85-6.92,9.23-11.64,16.58-12.55l4.58-.05ZM453.5,960.85c.39-.11.81-.22,1.15,0,2.98,1.93,6.38,2.79,9.97,2.7,5.82-.14,11.09-3.29,14.17-8.14,4.83-7.62,2.82-17.65-4.55-22.87-2.97-2.11-6.49-3.28-10.22-3.45-6.77-.31-13.05,4.06-15.89,10.05-2.47,5.21-2.12,11.3,1.04,16.1.34.51.55.87.36,1.51-.55,1.85-1.18,3.64-1.65,5.65l5.62-1.53Z"></path> <path d="M468.65,948.99c.19-.21.63-.21.85-.1,1.51.74,2.96,1.42,4.56,1.97.65,1.49.28,3.13-.94,4.14-1.67,1.38-3.73,1.65-5.76.93-2.26-.8-4.41-1.65-6.4-3.05-3.06-2.15-5.5-5-7.15-8.37-1.17-2.38-.66-6.03,1.67-7.34.81-.45,1.78-.41,2.65-.12.69,1.33,1.29,2.64,1.78,4.05.33.96.04,1.91-.61,2.64l-.7.8c-.18.2-.26.51-.11.77,1.6,2.75,4.05,4.76,6.99,5.94.38.15.74.3,1.07-.04l2.09-2.23Z"></path></g></svg></a>
+    </div>
     </div>
     <div class="contact-credit">© digitalpaula</div>
   </section>
