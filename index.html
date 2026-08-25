@@ -391,8 +391,11 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
     width:28px;height:28px;cursor:pointer;font-size:13px;transition:.2s}
   .menu-close:hover{background:var(--paper);color:var(--ink)}
   .menu-items{display:flex;flex-direction:column}
+  /* "HelveticaNeueHeavy" y no var(--disp): --disp es la Helvetica del SISTEMA, y con
+     font-weight:800 el navegador la engorda sinteticamente (queda una bold falsa) en vez de
+     usar la Heavy de verdad, que ya esta cargada y es la que usa el resto del sitio. */
   .menu-item{position:relative;display:flex;align-items:baseline;gap:14px;
-    text-decoration:none;color:var(--paper);font-family:var(--disp);font-weight:800;
+    text-decoration:none;color:var(--paper);font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;
     text-transform:uppercase;letter-spacing:-.1em;
     font-size:clamp(30px,3.95vw,76px);line-height:1;
     padding:clamp(14px,2.6vh,26px) 0;border-bottom:1px solid rgba(255,255,255,.28);
@@ -2368,16 +2371,6 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
     .ab-unit{font-size:14px;letter-spacing:.05em}
     .ab-label{font-size:16px}
 
-    /* ---- el corte del video contra el manifiesto ----
-       El hero recorta el video del ojo con un borde recto y abajo arranca el negro del
-       manifiesto: esa linea dura es lo que se veia. Un degradado en el pie del hero funde
-       el video con el #000 con el que abre la seccion siguiente.
-       z-index 2: por encima del video (1) pero por debajo del wordmark (5). Los .hcopy no
-       declaran z-index propio, asi que se les da 3 para que el degradado no se los coma. */
-    .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:17vh;
-      background:linear-gradient(to bottom,rgba(5,5,5,0),#000);
-      pointer-events:none;z-index:2}
-    .hero .hcopy{z-index:3}
 
     /* ---- LET'S TALK y el bloque de contacto ----
        Toman la version de telefono (ver el @media de 760, que ahora tambien cubre tablet),
@@ -2406,6 +2399,48 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
     .sw-lead{font-size:clamp(11px,.73vw,14px)}
     #lab .sw-logo img{height:clamp(42px,2.8vw,54px)}
     .sw-track{gap:clamp(76px,5.06vw,97px)}
+  }
+  /* ---------- ARREGLOS DE PANTALLA TACTIL (telefono y tablet) ----------
+     Un solo tramo para todo lo que no es escritorio, para no repetir la condicion. */
+  @media(max-width:900px),(max-width:1080px) and (orientation:portrait){
+    /* (a) El hero recorta el video del ojo con un borde recto y abajo arranca el negro del
+       manifiesto: esa linea dura es la que se veia. Este degradado funde el video con el
+       #000 con el que abre la seccion siguiente.
+       z-index 2: por encima del video (1) y por debajo del wordmark (5). Los .hcopy no
+       declaran z-index propio, asi que se les da 3 para que el degradado no se los coma. */
+    .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:17vh;
+      background:linear-gradient(to bottom,rgba(5,5,5,0),#000);
+      pointer-events:none;z-index:2}
+    .hero .hcopy{z-index:3}
+
+    /* (i) las lineas que separan los bloques de datos, mas finas. 1.38px en un telefono
+       se ven como un filete grueso. */
+    .about-stats .ab-row{border-bottom-width:.7px;border-bottom-color:#575757}
+
+    /* (g) la banda de "have another idea" ocupaba 338px, casi la mitad de la pantalla de
+       un telefono. El alto pasa a seguir al ancho de la caja (cqw), igual que su
+       tipografia, asi la banda guarda proporcion en vez de ser un alto fijo. */
+    .svl-cta-box{min-height:66cqw}
+  }
+
+  /* (h) el ojo del About en TELEFONO no tenia mascara y el recorte cuadrado se notaba.
+     Misma solucion que en tablet pero con el desvanecido mas largo (48% a 82% en vez de
+     52% a 76%), que es el "apenas mas feather" que pidio Paula. */
+  @media(max-width:680px){
+    .about-eye{-webkit-mask-image:radial-gradient(circle at 50% 50%,#000 48%,rgba(0,0,0,0) 82%);
+      mask-image:radial-gradient(circle at 50% 50%,#000 48%,rgba(0,0,0,0) 82%)}
+  }
+  /* (b) En telefono la fila de un proyecto se ordena en tres niveles:
+     CLIENTE arriba, despues INDUSTRY / YEAR / LOCATION en una sola linea, y ROLE abajo.
+     El rol se va solo al ultimo renglon con flex-basis:100%; los otros tres comparten la
+     linea repartiendose el ancho. min-width:0 es lo que les permite achicarse: sin eso el
+     contenido los infla y empujan al rol fuera de lugar. */
+  @media(max-width:680px){
+    .wrow-head{row-gap:16px;column-gap:14px}
+    .wrow-col-meta:not(.wrow-col-role){flex:1 1 0;min-width:0}
+    .wrow-col-role{flex:0 0 100%;min-width:0}
+    .wrow-col-meta .wrow-v{white-space:normal;overflow-wrap:anywhere}
+    .wrow-k{font-size:9px;letter-spacing:.28em}
   }
 </style>
 </head>
@@ -2475,7 +2510,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
     <video class="eye-vid" src="eye_steady.mp4?v=2" poster="eye-steady-poster.jpg" preload="auto" autoplay="" muted="" loop="" playsinline="" aria-label="digitalpaula"></video>
     <div class="eye-scan" id="eyeScan" aria-hidden="true">
       <div class="eye-scan-win">
-        <video class="eye-vid-dither" src="eye_dither.mp4?v=1" autoplay="" muted="" loop="" playsinline=""></video>
+        <video class="eye-vid-dither" src="eye_dither.mp4?v=1" poster="eye-dither-poster.jpg" autoplay="" muted="" loop="" playsinline=""></video>
       </div>
     </div>
     <!-- posiciones = coordenadas reales del .ai, ESTIRADAS 1.4x desde el ancla de cada fila
@@ -2567,7 +2602,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
               <span class="wrow-k" data-es="Año" data-it="Anno" data-deu="Jahr">Year</span>
               <span class="wrow-v">2025</span>
             </div>
-            <div class="wrow-col wrow-col-meta wrow-col-role">
+            <div class="wrow-col wrow-col-meta wrow-col-loc"><span class="wrow-k" data-es="Ubicación" data-it="Località" data-deu="Standort">Location</span><span class="wrow-v">Madrid</span></div><div class="wrow-col wrow-col-meta wrow-col-role">
               <span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span>
               <span class="wrow-v" data-es="Branding, Brand Guidelines, Merch" data-it="Branding, Brand Guidelines, Merch" data-deu="Branding, Brand Guidelines, Merch">Branding, Brand Guidelines, Merch</span>
             </div>
@@ -2595,7 +2630,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
               <span class="wrow-k" data-es="Año" data-it="Anno" data-deu="Jahr">Year</span>
               <span class="wrow-v">2026</span>
             </div>
-            <div class="wrow-col wrow-col-meta wrow-col-role">
+            <div class="wrow-col wrow-col-meta wrow-col-loc"><span class="wrow-k" data-es="Ubicación" data-it="Località" data-deu="Standort">Location</span><span class="wrow-v">Santa Fe</span></div><div class="wrow-col wrow-col-meta wrow-col-role">
               <span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span>
               <span class="wrow-v" data-es="Identidad de marca" data-it="Identità di Marca" data-deu="Markenidentität">Brand Identity</span>
             </div>
@@ -2623,7 +2658,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
               <span class="wrow-k" data-es="Año" data-it="Anno" data-deu="Jahr">Year</span>
               <span class="wrow-v">2023</span>
             </div>
-            <div class="wrow-col wrow-col-meta wrow-col-role">
+            <div class="wrow-col wrow-col-meta wrow-col-loc"><span class="wrow-k" data-es="Ubicación" data-it="Località" data-deu="Standort">Location</span><span class="wrow-v">Santa Fe</span></div><div class="wrow-col wrow-col-meta wrow-col-role">
               <span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span>
               <span class="wrow-v" data-es="Dirección Creativa, Branding, Packaging, Merch, Redes Sociales, Visualización de Datos" data-it="Direzione Creativa, Branding, Packaging, Merch, Social Media, Visualizzazione Dati" data-deu="Kreativdirektion, Branding, Packaging, Merch, Social Media, Datenvisualisierung">Creative Direction, Branding, Packaging, Merch, Social Media, Data Visualization</span>
             </div>
@@ -2696,10 +2731,10 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
               <!-- sin autoplay a proposito: arrancan recien al entrar en pantalla (JS mas
                    abajo, "videos de proyecto: play al entrar en viewport") — asi no se
                    descargan/reproducen los 4 al cargar la pagina. -->
-              <button class="wrow-thumb"><video src="work/yotto/blades.mp4" muted="" loop="" playsinline="" preload="metadata" aria-label="Yotto"></video></button>
-              <button class="wrow-thumb"><video src="work/yotto/reel.mp4" muted="" loop="" playsinline="" preload="metadata" aria-label="Yotto"></video></button>
-              <button class="wrow-thumb"><video src="work/yotto/bubble.mp4" muted="" loop="" playsinline="" preload="metadata" aria-label="Yotto"></video></button>
-              <button class="wrow-thumb"><video src="work/yotto/heart.mp4" muted="" loop="" playsinline="" preload="metadata" aria-label="Yotto"></video></button>
+              <button class="wrow-thumb"><video src="work/yotto/blades.mp4" poster="work/yotto/blades-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Yotto"></video></button>
+              <button class="wrow-thumb"><video src="work/yotto/reel-thumb.mp4" poster="work/yotto/reel-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Yotto"></video></button>
+              <button class="wrow-thumb"><video src="work/yotto/bubble.mp4" poster="work/yotto/bubble-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Yotto"></video></button>
+              <button class="wrow-thumb"><video src="work/yotto/heart.mp4" poster="work/yotto/heart-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Yotto"></video></button>
             </div>
           </div></div>
         </article>
@@ -3142,6 +3177,16 @@ function ES_TABLET(){
     v.addEventListener('pause', ()=>{ if(!document.hidden) play(v); });
   });
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) vids.forEach(play); });
+
+  /* iOS en Modo de bajo consumo RECHAZA el autoplay hasta que haya un gesto del usuario, y
+     ahi Safari dibuja su propio boton de play encima del video. No hay forma de forzarlo
+     -es una decision del sistema, no del sitio- pero si de engancharse al PRIMER toque para
+     que arranque solo, sin que la persona tenga que apretar ese boton.
+     once:true porque con un solo intento alcanza: si el gesto habilito la reproduccion,
+     los listeners de 'pause' y 'canplay' de arriba se encargan del resto. */
+  const arrancarConGesto = ()=> vids.forEach(play);
+  ['touchstart','pointerdown','click','keydown'].forEach(ev =>
+    document.addEventListener(ev, arrancarConGesto, {once:true, passive:true}));
 
   // resync: si las dos capas se desfasan mas de 60ms, la de abajo salta al tiempo de la de
   // arriba (la que se ve normalmente, la "de referencia"). chequeo liviano cada 500ms.

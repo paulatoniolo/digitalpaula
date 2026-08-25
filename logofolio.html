@@ -423,7 +423,7 @@
     .lfb-preview.side-left::before,
     .lfb-preview.side-left::after{content:"";position:absolute;left:0;right:0;
       pointer-events:none}
-    .lfb-preview.side-left::before{bottom:100%;height:100px;
+    .lfb-preview.side-left::before{bottom:100%;height:150px;
       background:linear-gradient(to top,var(--bg),rgba(5,5,5,0))}
     /* el de abajo va mas corto que el de arriba (50 contra 100) por una razon concreta: la
        linea de activacion esta ahi debajo, y con 100px el nombre ACTIVO -el unico blanco de
@@ -442,7 +442,7 @@
        "2001" al 70% de la pantalla, con 250px de aire repartido alrededor de una foto de
        194px: 107 arriba y 143 abajo. Al subir la linea a 62vh el padding baja a 39vh y la
        lista arranca 82px mas arriba, con los dos huecos mucho mas parejos. */
-    .lfb-list{padding:48vh 0 34vh}
+    .lfb-list{padding:58.5vh 0 30vh}
     /* el bloque de datos pasa a ser el encabezado de la foto, arriba de la banda, pero con
        EL MISMO FORMATO que en escritorio (pedido de Paula): isotipo + NOMBRE + / rubro,
        alineado al margen izquierdo. Solo cambia el tamano del isotipo, que a 150px de
@@ -733,8 +733,8 @@
      De arriba a abajo: bloque de datos (CSS, 11vh) -> banda de foto -> linea de activacion.
      No se pisan entre si, que es todo el punto: la foto deja de estar detras del texto. */
   var TACTIL  = matchMedia('(hover:none)').matches;
-  var BANDA_Y = 0.358;  // centro de la banda de foto (centrado entre datos y linea)
-  var LINEA_Y = 0.62;   // altura donde se activa el nombre (debajo del degradado)
+  var BANDA_Y = 0.44;   // centro de la banda de foto (cerca del medio de pantalla)
+  var LINEA_Y = 0.72;   // altura donde se activa el nombre (debajo del degradado)
 
   /* Carga una foto en un panel respetando su proporcion real. Se precarga la imagen para
      poder leer naturalWidth/naturalHeight ANTES de mostrarla y escribir --ar en la caja:
