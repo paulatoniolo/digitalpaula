@@ -1,0 +1,48 @@
+# digitalpaula.site — configuración para Hostinger (Apache)
+
+# --- Comprimir lo que es texto -------------------------------------------------
+# Los videos y las imágenes ya vienen comprimidos: comprimirlos otra vez no achica
+# nada y gasta CPU. El HTML, el CSS y las fuentes OTF sí bajan bastante.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE font/otf application/x-font-otf
+</IfModule>
+
+# --- Caché ---------------------------------------------------------------------
+# El HTML NO se cachea: así, cuando subís una versión nueva, el visitante la ve
+# enseguida en vez de quedarse con la vieja.
+# Los assets pesados sí, 30 días. Si cambiás una imagen o un video CONSERVANDO el
+# nombre, quien ya la vio puede seguir viendo la anterior hasta que venza. Para
+# forzar la actualización hay dos caminos: cambiarle el nombre al archivo, o
+# agregarle una versión en el HTML (?v=2), que es lo que ya hace la fuente.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                        "access plus 30 days"
+  ExpiresByType text/html               "access plus 0 seconds"
+  ExpiresByType image/jpeg              "access plus 30 days"
+  ExpiresByType image/png               "access plus 30 days"
+  ExpiresByType image/webp              "access plus 30 days"
+  ExpiresByType image/svg+xml           "access plus 30 days"
+  ExpiresByType video/mp4               "access plus 30 days"
+  ExpiresByType video/webm              "access plus 30 days"
+  ExpiresByType font/otf                "access plus 30 days"
+  ExpiresByType application/x-font-otf  "access plus 30 days"
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-cache" env=IS_HTML
+  SetEnvIf Request_URI "\.html$" IS_HTML
+</IfModule>
+
+# --- Tipos MIME ----------------------------------------------------------------
+# Algunos servidores no reconocen .otf ni .webm y los mandan como binario suelto;
+# sin esto la fuente de marca no carga y el ojo del header no reproduce.
+AddType font/otf                 .otf
+AddType video/webm               .webm
+AddType video/mp4                .mp4
+AddType image/svg+xml            .svg
+
+# --- El sitio arranca en index.html ---------------------------------------------
+DirectoryIndex index.html

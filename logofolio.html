@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>logofolio — digitalpaula</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#fff; --bg:#050505; --ink:#0a0a0a;
+    /* El acento rosa se reemplaza por un degradado lineal gris (#d4d4d4 -> #909090).
+       Como un degradado NO puede ir en 'color', el texto lo toma como imagen de fondo
+       recortada a la forma de las letras (background-clip:text + text-fill transparente).
+       --grad-medio es el tono equivalente para los pocos casos donde no entra un
+       degradado: los bordes (necesitarian border-image) y el tinte de fondo que se anima
+       con una transicion, que no puede interpolar entre dos imagenes. */
+    --grad-ini:#d4d4d4; --grad-fin:#909090; --grad-medio:#b2b2b2;
+    --grad:linear-gradient(90deg,var(--grad-ini),var(--grad-fin));
+    --disp:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    --body:Roboto,"Helvetica Neue",Arial,sans-serif;
+    --gmargin:clamp(20px,4vw,64px);
+    /* geometria de los paneles de preview. Los nombres derivan su ancho maximo de estos
+       dos valores (ver .lfb-name), asi que si se toca el panel el texto se reacomoda solo
+       y nunca vuelve a superponerse. */
+    --lfb-panel-w:min(29vw,470px);
+    --lfb-panel-x:2vw;
+    /* tope de alto: una vertical de 460px de ancho y ratio .55 daria 836px de alto y no
+       entraria en pantalla. El JS calcula el ancho final como min(ancho, alto*ratio), asi
+       respeta la proporcion exacta y ademas nunca se sale. */
+    --lfb-panel-hmax:70vh;
+    --lfb-zigzag:0vw;
+  }
+  @font-face{
+    font-family:"DigitalPaulaContact";
+    src:url("fonts/DigitalPaulaContact.otf?v=3") format("opentype");
+  }
+  @font-face{
+    font-family:"HelveticaNeueHeavy";
+    src:url("fonts/HelveticaNeueHeavy.otf") format("opentype");
+    font-weight:800;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  /* ---------- BARRA DE SCROLL (misma que index.html) ----------
+     La del sistema es gris claro y con botones de flecha: sobre negro se lee como un
+     elemento ajeno pegado al costado. Van las dos sintaxis: scrollbar-color es el estandar
+     pero no permite sacar los botones de las puntas; ::-webkit-scrollbar si. */
+  html{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:20px;
+    border:3px solid transparent;background-clip:content-box}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.34);
+    border:3px solid transparent;background-clip:content-box}
+  ::-webkit-scrollbar-button{display:none}
+  ::-webkit-scrollbar-corner{background:transparent}
+  /* min-height y no height: con height:100% el documento quedaba CLAVADO en el alto de la
+     pantalla, asi que en mobile -donde la lista ahora mide 1936px- todo lo que pasaba de
+     la primera pantalla quedaba cortado y la pagina no scrolleaba. En escritorio no se
+     notaba porque los 30 nombres entraban en una pantalla. */
+  html,body{background:var(--bg);color:var(--paper);font-family:var(--disp);overflow-x:hidden;
+    min-height:100%}
+  a{color:inherit;text-decoration:none}
+
+  .lfb-top{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;
+    align-items:center;padding:24px var(--gmargin);font-size:12px;letter-spacing:.06em;
+    mix-blend-mode:difference}
+  /* back = mismo ojito+flecha del header de index.html (nunca el texto "back digitalpaula"
+     — pedido explicito de Paula: "quitar el texto y hacerlo como el resto"). Como esta
+     pagina no tiene hero que tapar, el ojo esta SIEMPRE visible (sin el toggle .on de
+     index.html), solo la flechita aparece al hover, igual que alli. */
+  .lfb-back{display:flex;align-items:center;opacity:.85;transition:opacity .2s ease}
+  .lfb-back:hover{opacity:1}
+  .lfb-back-arrow{display:block;width:0;opacity:0;overflow:hidden;flex-shrink:0;
+    transition:width .3s ease,opacity .3s ease,margin-right .3s ease;margin-right:0}
+  .lfb-back:hover .lfb-back-arrow{width:16px;opacity:1;margin-right:10px}
+  .lfb-back-arrow i{position:relative;width:16px;height:8px;display:block}
+  .lfb-back-arrow i::before{content:'';position:absolute;left:0;top:50%;width:16px;height:1px;
+    background:currentColor}
+  .lfb-back-arrow i::after{content:'';position:absolute;left:0;top:50%;width:6px;height:6px;
+    border-left:1px solid currentColor;border-bottom:1px solid currentColor;
+    transform:translateY(-50%) rotate(45deg)}
+  .lfb-eye{height:28px;width:auto;object-fit:contain;pointer-events:none;flex-shrink:0;display:block}
+
+  .lfb-stage{min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:140px var(--gmargin) 100px;
+    position:relative;z-index:2}
+
+  /* Al pasar el mouse por una fila, TODA la pantalla se oscurece y desenfoca menos el
+     cliente activo. La capa vive DENTRO de .lfb-stage (que es un contexto de apilado con
+     z-index:2) y va en z-index:1, o sea por encima de los nombres, que quedan en auto.
+     El <li> con hover sube a z-index:2 y por eso queda por arriba de la capa, nitido.
+     backdrop-filter desenfoca lo que ya se pinto debajo: exactamente los otros nombres. */
+  .lfb-dim{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:rgba(3,3,3,.66);
+    backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+    opacity:0;visibility:hidden;
+    transition:opacity .35s ease,visibility 0s linear .35s}
+  /* PRUEBA (ref que mando Paula): la foto va DETRAS de los nombres y el velo se apaga.
+     El foco lo hace el contraste de color -inactivos en gris, activo en blanco- en vez
+     de oscurecer y desenfocar todo lo demas. Para volver al comportamiento anterior
+     alcanza con borrar esta regla de abajo. */
+  .lfb-dim.on{opacity:1;visibility:visible;transition:opacity .35s ease}
+  .lfb-dim.on{opacity:0;visibility:hidden}
+  /* la fila activa se despega por encima de la capa de oscurecido */
+  .lfb-row:hover{position:relative;z-index:2}
+
+  .lfb-list{list-style:none;width:100%}
+  /* inline-block, NO block: como block ocupaba TODO el ancho de la pantalla, asi que el
+     negro a los costados del nombre seguia contando como "estar sobre la fila" y no se
+     apagaba nada. Ajustada al ancho del texto, el area sensible coincide con lo que se ve. */
+  .lfb-row{display:inline-block;overflow:visible;text-align:center;transition:transform .5s ease}
+
+  /* ---------- ALINEACION: varian, pero todas pasan por el medio ----------
+     Primer intento: repartir el sobrante horizontal entre dos separadores flex en
+     proporcion --f. Variaba muchisimo, pero de mas: filas enteras quedaban pegadas a un
+     costado con el centro vacio, y la lista perdia el eje que la sostiene.
+     Ahora cada fila arranca CENTRADA y se corre un porcentaje de su PROPIO ancho. Que el
+     corrimiento se mida contra el ancho del nombre (y no contra el hueco disponible) es
+     lo que garantiza el eje: partiendo del centro, un desplazamiento menor al 50% del
+     propio ancho deja siempre al eje central por dentro de las letras. Con el tope en 42%
+     ningun nombre se despega del medio, y de paso ninguno llega a salirse: el mas ancho
+     posible es la mitad de la pantalla (max-width:48vw), asi que aun corrido al maximo le
+     sobra margen contra el borde.
+     Efecto secundario buscado: como el corrimiento es relativo al nombre, uno corto se
+     mueve poco y uno largo barre mucho. El desorden queda proporcionado en vez de parejo.
+     El ciclo es de 11 filas: con 30 clientes no se llega a ver la repeticion, y si manana
+     se agregan mas sigue funcionando sin tocar nada. */
+  .lfb-list>li{text-align:center}
+  /* El tope corta el corrimiento en 12vw pase lo que pase. Hace falta porque --dx es un
+     porcentaje del propio nombre: sin tope, cuanto mas largo el nombre mas lejos se va,
+     que es exactamente al reves de lo que conviene. clamp() admite mezclar % y vw, asi
+     que el navegador se queda con el menor de los dos y no hay que calcular nada a mano. */
+  .lfb-list>li>.lfb-row{
+    --tope:12vw;
+    transform:translateX(clamp(calc(-1 * var(--tope)), var(--dx,0%), var(--tope)))}
+
+  /* .ancla = los nombres mas anchos de la lista. Se quedan practicamente en el centro a
+     proposito: son los que marcan el eje, y los cortos se corren alrededor de ellos. Un
+     nombre que ya ocupa media pantalla no necesita moverse para no parecer una columna,
+     y si se mueve es lo unico que se ve. Es una clase en el <li> y no un nth-child para
+     que siga pegada al cliente correcto si manana se reordena o se agrega la lista. */
+  .lfb-list>li.ancla>.lfb-row{
+    transform:translateX(clamp(calc(-1 * var(--tope)), calc(var(--dx,0%) * .28), var(--tope)))}
+
+  .lfb-list>li:nth-child(11n+1){--dx:-38%}
+  .lfb-list>li:nth-child(11n+2){--dx:22%}
+  .lfb-list>li:nth-child(11n+3){--dx:-12%}
+  .lfb-list>li:nth-child(11n+4){--dx:40%}
+  .lfb-list>li:nth-child(11n+5){--dx:-28%}
+  .lfb-list>li:nth-child(11n+6){--dx:6%}
+  .lfb-list>li:nth-child(11n+7){--dx:34%}
+  .lfb-list>li:nth-child(11n+8){--dx:-20%}
+  .lfb-list>li:nth-child(11n+9){--dx:14%}
+  .lfb-list>li:nth-child(11n+10){--dx:-42%}
+  .lfb-list>li:nth-child(11n+11){--dx:30%}
+
+  /* entrada por scroll (mismo patron que .svl-row en index.html, ref forms.world/works):
+     aparece desde la izquierda con blur+opacidad al entrar en pantalla, y se deshace
+     igual (blur+opacidad+corrimiento) al salir de pantalla para cualquier lado —
+     Paula lo pidio explicitamente igual al efecto de servicios. --reveal-x/--hover-x
+     se combinan en un solo transform (mismo patron de custom properties que el
+     parallax de las fotos de WORK). */
+  /* display:block (no inline-block): un inline-block se alinea a la linea de base del
+     renglon del padre y ese renglon suma su propio strut/descendente, metiendo aire
+     extra entre nombre y nombre que no se puede sacar con line-height.
+     line-height:.72 sale de medir la fuente real (HelveticaNeueHeavy): la altura de
+     mayuscula es .712em y las redondas (C/G/J/O/S/U) sobresalen .017em bajo la linea
+     de base — con .72 las mayusculas de un nombre y del siguiente quedan practicamente
+     tocandose, sin espacio muerto. */
+  .lfb-name{
+    display:block;
+    font-family:"HelveticaNeueHeavy",var(--disp);
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:-.09em;
+    font-size:clamp(30px,6vw,104px);
+    line-height:.72;
+    /* GRIS SOLIDO, no blanco con opacidad. Con opacity:.3 dos nombres que se cruzan suman
+       su alfa en la zona compartida (~.51) y el solape se ve como una mancha mas clara.
+       Opaco sobre opaco da siempre el mismo valor, asi que el cruce deja de notarse.
+       #505050 es exactamente el color que daba el blanco al 30% sobre el fondo #050505
+       (255*.3 + 5*.7 = 80), o sea el reposo se ve igual que antes. La opacidad queda
+       reservada solo para la entrada/salida por scroll. */
+    color:#505050;
+    --reveal-x:-70px; --hover-x:0px;
+    opacity:0;
+    filter:blur(14px);
+    transform:translateX(calc(var(--reveal-x) + var(--hover-x)));
+    transition:opacity .9s ease, filter .9s ease, color .35s ease,
+               transform .9s cubic-bezier(.16,1,.3,1);
+    /* los nombres largos ("Salon de Artes Visuales Litoral") se salian de pantalla por los
+       dos lados: con nowrap el texto desbordaba la caja en vez de cortarse. Ahora parten en
+       dos lineas. text-wrap:balance reparte las palabras parejo entre las dos lineas en vez
+       de dejar una larguisima y una de una palabra. Los nombres cortos no se ven afectados:
+       si entran en una linea, no hay donde cortar. */
+    white-space:normal;
+    text-wrap:balance;
+    /* el nombre no puede pasar de la banda central que dejan libre los dos paneles de
+       preview: ancho de pantalla menos los dos paneles (posicion + ancho), menos el
+       corrimiento zigzag de las filas hacia ambos lados, menos un respiro de 40px.
+       Al acotarlo, un nombre de dos palabras como "Archivo Deportivo" ya no entra en una
+       linea y se parte solo (Archivo / Deportivo), que es justo lo que se buscaba: menos
+       ancho ocupado y mas aire a los costados. */
+    width:max-content;
+    /* Antes la banda era "lo que dejan libre los dos paneles de preview": 507px sobre un
+       viewport de 1440. Demasiado angosta. Empujaba a tres lineas a los nombres largos y,
+       peor, no le dejaba a ninguna fila lugar para correrse, con lo cual la lista entera
+       se leia centrada. Los paneles solo aparecen al pasar el mouse y Paula acepto que
+       tapen un poco al nombre, asi que ya no mandan ellos sobre el ancho del texto.
+       48vw: entra "MICROBLADING" de una linea (609px medidos a 1440, la palabra mas ancha
+       de toda la lista) y siguen partiendose en dos los tres nombres largos
+       (Archivo Deportivo, Medicina China SF, Camalote Seeds), que es como se veian bien. */
+    max-width:min(48vw,760px);
+    position:relative;
+  }
+  .lfb-row.in-view .lfb-name{--reveal-x:0px; opacity:1; filter:blur(0px)}
+  .lfb-row.in-view:hover .lfb-name{color:var(--paper); --hover-x:6px}
+
+  /* Con una foto encendida DETRAS, los nombres opacos la tapaban. Mientras dura el hover
+     pasan a un blanco muy translucido y la dejan pasar; el que se esta mirando se queda
+     opaco y en blanco pleno, asi el contraste entre uno y el resto se vuelve mayor, no
+     menor.
+     Va como COLOR con alfa y no como opacity a proposito: opacity afectaria tambien al
+     numero de orden y al blur de entrada, y ademas dejaria el elemento entero traslucido
+     en vez de solo el relleno de las letras.
+     El valor es bajo (.16) porque donde dos nombres se cruzan los alfas se suman: a .16 el
+     cruce llega a .29 y sigue leyendose como parte del fondo, no como una mancha. */
+  /* La transparencia se aplica a la LISTA ENTERA, no a cada nombre. Es la diferencia que
+     resuelve el problema de los cruces: con un color semitransparente por nombre, donde dos
+     se superponen los alfas se suman (.16 sobre .16 da .29) y el cruce se ve como una
+     mancha mas clara. Con opacity en el contenedor, el navegador dibuja todos los nombres
+     OPACOS en una capa aparte -donde el de arriba simplemente tapa al de abajo, sin sumar-
+     y recien despues aplica la transparencia a esa capa completa. El cruce queda del mismo
+     tono que el resto.
+     El precio es que el nombre activo tambien se atenua, por eso el grupo va en .65 y no
+     mas bajo: a ese valor el blanco del activo sigue destacando muy por encima del gris de
+     los demas. */
+  html.lfb-viendo .lfb-list{opacity:.65}
+  .lfb-list{transition:opacity .35s ease}
+
+  /* FUERA DEL FLUJO. Siendo inline-block creaba un punto de corte de linea entre el numero
+     y la palabra: cuando el nombre no entraba, el navegador mandaba el numero a un renglon
+     y el nombre a otro, sumando una linea fantasma. Eso producia los "espacios raros" entre
+     clientes y ademas obligaba a achicar nombres que en realidad entraban. Absoluto no
+     participa del salto de linea ni suma alto. */
+  .lfb-idx{position:absolute;left:0;top:.06em;font-family:var(--disp);font-weight:400;
+    letter-spacing:0;font-size:.13em;opacity:.5;transform:translateX(-1.6em)}
+
+  /* foto en un lugar FIJO por cliente (izquierda o derecha + una altura propia, ver
+     data-side/data-top en el HTML), NO siguiendo al mouse — Paula pidio que cada
+     cliente tenga su lugar fijo para poder ubicarse, y que esos lugares varien de
+     altura/posicion en vez de ser siempre el mismo. el "top" lo pone JS por fila
+     (custom property --top), la animacion es un bounce real (varios rebotes, no un
+     solo overshoot) reiniciable en cada hover via la clase .bounce. */
+  /* Ahora los DOS paneles se muestran a la vez (uno por lado) y cada uno lleva solo la
+     foto: el bloque de logo+nombre+industria se mudo a .lfb-info, fijo arriba a la
+     izquierda, para no duplicarse. Comparten --top, asi que quedan centrados
+     verticalmente entre si aunque tengan alturas distintas. */
+  .lfb-preview{position:fixed;top:var(--top,50%);width:var(--lfb-panel-w);
+    display:flex;flex-direction:column;
+    pointer-events:none;z-index:1;opacity:0;overflow:hidden;
+    transform:translateY(-50%) scale(.92);
+    transition:opacity .4s ease, top .7s cubic-bezier(.22,.61,.36,1)}
+  .lfb-preview.side-left{left:var(--lfb-panel-x);align-items:flex-start}
+  .lfb-preview.side-right{right:var(--lfb-panel-x);align-items:flex-end}
+  .lfb-preview.on{opacity:1}
+  /* bounce sutil/flowy (ref materialized.webflow.io: un solo asentamiento suave,
+     nada de rebotes duros ni escalas exageradas) */
+  .lfb-preview.on.bounce{animation:lfbBounce 1.1s cubic-bezier(.22,.61,.36,1) forwards}
+  @keyframes lfbBounce{
+    0%{transform:translateY(-50%) scale(.92)}
+    60%{transform:translateY(-50%) scale(1.025)}
+    100%{transform:translateY(-50%) scale(1)}
+  }
+  /* tarjeta neutra de fondo (placeholder) para los clientes que todavia no
+     tienen foto/textura real — Paula aclaro que el logo NUNCA va como imagen
+     principal. mientras no llega la foto real, el fondo de la mitad de abajo
+     es liso, no el logo agrandado. */
+  /* PROPORCION NATURAL de cada foto (pedido de Paula: "respeta las proporciones, no las
+     cambies"). Antes habia un aspect-ratio:4/5 fijo + object-fit:cover, o sea que toda
+     imagen que no fuera 4:5 se RECORTABA. Ahora el alto de la caja lo define la propia
+     imagen: el JS lee naturalWidth/naturalHeight y lo escribe en --ar, y object-fit:contain
+     garantiza que nunca se recorte aunque la medicion falle. Se mantienen las dos <img>
+     superpuestas para poder cruzar de una a otra con opacidad al cambiar de fila. */
+  .lfb-preview-photo{position:relative;width:var(--w,100%);aspect-ratio:var(--ar,4/5);
+    overflow:hidden;flex-shrink:0;background:#141414}
+  .lfb-preview-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+    opacity:0;transition:opacity .25s ease}
+  .lfb-preview-photo img.on{opacity:1}
+
+  /* isotipo en positivo (blanco) + nombre + tag EN SU PROPIO ESPACIO arriba,
+     antes de que empiece la foto (ref "ejemplo logo-16.svg" de Paula, caso
+     Boota) — bloque aparte, no superpuesto, y SIN fondo propio (nada de caja
+     negra detras del nombre, que se vea flotando igual que en la referencia).
+     escala +30% pedida por Paula (estaba muy chico). */
+  /* Ya NO vive adentro de los paneles: con dos fotos a la vez el bloque se duplicaba.
+     Ahora es un unico elemento fijo con lugar propio arriba a la izquierda, debajo del
+     header. Al ser position:fixed con top/left fijos, ocupa siempre el mismo lugar y no
+     salta al cambiar de cliente, sin importar el alto de las fotos. Escala +33% respecto
+     del tamano que tenia adentro del panel (logo 42->56, nombre 17->22, tag 10->12). */
+  /* Si una foto queda debajo del bloque, se desenfoca y oscurece SOLO esa zona para que el
+     texto siga legible (pedido de Paula). backdrop-filter es ideal aca: sobre el fondo negro
+     de la pagina no produce ningun cambio visible (oscurecer y desenfocar negro sigue dando
+     negro), asi que no aparece ninguna placa fantasma; el efecto solo se nota cuando
+     efectivamente hay una imagen atras. El padding hace que el desenfoque respire un poco
+     mas alla del texto, y el top/left lo compensan para que el bloque no se mueva de lugar. */
+  .lfb-info{position:fixed;top:96px;left:var(--gmargin);z-index:6;
+    display:flex;align-items:center;gap:16px;
+    pointer-events:none;opacity:0;transition:opacity .35s ease}
+  .lfb-info.on{opacity:1}
+  .lfb-info img{width:auto;height:auto;max-height:56px;max-width:150px;
+    object-fit:contain;opacity:1}
+  /* por defecto oculto: solo los 3 pares fusionados (Boota, Franja, Malika) tienen un
+     segundo logo. Sin esto se veria el icono de imagen rota antes del primer hover. */
+  .logo2{display:none}
+  .lfb-overlay-text{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .lfb-overlay-name{font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;
+    font-size:22px;color:#f4f4f4;text-transform:uppercase;letter-spacing:0;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lfb-overlay-tag{font-family:var(--disp);font-weight:400;font-size:12px;
+    letter-spacing:.2em;text-transform:uppercase;color:#f4f4f4;opacity:.8;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lfb-overlay-tag:empty{display:none}
+  .lfb-overlay-tag::before{content:"/ "}
+  .lfb-overlay-tag:empty::before{content:none}
+
+  /* cursor a medida (mismo sistema que index.html, ref tol.is): crosshair fino que
+     se convierte en corners+diamante sobre una fila. sin esto el cursor nativo
+     desaparecia (cursor:none global) y no quedaba nada mostrando donde estaba el mouse. */
+  /* El cursor a medida vive entero dentro de @media(hover:hover) and (pointer:fine).
+     En un telefono esa consulta NO aplica, asi que el <div> se quedaba sin position:fixed
+     y quedaba como un bloque normal al principio del <body>: 19px muertos arriba de toda
+     la pagina. Eso corria el hero hacia abajo y empujaba su bloque de texto -anclado al
+     borde inferior- fuera de la pantalla, cortando el [ let's talk ].
+     Se apaga por defecto y el propio media query lo enciende. */
+  .xcursor{display:none}
+  @media(hover:hover) and (pointer:fine){
+    *{cursor:none}
+    /* mix-blend-mode:difference = SIEMPRE contrasta con lo que tenga debajo (blanco
+       sobre fondo oscuro, negro sobre fondo claro) — Paula dijo que no se veia,
+       asi que ademas lo agrande y le subi la opacidad a full. */
+    .xcursor{display:block;position:fixed;top:0;left:0;z-index:9999;pointer-events:none;
+      transform:translate3d(-100px,-100px,0);opacity:0;transition:opacity .2s ease;
+      mix-blend-mode:difference}
+    .xcursor.on{opacity:1}
+    .xc-inner{position:relative}
+    .xc-tick{position:absolute;background:#fff;transition:opacity .15s ease}
+    .xc-t{left:-1px;top:-26px;width:2px;height:19px}
+    .xc-b{left:-1px;top:7px;width:2px;height:19px}
+    .xc-l{left:-26px;top:-1px;width:19px;height:2px}
+    .xc-r{left:7px;top:-1px;width:19px;height:2px}
+    .xc-dot{position:absolute;left:-2.5px;top:-2.5px;width:5px;height:5px;border-radius:50%;
+      background:#fff;transition:opacity .15s ease}
+    .xc-hover{position:absolute;left:-14px;top:-14px;width:28px;height:28px;
+      opacity:0;transition:opacity .15s ease}
+    .xcursor.hover .xc-hover{opacity:1}
+    .xcursor.hover .xc-tick,.xcursor.hover .xc-dot{opacity:0}
+    .xc-corner{position:absolute;width:7px;height:7px;
+      border-top:1.5px solid #fff;border-left:1.5px solid #fff}
+    .xc-c1{top:0;left:0}
+    .xc-c2{top:0;right:0;transform:rotate(90deg)}
+    .xc-c3{bottom:0;right:0;transform:rotate(180deg)}
+    .xc-c4{bottom:0;left:0;transform:rotate(270deg)}
+    .xc-diamond{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;
+      border:1px solid #fff;transform:rotate(45deg)}
+  }
+
+  @media(hover:none){
+    /* La foto ya NO se oculta en tactil. Esa regla es de cuando los paneles iban a los
+       costados y le comian el ancho al nombre; ahora van detras, asi que no le quitan
+       lugar a nada y un toque sobre un nombre la revela igual. */
+    .lfb-name{opacity:1}
+  }
+  @media(max-width:680px){
+    /* clamp anterior (32px,12vw,60px) daba ~44px a 370px de ancho — suficiente para nombres
+       cortos, pero "Camalote Seeds"/"Lucila Vallejos" (los mas largos de la lista) se salian
+       de pantalla (detectado por auditoria responsive: "Camalote Seeds" llegaba a 378px de
+       ancho en un viewport de 370px). Coeficiente vw mas chico para que el nombre mas largo
+       entre siempre, incluso sumado al corrimiento zigzag de cada fila. */
+    /* El aire va ENTRE clientes, no entre los renglones de un mismo nombre. Antes estaba
+       todo en un line-height de 1.42 y eso separaba tambien las dos lineas de
+       "Microblading / Santa Fe", que es un solo cliente y tiene que leerse como un bloque.
+       Ahora el nombre queda casi sin interlinea (.84, practicamente el .72 de escritorio) y
+       la separacion entre clientes la da un margin en el <li>, que no puede meterse adentro
+       de un nombre. */
+    .lfb-name{font-size:clamp(26px,8.5vw,60px);max-width:100%;line-height:.84}
+    .lfb-list>li{margin-bottom:37px}
+    .lfb-list>li:last-child{margin-bottom:0}
+    /* sin corrimiento: aca el nombre llega a ocupar todo el ancho, asi que no hay
+       sobrante contra los bordes del cual descontar el desplazamiento. */
+    .lfb-list>li>.lfb-row{--dx:0%}
+    /* UNA sola foto por cliente y a lo ANCHO DE LA PANTALLA, en una banda fija.
+       Antes iba detras del texto y no se veia nada: una foto de 74vw compitiendo contra 30
+       nombres superpuestos encima. A 100vw no queda nada de lista asomando a los costados,
+       y al estar fuera del flujo el texto nunca se le encima.
+       El de la derecha se apaga (pedido de Paula: una sola foto). */
+    :root{--lfb-panel-w:100vw;--lfb-panel-x:0px;--lfb-panel-hmax:40vh}
+    .lfb-preview.side-right{display:none}
+    /* left/right y NO width:100vw: 100vw incluye el ancho de la barra de scroll, asi que
+       la foto quedaba 10px mas ancha que la pantalla y se cortaba de un lado (medido: 385
+       sobre 375). Con los dos bordes anclados, el ancho lo da el viewport real. */
+    /* z-index 4 y no 1: .lfb-stage -que contiene la lista- esta en z-index 2, asi que con
+       el 1 de escritorio la lista entera se pintaba ENCIMA de la foto y los nombres le
+       pasaban por arriba (medido con elementsFromPoint en el centro de la banda: devolvia
+       span.lfb-name, y habia 6 nombres cayendo dentro de la foto). En escritorio el orden
+       inverso es el correcto -los nombres adelante, la foto detras-, por eso el cambio vive
+       solo aca. Queda debajo de .lfb-info (6), que es lo que se busca.
+       overflow visible: los degradados de abajo cuelgan FUERA de la caja del panel y con
+       el hidden de escritorio quedaban recortados. */
+    .lfb-preview.side-left{left:0;right:0;width:auto;align-items:center;
+      z-index:4;overflow:visible}
+    /* Los nombres se disuelven en el negro de la pagina ANTES de tocar la foto y vuelven a
+       aparecer del otro lado, en vez de quedar cortados a mitad de letra contra el borde.
+       Van colgados del PANEL y no fijos a una altura del viewport a proposito: la banda
+       cambia de alto segun la proporcion de cada foto (medido: entre 183 y 385 de ancho),
+       asi que un degradado a altura fija dejaria de tocarla en cuanto la foto es mas
+       apaisada. Colgados asi, siempre arrancan exactamente en el borde.
+       100px = poco mas de un renglon de la lista (64.5px por cliente), que es lo que tarda
+       un nombre en desaparecer del todo. */
+    .lfb-preview.side-left::before,
+    .lfb-preview.side-left::after{content:"";position:absolute;left:0;right:0;
+      pointer-events:none}
+    .lfb-preview.side-left::before{bottom:100%;height:100px;
+      background:linear-gradient(to top,var(--bg),rgba(5,5,5,0))}
+    /* el de abajo va mas corto que el de arriba (50 contra 100) por una razon concreta: la
+       linea de activacion esta ahi debajo, y con 100px el nombre ACTIVO -el unico blanco de
+       la lista- caia adentro del degradado y quedaba velado un 39%. Arriba no pasa porque
+       ahi solo hay nombres grises saliendo de escena, que es justo lo que se quiere. */
+    .lfb-preview.side-left::after{top:100%;height:50px;
+      background:linear-gradient(to bottom,var(--bg),rgba(5,5,5,0))}
+    /* align-items:flex-start: la lista ya no entra en el alto del stage, y centrada se
+       desbordaba por arriba dejando los primeros clientes fuera de alcance del scroll. */
+    .lfb-stage{padding:110px var(--gmargin) 70px;align-items:flex-start}
+    /* aire arriba y abajo para que el PRIMER y el ULTIMO cliente tambien puedan llegar a
+       la linea de activacion (56vh). Sin esto los de las puntas nunca se encienden. */
+    /* El padding de arriba es exactamente lo que necesita el PRIMER cliente para caer en
+       la linea de activacion con la pagina sin scrollear (si sobra, el 01 no se enciende
+       nunca y se arranca en el 02). Estaba en 57vh con la linea en 72vh, y eso dejaba al
+       "2001" al 70% de la pantalla, con 250px de aire repartido alrededor de una foto de
+       194px: 107 arriba y 143 abajo. Al subir la linea a 62vh el padding baja a 39vh y la
+       lista arranca 82px mas arriba, con los dos huecos mucho mas parejos. */
+    .lfb-list{padding:48vh 0 34vh}
+    /* el bloque de datos pasa a ser el encabezado de la foto, arriba de la banda, pero con
+       EL MISMO FORMATO que en escritorio (pedido de Paula): isotipo + NOMBRE + / rubro,
+       alineado al margen izquierdo. Solo cambia el tamano del isotipo, que a 150px de
+       escritorio no le dejaria lugar al nombre en 375px de pantalla.
+       right ademas de left: sin el, el bloque tomaba el ancho de su contenido y un nombre
+       largo se salia en vez de recortarse con puntos suspensivos como en escritorio. */
+    .lfb-info{top:11vh;left:var(--gmargin);right:var(--gmargin);width:auto;
+      align-items:flex-start;justify-content:center}
+    .lfb-info img{max-height:40px;max-width:110px}
+    /* en escritorio el nombre va en una linea y lo que sobra se recorta con puntos
+       suspensivos. Aca no alcanza: descontando el isotipo quedan ~209px y "SALON DE ARTES
+       VISUALES" mide 280, o sea que el cliente se leia "SALON DE ARTES VIS...". Se deja
+       partir en dos renglones, que es lo unico que cambia respecto de la version web. */
+    .lfb-overlay-name{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.04}
+    /* la lista se atenua mas que en escritorio (.65): aca compite con una foto a pantalla
+       completa, no con dos estampillas laterales. */
+    html.lfb-viendo .lfb-list{opacity:.34}
+    /* la fila que esta en la linea de activacion. Es el unico blanco de la lista, y lo que
+       vincula lo que estas scrolleando con la foto que aparece. */
+    .lfb-row.activo .lfb-name{color:var(--paper)}
+  }
+
+  /* ---------- menu lateral (portado 1:1 desde index.html) ----------
+     Antes aca solo decia "Logofolio" como texto muerto. Ahora es el mismo waffle 3x3 y
+     el mismo panel que el resto del sitio, para que el menu este disponible tambien en
+     esta pagina. Los links a secciones apuntan a index.html#seccion porque esas
+     secciones NO existen aca (un "#work" pelado no iria a ningun lado). */
+  .menu-btn{background:none;border:none;color:var(--paper);
+    padding:8px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center}
+  .menu-btn:hover{opacity:.6}
+  .waffle{display:grid;grid-template-columns:repeat(3,3px);grid-template-rows:repeat(3,3px);gap:3px}
+  .waffle i{width:3px;height:3px;background:currentColor;display:block}
+
+  .menu-overlay{position:fixed;inset:0;z-index:40;background:rgba(5,5,5,.08);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    opacity:0;pointer-events:none;visibility:hidden;
+    transition:opacity .4s ease,visibility 0s linear .4s}
+  .menu-overlay.open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity .4s ease}
+  .menu-panel{position:fixed;top:0;right:0;bottom:0;z-index:41;
+    width:clamp(300px,29vw,560px);background:rgba(10,10,10,.4);
+    backdrop-filter:blur(50px);-webkit-backdrop-filter:blur(50px);
+    border-left:1px solid rgba(255,255,255,.12);
+    transform:translateX(100%);visibility:hidden;
+    transition:transform .45s cubic-bezier(.19,1,.22,1),visibility 0s linear .45s;
+    padding:24px 26px 34px;overflow-y:auto}
+  .menu-panel.open{transform:translateX(0);visibility:visible;
+    transition:transform .45s cubic-bezier(.19,1,.22,1)}
+  .menu-top{display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--disp);font-weight:700;font-size:12px;letter-spacing:.1em;
+    text-transform:uppercase;margin-bottom:clamp(22px,4.5vh,52px)}
+  .menu-close{background:none;border:1px solid rgba(255,255,255,.3);color:var(--paper);
+    width:28px;height:28px;cursor:pointer;font-size:13px;transition:.2s}
+  .menu-close:hover{background:var(--paper);color:var(--ink)}
+  .menu-items{display:flex;flex-direction:column}
+  .menu-item{position:relative;display:flex;align-items:baseline;gap:14px;
+    text-decoration:none;color:var(--paper);font-family:var(--disp);font-weight:800;
+    text-transform:uppercase;letter-spacing:-.1em;
+    font-size:clamp(30px,3.95vw,76px);line-height:1;
+    padding:clamp(14px,2.6vh,26px) 0;border-bottom:1px solid rgba(255,255,255,.28);
+    transition:opacity .2s,padding-left .3s}
+  .menu-item:hover{opacity:.6;padding-left:10px}
+  /* la pagina actual queda marcada y sin hover: no tiene sentido "ir" a donde ya estas */
+  .menu-item[aria-current="page"]{opacity:.4;pointer-events:none}
+  .mi-sub{font-family:var(--body);font-weight:400;letter-spacing:0;text-transform:uppercase;
+    font-size:clamp(11px,1vw,19px);opacity:.6;white-space:nowrap}
+  .menu-contact{margin-top:clamp(16px,3vh,32px);padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.16);display:flex;flex-direction:column;gap:4px}
+  .menu-contact-label{font-family:var(--disp);font-weight:300;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;opacity:.55}
+  .menu-contact-mail{font-family:var(--disp);font-weight:500;font-size:clamp(12px,1vw,16px);
+    letter-spacing:-.01em;color:var(--paper);text-decoration:none;opacity:.9;transition:.2s}
+  .menu-contact-mail:hover{opacity:1;background-image:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .menu-contact-ww{font-family:var(--disp);font-weight:300;font-size:9px;letter-spacing:.2em;
+    text-transform:uppercase;opacity:.5}
+  .menu-avail{display:inline-block;width:7px;height:7px;border-radius:50%;
+    background:#3ddc84;margin-left:9px;vertical-align:middle;opacity:1;
+    animation:availPulse 2.4s ease-out infinite}
+  @keyframes availPulse{
+    0%{box-shadow:0 0 0 0 rgba(61,220,132,.5)}
+    70%{box-shadow:0 0 0 7px rgba(61,220,132,0)}
+    100%{box-shadow:0 0 0 0 rgba(61,220,132,0)}
+  }
+  @media(prefers-reduced-motion:reduce){ .menu-avail{animation:none} }
+  /* helvetica bold + tracking -60 (-60/1000 = -.06em), igual que en index.html */
+  .menu-talk{display:block;margin-top:clamp(10px,1.6vh,18px);text-decoration:none;color:var(--paper);
+    font-family:var(--disp);font-weight:700;font-size:clamp(10px,.85vw,15px);letter-spacing:-.06em;
+    text-transform:uppercase;opacity:.75;transition:.2s}
+  .menu-talk:hover{opacity:1}
+  /* PORTADO DE index.html. Faltaba entero: el menu de esta pagina se copio 1:1 de index
+     ANTES de que se agrandara para telefono, asi que se quedo con los cuerpos de escritorio.
+     Los seis estan en clamp() con el medio en vw y calibrados para pantalla ancha: en 375px
+     todos caen a su piso (item 30px, sub 11, label 10, mail 12, ww 9, talk 10) y el panel
+     ademas se quedaba en 300px sin llegar al borde. Fijos en px, que es lo correcto cuando
+     el ancho ya no varia lo suficiente como para que escalar aporte algo.
+     width:100% y no 100vw: 100vw incluye el ancho del scrollbar y en un panel fixed;right:0
+     eso lo corre ~15px fuera del borde izquierdo. */
+  /* Los seis cuerpos del menu estan en clamp() con el medio en vw, calibrados para
+     pantalla ancha: por debajo de 900px todos caen a su piso (item 30px, sub 11...) y el
+     panel se lee chico. Se fijan en px, que es lo correcto cuando el ancho ya no varia lo
+     suficiente como para que escalar aporte algo.
+     El corte va en 900 y no en 640: el iPad (768-834) quedaba afuera y por eso se veia
+     con los cuerpos de escritorio. */
+  @media(max-width:900px){
+    /* en tablet el panel sigue siendo lateral pero mas ancho, porque con 300px los items
+       de 48px no entraban. En telefono (abajo) pasa a ocupar todo. */
+    .menu-panel{width:min(440px,72vw);display:flex;flex-direction:column}
+    /* Los ITEMS arrancan arriba, pegados al titulo: con margin-top:auto quedaban empujados
+       al fondo y en pantallas altas se leian "muy abajo". El que queda anclado al borde
+       inferior es el bloque de CONTACTO, que es lo que se buscaba con "abajo a la
+       izquierda". overflow-y:auto es la red por si en una pantalla muy baja no entra:
+       ahi el margen automatico se anula y scrollea, en vez de recortarse. */
+    .menu-items{margin-top:clamp(16px,4vh,44px)}
+    .menu-contact{margin-top:auto}
+    .menu-top{font-size:14px}
+    .menu-close{width:34px;height:34px;font-size:16px}
+    .menu-item{font-size:48px}
+    .mi-sub{font-size:17px}
+    .menu-contact-label{font-size:16px}
+    .menu-contact-mail{font-size:18px}
+    .menu-contact-ww{font-size:14px}
+    .menu-talk{font-size:16px}
+  }
+  @media(max-width:640px){
+    .menu-panel{width:100%}
+  }
+</style>
+</head>
+<body>
+  <div class="xcursor" id="xcursor" aria-hidden="true">
+    <div class="xc-inner">
+      <span class="xc-tick xc-t"></span>
+      <span class="xc-tick xc-b"></span>
+      <span class="xc-tick xc-l"></span>
+      <span class="xc-tick xc-r"></span>
+      <span class="xc-dot"></span>
+      <span class="xc-hover">
+        <span class="xc-corner xc-c1"></span>
+        <span class="xc-corner xc-c2"></span>
+        <span class="xc-corner xc-c3"></span>
+        <span class="xc-corner xc-c4"></span>
+        <span class="xc-diamond"></span>
+      </span>
+    </div>
+  </div>
+  <div class="lfb-top">
+    <a class="lfb-back" href="index.html" aria-label="Back to digitalpaula">
+      <span class="lfb-back-arrow" aria-hidden="true"><i></i></span>
+      <video class="lfb-eye" src="header-eye.webm" autoplay muted loop playsinline aria-hidden="true"></video>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+      <span class="waffle" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+    </button>
+  </div>
+
+  <div class="lfb-stage">
+    <div class="lfb-dim" id="lfbDim" aria-hidden="true"></div>
+    <ol class="lfb-list" id="lfbList">
+      <li><a class="lfb-row" data-pos-left="0.30" data-pos-right="0.64" data-img-left="work/logofolio/img/2001-a.jpg" data-img-right="work/logofolio/img/2001-b.jpg" data-tag="Visuals" data-hover data-logo="work/logofolio/2001.png"><span class="lfb-name"><span class="lfb-idx">01</span>2001</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.56" data-pos-right="0.34" data-img-left="work/logofolio/img/492-a.jpg" data-img-right="work/logofolio/img/492-b.jpg" data-hover data-logo="work/logofolio/492.png" data-tag="Media Group"><span class="lfb-name"><span class="lfb-idx">02</span>492</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.42" data-pos-right="0.70" data-img-left="work/logofolio/img/archivo-deportivo-a.jpg" data-img-right="work/logofolio/img/archivo-deportivo-b.jpg" data-tag="Clothing" data-hover data-logo="work/logofolio/archivo-deportivo.png"><span class="lfb-name"><span class="lfb-idx">03</span>Archivo Deportivo</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.58" data-pos-right="0.34" data-img-left="work/logofolio/img/belvedere-a.jpg" data-img-right="work/logofolio/img/belvedere-b.jpg" data-tag="Real Estate" data-hover data-logo="work/logofolio/belvedere.png"><span class="lfb-name"><span class="lfb-idx">04</span>Belvedere</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.68" data-pos-right="0.46" data-img-left="work/logofolio/img/boota-a.jpg" data-img-right="work/logofolio/img/boota-b.jpg" data-hover data-logo="work/logofolio/boota-isotipo.png" data-logo2="work/logofolio/boota-logotipo.png" data-tag="Festival Urbano"><span class="lfb-name"><span class="lfb-idx">05</span>Boota</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.36" data-pos-right="0.58" data-img-left="work/logofolio/img/camalote-seeds-a.jpg" data-img-right="work/logofolio/img/camalote-seeds-b.jpg" data-tag="Seed Bank" data-hover data-logo="work/logofolio/camalote-seeds.png"><span class="lfb-name"><span class="lfb-idx">06</span>Camalote Seeds</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.62" data-pos-right="0.30" data-img-left="work/logofolio/img/coinxbet-a.jpg" data-img-right="work/logofolio/img/coinxbet-b.jpg" data-tag="Gambling" data-hover data-logo="work/logofolio/coinxbet.png"><span class="lfb-name"><span class="lfb-idx">07</span>CoinXBet</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.48" data-pos-right="0.68" data-img-left="work/logofolio/img/cwe-lawyers-a.jpg" data-img-right="work/logofolio/img/cwe-lawyers-b.jpg" data-tag="Law Firm" data-hover data-logo="work/logofolio/cwe-lawyers.png"><span class="lfb-name"><span class="lfb-idx">08</span>CWE</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.72" data-pos-right="0.40" data-img-left="work/logofolio/img/dedicarte-a.jpg" data-img-right="work/logofolio/img/dedicarte-b.jpg" data-tag="Candles" data-hover data-logo="work/logofolio/dedicarte.png"><span class="lfb-name"><span class="lfb-idx">09</span>DedicArte</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.30" data-pos-right="0.64" data-img-left="work/logofolio/img/divino-a.jpg" data-img-right="work/logofolio/img/divino-b.jpg" data-tag="Productions" data-hover data-logo="work/logofolio/divino.png"><span class="lfb-name"><span class="lfb-idx">10</span>Divino</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.56" data-pos-right="0.34" data-img-left="work/logofolio/img/franja-a.jpg" data-img-right="work/logofolio/img/franja-b.jpg" data-tag="Sport Brand" data-hover data-logo="work/logofolio/franja.png" data-logo2="work/logofolio/frnj.png"><span class="lfb-name"><span class="lfb-idx">11</span>Franja</span></a></li>
+<li class="ancla"><a class="lfb-row" data-pos-left="0.42" data-pos-right="0.70" data-img-left="work/logofolio/img/global-spain-a.jpg" data-img-right="work/logofolio/img/global-spain-b.jpg" data-tag="Citizenship Consultant" data-hover data-logo="work/logofolio/global-spain.png"><span class="lfb-name"><span class="lfb-idx">12</span>Global Spain</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.68" data-pos-right="0.46" data-img-left="work/logofolio/img/kimun-a.jpg" data-img-right="work/logofolio/img/kimun-b.jpg" data-tag="Holistic Therapy" data-hover data-logo="work/logofolio/kimun.png"><span class="lfb-name"><span class="lfb-idx">13</span>Kimun</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.36" data-pos-right="0.58" data-img-left="work/logofolio/img/klik-a.jpg" data-img-right="work/logofolio/img/klik-b.jpg" data-tag="Vending Machines" data-hover data-logo="work/logofolio/klik.png"><span class="lfb-name"><span class="lfb-idx">14</span>Klik</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.62" data-pos-right="0.30" data-img-left="work/logofolio/img/la-tercera-a.jpg" data-img-right="work/logofolio/img/la-tercera-b.jpg" data-hover data-logo="work/logofolio/la-tercera.png" data-tag="Drugstore"><span class="lfb-name"><span class="lfb-idx">15</span>La Tercera</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.48" data-pos-right="0.68" data-img-left="work/logofolio/img/lapa-a.jpg" data-img-right="work/logofolio/img/lapa-b.jpg" data-tag="3D Printing" data-hover data-logo="work/logofolio/lapa.png"><span class="lfb-name"><span class="lfb-idx">16</span>Lapa</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.72" data-pos-right="0.40" data-img-left="work/logofolio/img/lumen-optics-a.jpg" data-img-right="work/logofolio/img/lumen-optics-b.jpg" data-tag="Optical" data-hover data-logo="work/logofolio/lumen-optics.png"><span class="lfb-name"><span class="lfb-idx">17</span>Lunet</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.30" data-pos-right="0.64" data-img-left="work/logofolio/img/lv-lashes-a.jpg" data-img-right="work/logofolio/img/lv-lashes-b.jpg" data-tag="Lash Artist" data-hover data-logo="work/logofolio/lv-lashes.png"><span class="lfb-name"><span class="lfb-idx">18</span>LV Lashes</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.56" data-pos-right="0.34" data-img-left="work/logofolio/img/malika-a.jpg" data-img-right="work/logofolio/img/malika-b.jpg" data-hover data-logo="work/logofolio/malika.png" data-tag="Outdoor and Sport"><span class="lfb-name"><span class="lfb-idx">19</span>Malika</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.42" data-pos-right="0.70" data-img-left="work/logofolio/img/medicina-china-sf-a.jpg" data-img-right="work/logofolio/img/medicina-china-sf-b.jpg" data-tag="Chinese Medicine" data-hover data-logo="work/logofolio/medicina-china-sf.png"><span class="lfb-name"><span class="lfb-idx">20</span>Medicina China SF</span></a></li>
+<li class="ancla"><a class="lfb-row" data-pos-left="0.36" data-pos-right="0.64" data-img-left="work/logofolio/img/microblading-sf-a.jpg" data-img-right="work/logofolio/img/microblading-sf-b.jpg" data-tag="Beauty" data-hover data-logo="work/logofolio/microblading-sf.png"><span class="lfb-name"><span class="lfb-idx">21</span>Microblading<br>Santa Fe</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.68" data-pos-right="0.46" data-img-left="work/logofolio/img/ofiuras-a.jpg" data-img-right="work/logofolio/img/ofiuras-b.jpg" data-tag="Band" data-hover data-logo="work/logofolio/ofiuras.png"><span class="lfb-name"><span class="lfb-idx">22</span>Ofiuras</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.36" data-pos-right="0.58" data-img-left="work/logofolio/img/r-o-podcast-a.jpg" data-img-right="work/logofolio/img/r-o-podcast-b.jpg" data-tag="Podcast" data-hover data-logo="work/logofolio/r-o-podcast.png"><span class="lfb-name"><span class="lfb-idx">23</span>R&amp;O</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.62" data-pos-right="0.30" data-img-left="work/logofolio/img/reclamar-a.jpg" data-img-right="work/logofolio/img/reclamar-b.jpg" data-tag="Legal Tech" data-hover data-logo="work/logofolio/reclamar.png"><span class="lfb-name"><span class="lfb-idx">24</span>Reclamar</span></a></li>
+<li class="ancla"><a class="lfb-row" data-pos-left="0.48" data-pos-right="0.68" data-img-left="work/logofolio/img/salon-artes-litoral-a.jpg" data-img-right="work/logofolio/img/salon-artes-litoral-b.jpg" data-tag="Art Exhibition" data-hover data-logo="work/logofolio/salon-artes-litoral.png"><span class="lfb-name"><span class="lfb-idx">25</span>Salón de Artes<br>Visuales</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.72" data-pos-right="0.40" data-img-left="work/logofolio/img/scorpio-a.jpg" data-img-right="work/logofolio/img/scorpio-b.jpg" data-tag="Productions" data-hover data-logo="work/logofolio/scorpio.png"><span class="lfb-name"><span class="lfb-idx">26</span>Scorpio</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.30" data-pos-right="0.64" data-img-left="work/logofolio/img/shot-lab-a.jpg" data-img-right="work/logofolio/img/shot-lab-b.jpg" data-tag="Productions" data-hover data-logo="work/logofolio/shot-lab.png"><span class="lfb-name"><span class="lfb-idx">27</span>Shot Lab</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.56" data-pos-right="0.34" data-img-left="work/logofolio/img/sicilian-a.jpg" data-img-right="work/logofolio/img/sicilian-b.jpg" data-tag="Handmade Objects" data-hover data-logo="work/logofolio/sicilian.png"><span class="lfb-name"><span class="lfb-idx">28</span>Sicilian</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.42" data-pos-right="0.70" data-img-left="work/logofolio/img/tierra-clothing-a.jpg" data-img-right="work/logofolio/img/tierra-clothing-b.jpg" data-tag="Clothing" data-hover data-logo="work/logofolio/tierra-clothing.png"><span class="lfb-name"><span class="lfb-idx">29</span>Tierra</span></a></li>
+<li><a class="lfb-row" data-pos-left="0.68" data-pos-right="0.46" data-img-left="work/logofolio/img/velco-a.jpg" data-img-right="work/logofolio/img/velco-b.jpg" data-tag="Coffee Brand" data-hover data-logo="work/logofolio/velco.png"><span class="lfb-name"><span class="lfb-idx">30</span>Velco</span></a></li>
+    </ol>
+  </div>
+
+  <div class="lfb-info" id="lfbInfo">
+    <img class="logo" alt="">
+    <img class="logo2" alt="">
+    <span class="lfb-overlay-text"><span class="lfb-overlay-name"></span><span class="lfb-overlay-tag"></span></span>
+  </div>
+  <div class="lfb-preview side-left" id="lfbPreviewLeft">
+    <div class="lfb-preview-photo"><img class="a" alt=""><img class="b" alt=""></div>
+  </div>
+  <div class="lfb-preview side-right" id="lfbPreviewRight">
+    <div class="lfb-preview-photo"><img class="a" alt=""><img class="b" alt=""></div>
+  </div>
+
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <aside class="menu-panel" id="menuPanel" aria-hidden="true">
+    <div class="menu-top">
+      <span class="menu-label">INDEX</span>
+      <button class="menu-close" id="menuClose" aria-label="Cerrar menu">&#10005;</button>
+    </div>
+    <nav class="menu-items">
+      <a href="index.html#work" class="menu-item"><span class="mi-txt">Work</span><span class="mi-sub">[ Portfolio ]</span></a>
+      <a href="logofolio.html" class="menu-item" aria-current="page"><span class="mi-txt">Logofolio</span></a>
+      <a href="index.html#servicios" class="menu-item"><span class="mi-txt">Services</span></a>
+      <a href="index.html#about" class="menu-item"><span class="mi-txt">About</span></a>
+      <a href="index.html#contacto" class="menu-item"><span class="mi-txt">Contact</span></a>
+    </nav>
+    <div class="menu-contact">
+      <span class="menu-contact-label">Contact</span>
+      <a class="menu-contact-mail" href="mailto:contactdigitalpaula@gmail.com">contactdigitalpaula@gmail.com</a>
+      <span class="menu-contact-ww">[ Working worldwide ]<i class="menu-avail" role="img" aria-label="Disponible" title="Disponible"></i></span>
+    </div>
+    <a href="index.html#contacto" class="menu-talk">[ let&#39;s talk ]</a>
+  </aside>
+
+<script>
+/* menu lateral: mismo comportamiento que en index.html (abrir/cerrar + Escape + click en
+   el overlay). Los items apuntan a otra pagina, asi que cerrar al clickear es cosmetico,
+   pero se mantiene por consistencia con el resto del sitio. */
+(function(){
+  var btn=document.getElementById('menuBtn'), panel=document.getElementById('menuPanel'),
+      overlay=document.getElementById('menuOverlay'), closeBtn=document.getElementById('menuClose');
+  if(!btn||!panel) return;
+  function open(){ panel.classList.add('open'); overlay.classList.add('open');
+    panel.setAttribute('aria-hidden','false'); btn.setAttribute('aria-expanded','true'); }
+  function close(){ panel.classList.remove('open'); overlay.classList.remove('open');
+    panel.setAttribute('aria-hidden','true'); btn.setAttribute('aria-expanded','false'); }
+  btn.addEventListener('click',open);
+  closeBtn.addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  panel.querySelectorAll('.menu-item, .menu-talk').forEach(function(a){ a.addEventListener('click',close); });
+})();
+
+/* pagina propia, sin Lenis: es un listado corto, no necesita scroll suavizado. */
+
+/* cursor a medida (mismo sistema de index.html, ref tol.is): el cursor nativo esta
+   apagado (cursor:none) asi que este SIEMPRE tiene que estar visible y por delante
+   de todo (z-index:9999) — nunca se esconde al pasar sobre un nombre, solo cambia
+   a el estado "hover" (corners+diamante). */
+(function(){
+  const cursor = document.getElementById('xcursor');
+  if(!cursor || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  document.addEventListener('mousemove', e=>{
+    cursor.style.transform = `translate3d(${e.clientX}px,${e.clientY}px,0)`;
+    cursor.classList.add('on');
+    cursor.classList.toggle('hover', !!e.target.closest('[data-hover]'));
+  });
+  document.addEventListener('mouseleave', ()=> cursor.classList.remove('on'));
+})();
+
+/* foto en un lugar fijo POR CLIENTE (izquierda o derecha + su propia altura, ver
+   data-side/data-top de cada fila) — ya no sigue al mouse, y cada una tiene su
+   propio lugar (no siempre el mismo) para que se note mas variado. bounce real
+   (keyframes con varios rebotes) reiniciado en cada hover via remove+reflow+add,
+   asi vuelve a jugar aunque se pase de un nombre a otro del mismo lado seguido. */
+(function(){
+  const panels = {
+    left: document.getElementById('lfbPreviewLeft'),
+    right: document.getElementById('lfbPreviewRight')
+  };
+  const state = {
+    left: {active:0, imgs:null},
+    right: {active:0, imgs:null}
+  };
+  Object.keys(panels).forEach(side=>{
+    state[side].imgs = [panels[side].querySelector('.a'), panels[side].querySelector('.b')];
+  });
+
+  function retriggerBounce(panel){
+    panel.classList.remove('bounce');
+    void panel.offsetWidth; // fuerza reflow para poder re-jugar la animacion
+    panel.classList.add('bounce');
+  }
+
+  var info = document.getElementById('lfbInfo');
+  var dim  = document.getElementById('lfbDim');
+
+  /* Las tres coordenadas del layout tactil, en fracciones del alto de pantalla.
+     De arriba a abajo: bloque de datos (CSS, 11vh) -> banda de foto -> linea de activacion.
+     No se pisan entre si, que es todo el punto: la foto deja de estar detras del texto. */
+  var TACTIL  = matchMedia('(hover:none)').matches;
+  var BANDA_Y = 0.358;  // centro de la banda de foto (centrado entre datos y linea)
+  var LINEA_Y = 0.62;   // altura donde se activa el nombre (debajo del degradado)
+
+  /* Carga una foto en un panel respetando su proporcion real. Se precarga la imagen para
+     poder leer naturalWidth/naturalHeight ANTES de mostrarla y escribir --ar en la caja:
+     sin eso la caja mantendria la proporcion de la foto anterior por un instante y se
+     veria un salto. Si el panel no tiene foto para esa fila, se esconde. */
+  // token de secuencia: el onload de abajo es asincrono, asi que al pasar rapido de una
+  // fila a otra la carga de la ANTERIOR puede resolverse despues y pisar la proporcion y
+  // la foto de la fila actual (se veia el --ar de otro cliente). Cada hover incrementa
+  // este contador y el onload solo aplica si sigue siendo el pedido vigente.
+  var pedido = 0;
+  function ponerFoto(side, src, id, frac){
+    var panel = panels[side], st = state[side];
+    if(!src){ panel.classList.remove('on','bounce'); return; }
+    var photo = panel.querySelector('.lfb-preview-photo');
+    var pre = new Image();
+    pre.onload = function(){
+      if(id !== pedido) return;            // llego tarde: ya hay otra fila activa
+      var ratio = pre.naturalWidth / pre.naturalHeight;
+      // el ancho sale de respetar LOS DOS topes (ancho maximo y alto maximo) sin tocar la
+      // proporcion: si la foto es muy vertical, se angosta en vez de recortarse o salirse.
+      var maxW = parseFloat(getComputedStyle(panel).width);
+      var maxH = window.innerHeight * (parseFloat(getComputedStyle(document.documentElement)
+                   .getPropertyValue('--lfb-panel-hmax')) || 70) / 100;
+
+      // El panel IZQUIERDO comparte columna con el bloque de datos de arriba a la izquierda,
+      // asi que no puede invadir esa franja: su techo pasa a ser el pie del bloque. Eso
+      // limita tambien su alto disponible, si no una foto muy vertical no entraria entre el
+      // bloque y el borde inferior. El derecho no tiene esa restriccion.
+      var m = 14;
+      var techo = m;
+      if(side === 'left' && !TACTIL){
+        var ib = info.getBoundingClientRect();
+        techo = Math.max(m, ib.bottom + 22);
+        maxH = Math.min(maxH, window.innerHeight - techo - m);
+      }
+
+      var w = Math.min(maxW, maxH * ratio);
+      photo.style.width = w + 'px';
+      photo.style.setProperty('--ar', pre.naturalWidth + ' / ' + pre.naturalHeight);
+
+      // altura: la fraccion pedida por la fila, recortada para que el panel entre entero en
+      // pantalla y, del lado izquierdo, para que arranque debajo del bloque de datos.
+      var h = w / ratio;
+      var t = frac * window.innerHeight;
+      // en tactil la banda NO varia de altura por cliente: es un lugar fijo de la pantalla,
+      // entre el bloque de datos (11vh) y la linea de activacion (56vh). Que cada foto
+      // cayera a una altura distinta tenia sentido cuando seguian al mouse; con el scroll
+      // manejando el revelado, una banda que salta en cada cliente marea.
+      if(TACTIL) t = window.innerHeight * BANDA_Y;
+      t = Math.max(techo + h/2, Math.min(window.innerHeight - h/2 - m, t));
+      panel.style.setProperty('--top', t + 'px');
+
+      var next = 1 - st.active;
+      st.imgs[st.active].classList.remove('on');
+      st.imgs[next].src = src;
+      st.imgs[next].classList.add('on');
+      st.active = next;
+    };
+    pre.src = src;
+    panel.classList.add('on');
+    retriggerBounce(panel);
+  }
+
+  function activar(row){
+      var id = ++pedido;
+      ponerFoto('left',  row.getAttribute('data-img-left'),  id,
+                parseFloat(row.getAttribute('data-pos-left'))  || 0.5);
+      ponerFoto('right', row.getAttribute('data-img-right'), id,
+                parseFloat(row.getAttribute('data-pos-right')) || 0.5);
+
+      // bloque de datos: uno solo, fijo arriba a la izquierda (antes se dibujaba adentro
+      // del panel, lo que con dos paneles lo habria duplicado).
+      info.querySelector('.logo').src = row.getAttribute('data-logo') || '';
+      var logo2Src = row.getAttribute('data-logo2');
+      var logo2El = info.querySelector('.logo2');
+      if(logo2Src){ logo2El.src = logo2Src; logo2El.style.display = 'block'; }
+      else { logo2El.removeAttribute('src'); logo2El.style.display = 'none'; }
+
+      const nameEl = row.querySelector('.lfb-name');
+      // el nombre puede tener <br> manuales y el span del indice adelante: se clona, se
+      // saca el indice y se convierten los <br> en espacios para leer el nombre completo.
+      const nameClone = nameEl.cloneNode(true);
+      const idxEl = nameClone.querySelector('.lfb-idx');
+      if(idxEl) idxEl.remove();
+      nameClone.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode(' ')));
+      info.querySelector('.lfb-overlay-name').textContent =
+        nameClone.textContent.replace(/\s+/g,' ').trim();
+      info.querySelector('.lfb-overlay-tag').textContent = row.getAttribute('data-tag') || '';
+      info.classList.add('on');
+      dim.classList.add('on');
+      document.documentElement.classList.add('lfb-viendo');
+  }
+  function apagar(){
+    info.classList.remove('on');
+    dim.classList.remove('on');
+    document.documentElement.classList.remove('lfb-viendo');
+    panels.left.classList.remove('on','bounce');
+    panels.right.classList.remove('on','bounce');
+  }
+  var stage = document.querySelector('.lfb-stage');
+  var filas = [].slice.call(document.querySelectorAll('.lfb-row'));
+
+  if(!TACTIL){
+    filas.forEach(function(row){
+      row.addEventListener('mouseenter', function(){ activar(row); });
+    });
+    // Todo se apaga en cuanto el cursor NO esta sobre un nombre: sobre el fondo negro vuelven
+    // los nombres a verse nitidos y desaparecen las dos fotos.
+    // Se usa mouseover delegado (que si informa el elemento de destino) en vez de un
+    // mouseleave por fila: al pasar de un nombre al de al lado, el destino sigue siendo una
+    // fila, asi que no se apaga y se evita el parpadeo entre filas contiguas.
+    stage.addEventListener('mouseover', function(e){
+      if(!e.target.closest('.lfb-row')) apagar();
+    });
+    stage.addEventListener('mouseleave', apagar);
+  } else {
+    /* En un telefono no hay hover, asi que el revelado lo maneja el SCROLL: se activa el
+       cliente cuyo nombre esta mas cerca de una linea fija de la pantalla (56vh). Es el
+       mismo mecanismo que ya usan las filas de Services en index.html.
+       Nunca se apaga: siempre hay un cliente en pantalla, que es justamente la gracia —
+       las fotos van cambiando solas mientras scrolleas, igual que el hover en escritorio. */
+    var actual = null;
+    function porScroll(){
+      var linea = window.innerHeight * LINEA_Y;
+      var elegida = null, min = Infinity;
+      for(var i = 0; i < filas.length; i++){
+        var r = filas[i].getBoundingClientRect();
+        var d = Math.abs((r.top + r.bottom) / 2 - linea);
+        if(d < min){ min = d; elegida = filas[i]; }
+      }
+      if(!elegida || elegida === actual) return;
+      if(actual) actual.classList.remove('activo');
+      elegida.classList.add('activo');
+      actual = elegida;
+      activar(elegida);
+    }
+    var pidiendo = false;
+    function pedir(){
+      if(pidiendo) return;
+      pidiendo = true;
+      requestAnimationFrame(function(){ pidiendo = false; porScroll(); });
+    }
+    window.addEventListener('scroll', pedir, {passive:true});
+    window.addEventListener('resize', pedir);
+    porScroll();
+  }
+})();
+
+/* Ya NO hay auto-achique por cantidad de lineas: Paula pidio que TODOS los nombres midan
+   lo mismo. Para que eso sea posible sin que ninguno se pase de la banda libre, la banda se
+   ensancho (paneles algo mas angostos, margen lateral menor y zigzag en cero). Los cortes de
+   linea puntuales se resuelven con <br> a mano en el HTML. */
+
+/* entrada por scroll (mismo patron que .svl-row de index.html): cada nombre aparece
+   desde la izquierda con blur+opacidad al entrar en pantalla, y se deshace igual
+   al salir (para cualquier lado) — sin libreria, solo IntersectionObserver + CSS. */
+(function(){
+  const rows = [...document.querySelectorAll('.lfb-row')];
+  if(!rows.length || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      entry.target.classList.toggle('in-view', entry.isIntersecting);
+    });
+  }, {threshold:0.2, rootMargin:'0px 0px -8% 0px'});
+  rows.forEach(row=> io.observe(row));
+})();
+</script>
+</body>
+</html>
