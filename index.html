@@ -2442,6 +2442,29 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
     .wrow-col-meta .wrow-v{white-space:normal;overflow-wrap:anywhere}
     .wrow-k{font-size:9px;letter-spacing:.28em}
   }
+  /* (j) El video del ojito del header TIENE canal alfa (VP9 con alpha_mode), pero Safari
+     no soporta transparencia en WebM y lo dibuja con su fondo negro: por eso en iPhone se
+     ve un rectangulo. El fondo del video es negro puro (0,0,0) y el del sitio es #050505,
+     asi que la diferencia se nota.
+     mix-blend-mode:screen resuelve sin archivo nuevo: en modo screen el negro puro es
+     neutro -deja pasar el fondo tal cual- y solo queda el ojo. Funciona en todos los
+     navegadores, Safari incluido, y evita tener que mantener un segundo video en HEVC con
+     alfa solo para Apple. isolation:isolate en el contenedor lo mantiene blendeando contra
+     la pagina y no contra si mismo. */
+  .header-eye,.lfb-eye{mix-blend-mode:screen}
+  .header-eye-wrap,.lfb-back{isolation:isolate}
+  /* (l) El pie del "siguiente proyecto" en telefono: el ojo sube y la bajada baja, se
+     achica al mismo cuerpo que el [EYE & TASTE] del hero (13.1px / 1.074) y se alinea a la
+     derecha. Tambien toma la Helvetica del hero -regular arriba, Heavy abajo- en vez de la
+     tipografia de marca: a 13px una display de ese caracter no se lee. */
+  @media(max-width:680px){
+    .wov-next-thumb{margin-top:-6vw}
+    .wov-next-name{font-size:13.1px;line-height:1.074;letter-spacing:.02em;
+      text-align:right;margin-top:26px;font-family:var(--disp);
+      background-image:none;-webkit-text-fill-color:currentColor;color:var(--paper)}
+    .wov-next-name .wnn-l:first-child{font-family:"HelveticaNeueRoman",var(--disp);font-weight:400}
+    .wov-next-name .wnn-l:last-child{font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800}
+  }
 </style>
 </head>
 <body>
