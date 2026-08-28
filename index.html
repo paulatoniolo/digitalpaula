@@ -3172,10 +3172,15 @@ Gen-4.5"><img src="work/softwares/logo-31.svg" alt=""></div>
     <div class="contact-tag">[ <span data-es="¿TENÉS PROYECTOS?" data-it="HAI PROGETTI?" data-deu="HAST DU PROJEKTE?">GOT PROJECTS?</span> ]</div>
 
     <!-- "LET'S TALK" disperso, mismo criterio que el wordmark del hero: texto vivo
-         posicionado (no vectorizado), asi se selecciona, se traduce y escala solo. -->
+         posicionado (no vectorizado), asi se selecciona, se traduce y escala solo.
+         El "top" de cada letra salio de medir el bbox de tinta de cada una por separado
+         en el svg de referencia, con pequenios errores de un par de px entre letras.
+         En el svg original todas son UN mismo <text>, asi que comparten linea de base real:
+         re-nivelado a un solo top% por palabra (excepto el apostrofe, que va mas arriba
+         a proposito). -->
     <div class="cs-type" role="img" aria-label="Let's talk">
-      <span class="cs-word"><span class="cs-ch" style="left:5.56%;top:21.69%">L</span><span class="cs-ch" style="left:20.6%;top:21.38%">E</span><span class="cs-ch" style="left:35.4%;top:21.17%">T</span><span class="cs-ch cs-ap" style="left:47.39%;top:16.44%">'</span><span class="cs-ch" style="left:52.46%;top:22.25%">S</span></span>
-      <span class="cs-word"><span class="cs-ch" style="left:35.75%;top:59.47%">T</span><span class="cs-ch" style="left:51.13%;top:57.7%">A</span><span class="cs-ch" style="left:68.78%;top:57.97%">L</span><span class="cs-ch" style="left:83.94%;top:58.41%">K</span></span>
+      <span class="cs-word"><span class="cs-ch" style="left:5.56%;top:21.62%">L</span><span class="cs-ch" style="left:20.6%;top:21.62%">E</span><span class="cs-ch" style="left:35.4%;top:21.62%">T</span><span class="cs-ch cs-ap" style="left:47.39%;top:16.44%">'</span><span class="cs-ch" style="left:52.46%;top:21.62%">S</span></span>
+      <span class="cs-word"><span class="cs-ch" style="left:35.75%;top:58.39%">T</span><span class="cs-ch" style="left:51.13%;top:58.39%">A</span><span class="cs-ch" style="left:68.78%;top:58.39%">L</span><span class="cs-ch" style="left:83.94%;top:58.39%">K</span></span>
     </div>
 
     <div class="cs-info">
