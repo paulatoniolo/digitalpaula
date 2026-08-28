@@ -166,7 +166,10 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
   .ab-label{font-family:"DigitalPaulaContact","Permanent Marker",cursive;font-weight:400;
     background-image:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;letter-spacing:-.02em;text-transform:uppercase;
     font-size:clamp(9px,.9vw,16px)}
-  .ab-cell{display:flex;align-items:baseline;align-items:last baseline;gap:.5em}
+  /* el gap iba en .5em, pero .ab-cell no fija su propio font-size: resolvia contra los
+     16px heredados del body en vez de contra el numero (que va de 22 a 72px segun
+     pantalla), asi que siempre daba 8px fijos — poco al lado de un numero grande. */
+  .ab-cell{display:flex;align-items:baseline;align-items:last baseline;gap:clamp(10px,1.4vw,22px)}
   .ab-num{font-family:"HelveticaNeueLight",var(--disp);font-weight:300;
     color:#fff8f8;letter-spacing:-.07em;line-height:1;
     font-size:min(clamp(22px,3.9vw,72px), 8vh)}
