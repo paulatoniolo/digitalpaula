@@ -145,14 +145,14 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
      entero sobre el negro. */
   /* con el pie liberado los datos bajan y se estiran: son el contenido principal de
      esta mitad, asi que ocupan el tercio inferior entero en vez de una banda apretada. */
-  /* el bloque se ensancha para que el filete sea mas largo y las columnas respiren.
-     Pisa la foto, que arranca en el 62%: es a proposito, pero solo la LINEA (ver la
-     columna vacia del final en .ab-row). */
-  .about-stats{position:absolute;left:var(--about-x);width:68%;top:58%;bottom:7%;z-index:3;
+  /* el bloque llega hasta el otro lado del marco: mismo right:2.5% que .about-name, asi
+     el filete Y los propios numeros/etiquetas cruzan sobre la foto en vez de quedarse
+     recortados del lado negro. Las 3 columnas son 1fr, asi que al ensanchar el bloque se
+     reparten solas de forma pareja en todo el ancho nuevo — no hace falta una columna
+     vacia al final para "estirar" nada. */
+  .about-stats{position:absolute;left:var(--about-x);right:2.5%;top:58%;bottom:7%;z-index:3;
     display:flex;flex-direction:column;justify-content:center}
-  /* la quinta columna va vacia: es lo que deja que el filete siga hasta sobre la foto
-     mientras los textos se quedan del lado negro. */
-  .about-stats .ab-row{display:grid;grid-template-columns:16% repeat(3,1fr) 18%;
+  .about-stats .ab-row{display:grid;grid-template-columns:16% repeat(3,1fr);
     /* 'last baseline' y no 'baseline': la unidad tiene dos renglones y baseline a secas
        alinea por el PRIMERO, que es lo que dejaba el numero a la altura de /BRAND en vez
        de la de IDENTITIES. Con last se apoyan todos en el ultimo renglon. */
