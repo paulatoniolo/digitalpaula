@@ -865,7 +865,12 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
   }
   .ml-line{font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;
     font-size:clamp(20.4px,3.76vw,69.7px);line-height:.963;letter-spacing:-.096em;color:var(--paper)}
-  .ml-pink{background-image:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  /* width:fit-content a proposito: .ml-line vive en un flex column sin align-items, asi
+     que por default estira a lo ancho del contenedor (stretch). Sin este ancho ajustado
+     al texto, el degradado se pinta contra la CAJA entera (mucho mas ancha que "Branding,
+     motion & digital experiences.") y esa porcion de la rampa se lee casi plana — mismo
+     bug que ya se habia resuelto en .wt-selected/.ab-label/etc. */
+  .ml-pink{background-image:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;width:fit-content}
   .ml-cta{margin-top:.9em;font-family:var(--body);font-weight:300;
     font-size:clamp(16.2px,2.98vw,55.25px);line-height:1.1;letter-spacing:-.051em;color:var(--paper)}
   /* el cuerpo de arriba esta calibrado al limite EXACTO para que el ingles entre en una
@@ -2627,7 +2632,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
   <section class="blk ink manifesto" id="manifesto">
     <div class="inner">
       <div class="manifesto-lines">
-        <p class="ml-line" data-es="Branding, motion y experiencias digitales." data-it="Branding, motion ed esperienze digitali." data-deu="Branding, Motion &amp; digitale Erlebnisse.">Branding, motion &amp; digital experiences.</p>
+        <p class="ml-line ml-pink" data-es="Branding, motion y experiencias digitales." data-it="Branding, motion ed esperienze digitali." data-deu="Branding, Motion &amp; digitale Erlebnisse.">Branding, motion &amp; digital experiences.</p>
         <p class="ml-line" data-es="Me encanta convertir ideas en mundos visuales y crear conexiones a través del diseño." data-it="Amo trasformare le idee in mondi visivi e creare connessioni attraverso il design." data-deu="Ich liebe es, Ideen in visuelle Welten zu verwandeln und durch Design Verbindungen zu schaffen.">I love turning ideas into visual worlds and creating connections through&nbsp;design.</p>
         <p class="ml-line ml-cta"><a href="#contacto" data-es="Hagamos que tu &lt;b&gt;próximo proyecto&lt;/b&gt; sea una de esas cosas." data-it="Facciamo in modo che il tuo &lt;b&gt;prossimo progetto&lt;/b&gt; sia una di quelle cose." data-deu="Lass uns dein &lt;b&gt;nächstes Projekt&lt;/b&gt; zu einer dieser Dinge machen.">Let's make your <b>next project</b> one of&nbsp;those&nbsp;things.</a></p>
       </div>
