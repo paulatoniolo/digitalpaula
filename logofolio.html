@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --paper:#fff; --bg:#050505; --ink:#0a0a0a;
+    --paper:#fff; --bg:#000; --ink:#000;
     /* El acento rosa se reemplaza por un degradado lineal gris (#d4d4d4 -> #909090).
        Como un degradado NO puede ir en 'color', el texto lo toma como imagen de fondo
        recortada a la forma de las letras (background-clip:text + text-fill transparente).
@@ -94,247 +94,101 @@
     transform:translateY(-50%) rotate(45deg)}
   .lfb-eye{height:28px;width:auto;object-fit:contain;pointer-events:none;flex-shrink:0;display:block}
 
-  .lfb-stage{min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:140px var(--gmargin) 100px;
-    position:relative;z-index:2}
-
-  /* Al pasar el mouse por una fila, TODA la pantalla se oscurece y desenfoca menos el
-     cliente activo. La capa vive DENTRO de .lfb-stage (que es un contexto de apilado con
-     z-index:2) y va en z-index:1, o sea por encima de los nombres, que quedan en auto.
-     El <li> con hover sube a z-index:2 y por eso queda por arriba de la capa, nitido.
-     backdrop-filter desenfoca lo que ya se pinto debajo: exactamente los otros nombres. */
-  .lfb-dim{position:fixed;inset:0;z-index:1;pointer-events:none;
-    background:rgba(3,3,3,.66);
-    backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
-    opacity:0;visibility:hidden;
-    transition:opacity .35s ease,visibility 0s linear .35s}
-  /* PRUEBA (ref que mando Paula): la foto va DETRAS de los nombres y el velo se apaga.
-     El foco lo hace el contraste de color -inactivos en gris, activo en blanco- en vez
-     de oscurecer y desenfocar todo lo demas. Para volver al comportamiento anterior
-     alcanza con borrar esta regla de abajo. */
-  .lfb-dim.on{opacity:1;visibility:visible;transition:opacity .35s ease}
-  .lfb-dim.on{opacity:0;visibility:hidden}
-  /* la fila activa se despega por encima de la capa de oscurecido */
-  .lfb-row:hover{position:relative;z-index:2}
-
-  .lfb-list{list-style:none;width:100%}
-  /* inline-block, NO block: como block ocupaba TODO el ancho de la pantalla, asi que el
-     negro a los costados del nombre seguia contando como "estar sobre la fila" y no se
-     apagaba nada. Ajustada al ancho del texto, el area sensible coincide con lo que se ve. */
-  .lfb-row{display:inline-block;overflow:visible;text-align:center;transition:transform .5s ease}
-
-  /* ---------- ALINEACION: varian, pero todas pasan por el medio ----------
-     Primer intento: repartir el sobrante horizontal entre dos separadores flex en
-     proporcion --f. Variaba muchisimo, pero de mas: filas enteras quedaban pegadas a un
-     costado con el centro vacio, y la lista perdia el eje que la sostiene.
-     Ahora cada fila arranca CENTRADA y se corre un porcentaje de su PROPIO ancho. Que el
-     corrimiento se mida contra el ancho del nombre (y no contra el hueco disponible) es
-     lo que garantiza el eje: partiendo del centro, un desplazamiento menor al 50% del
-     propio ancho deja siempre al eje central por dentro de las letras. Con el tope en 42%
-     ningun nombre se despega del medio, y de paso ninguno llega a salirse: el mas ancho
-     posible es la mitad de la pantalla (max-width:48vw), asi que aun corrido al maximo le
-     sobra margen contra el borde.
-     Efecto secundario buscado: como el corrimiento es relativo al nombre, uno corto se
-     mueve poco y uno largo barre mucho. El desorden queda proporcionado en vez de parejo.
-     El ciclo es de 11 filas: con 30 clientes no se llega a ver la repeticion, y si manana
-     se agregan mas sigue funcionando sin tocar nada. */
-  .lfb-list>li{text-align:center}
-  /* El tope corta el corrimiento en 12vw pase lo que pase. Hace falta porque --dx es un
-     porcentaje del propio nombre: sin tope, cuanto mas largo el nombre mas lejos se va,
-     que es exactamente al reves de lo que conviene. clamp() admite mezclar % y vw, asi
-     que el navegador se queda con el menor de los dos y no hay que calcular nada a mano. */
-  .lfb-list>li>.lfb-row{
-    --tope:12vw;
-    transform:translateX(clamp(calc(-1 * var(--tope)), var(--dx,0%), var(--tope)))}
-
-  /* .ancla = los nombres mas anchos de la lista. Se quedan practicamente en el centro a
-     proposito: son los que marcan el eje, y los cortos se corren alrededor de ellos. Un
-     nombre que ya ocupa media pantalla no necesita moverse para no parecer una columna,
-     y si se mueve es lo unico que se ve. Es una clase en el <li> y no un nth-child para
-     que siga pegada al cliente correcto si manana se reordena o se agrega la lista. */
-  .lfb-list>li.ancla>.lfb-row{
-    transform:translateX(clamp(calc(-1 * var(--tope)), calc(var(--dx,0%) * .28), var(--tope)))}
-
-  .lfb-list>li:nth-child(11n+1){--dx:-38%}
-  .lfb-list>li:nth-child(11n+2){--dx:22%}
-  .lfb-list>li:nth-child(11n+3){--dx:-12%}
-  .lfb-list>li:nth-child(11n+4){--dx:40%}
-  .lfb-list>li:nth-child(11n+5){--dx:-28%}
-  .lfb-list>li:nth-child(11n+6){--dx:6%}
-  .lfb-list>li:nth-child(11n+7){--dx:34%}
-  .lfb-list>li:nth-child(11n+8){--dx:-20%}
-  .lfb-list>li:nth-child(11n+9){--dx:14%}
-  .lfb-list>li:nth-child(11n+10){--dx:-42%}
-  .lfb-list>li:nth-child(11n+11){--dx:30%}
-
-  /* entrada por scroll (mismo patron que .svl-row en index.html, ref forms.world/works):
-     aparece desde la izquierda con blur+opacidad al entrar en pantalla, y se deshace
-     igual (blur+opacidad+corrimiento) al salir de pantalla para cualquier lado —
-     Paula lo pidio explicitamente igual al efecto de servicios. --reveal-x/--hover-x
-     se combinan en un solo transform (mismo patron de custom properties que el
-     parallax de las fotos de WORK). */
-  /* display:block (no inline-block): un inline-block se alinea a la linea de base del
-     renglon del padre y ese renglon suma su propio strut/descendente, metiendo aire
-     extra entre nombre y nombre que no se puede sacar con line-height.
-     line-height:.72 sale de medir la fuente real (HelveticaNeueHeavy): la altura de
-     mayuscula es .712em y las redondas (C/G/J/O/S/U) sobresalen .017em bajo la linea
-     de base — con .72 las mayusculas de un nombre y del siguiente quedan practicamente
-     tocandose, sin espacio muerto. */
-  .lfb-name{
-    display:block;
-    font-family:"HelveticaNeueHeavy",var(--disp);
-    font-weight:800;
-    text-transform:uppercase;
-    letter-spacing:-.09em;
-    font-size:clamp(30px,6vw,104px);
-    line-height:.72;
-    /* GRIS SOLIDO, no blanco con opacidad. Con opacity:.3 dos nombres que se cruzan suman
-       su alfa en la zona compartida (~.51) y el solape se ve como una mancha mas clara.
-       Opaco sobre opaco da siempre el mismo valor, asi que el cruce deja de notarse.
-       #505050 es exactamente el color que daba el blanco al 30% sobre el fondo #050505
-       (255*.3 + 5*.7 = 80), o sea el reposo se ve igual que antes. La opacidad queda
-       reservada solo para la entrada/salida por scroll. */
-    color:#505050;
-    --reveal-x:-70px; --hover-x:0px;
-    opacity:0;
-    filter:blur(14px);
-    transform:translateX(calc(var(--reveal-x) + var(--hover-x)));
-    transition:opacity .9s ease, filter .9s ease, color .35s ease,
-               transform .9s cubic-bezier(.16,1,.3,1);
-    /* los nombres largos ("Salon de Artes Visuales Litoral") se salian de pantalla por los
-       dos lados: con nowrap el texto desbordaba la caja en vez de cortarse. Ahora parten en
-       dos lineas. text-wrap:balance reparte las palabras parejo entre las dos lineas en vez
-       de dejar una larguisima y una de una palabra. Los nombres cortos no se ven afectados:
-       si entran en una linea, no hay donde cortar. */
-    white-space:normal;
-    text-wrap:balance;
-    /* el nombre no puede pasar de la banda central que dejan libre los dos paneles de
-       preview: ancho de pantalla menos los dos paneles (posicion + ancho), menos el
-       corrimiento zigzag de las filas hacia ambos lados, menos un respiro de 40px.
-       Al acotarlo, un nombre de dos palabras como "Archivo Deportivo" ya no entra en una
-       linea y se parte solo (Archivo / Deportivo), que es justo lo que se buscaba: menos
-       ancho ocupado y mas aire a los costados. */
-    width:max-content;
-    /* Antes la banda era "lo que dejan libre los dos paneles de preview": 507px sobre un
-       viewport de 1440. Demasiado angosta. Empujaba a tres lineas a los nombres largos y,
-       peor, no le dejaba a ninguna fila lugar para correrse, con lo cual la lista entera
-       se leia centrada. Los paneles solo aparecen al pasar el mouse y Paula acepto que
-       tapen un poco al nombre, asi que ya no mandan ellos sobre el ancho del texto.
-       48vw: entra "MICROBLADING" de una linea (609px medidos a 1440, la palabra mas ancha
-       de toda la lista) y siguen partiendose en dos los tres nombres largos
-       (Archivo Deportivo, Medicina China SF, Camalote Seeds), que es como se veian bien. */
-    max-width:min(48vw,760px);
-    position:relative;
+  /* ---------- GRILLA DE LOGOS (ref benorth.studio/es/servicios, bloque "Clientes") ----------
+     4 columnas, todos los logos apagados (blanco al 30% = gris sobre el negro) y el que se
+     apunta se prende a blanco pleno. Los PNG de work/logofolio/grilla/ ya vienen RECORTADOS
+     al borde de la marca (sin aire transparente), asi que el tamano que se ve es el de la
+     marca real. --w/--h de cada logo salen de un calculo de peso optico: misma superficie
+     para todos, corregida por cuanta tinta tiene cada uno (un logo de trazo fino ocupa algo
+     mas de caja que uno macizo), con tope de 170x62. Asi un isotipo cuadrado y un logotipo
+     largo se leen del mismo tamano, que es lo que hace la referencia ajustando a mano. */
+  .lfg{min-height:100vh;min-height:100svh;padding:130px var(--gmargin) 120px;position:relative;z-index:2}
+  .lfg-head{display:flex;justify-content:space-between;align-items:baseline;
+    font-family:var(--disp);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:#8a8a8a;margin-bottom:clamp(40px,6vw,88px)}
+  .lfg-grid{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:14px 18px;--s:1}
+  .lfg-cell{height:clamp(104px,9vw,140px);display:flex;align-items:center;justify-content:center}
+  .lfg-cell img{display:block;width:calc(var(--w) * var(--s));height:calc(var(--h) * var(--s));
+    object-fit:contain;opacity:.3;transition:opacity .3s ease}
+  .lfg-cell:hover img{opacity:1}
+  /* la celda "tu logo aca" de la referencia: lleva al contacto */
+  .lfg-cta a{font-family:var(--disp);font-size:15px;color:#d4d4d4;
+    text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;transition:color .3s ease}
+  .lfg-cta a:hover{color:var(--paper)}
+  @media(max-width:1100px){ .lfg-grid{--s:.85} }
+  @media(max-width:900px){ .lfg-grid{grid-template-columns:repeat(3,1fr)} }
+  @media(max-width:640px){
+    .lfg{padding-top:100px}
+    .lfg-grid{grid-template-columns:repeat(2,1fr);gap:6px 12px;--s:.72}
+    .lfg-cell{height:88px}
+    .lfg-cta a{font-size:13px}
   }
-  .lfb-row.in-view .lfb-name{--reveal-x:0px; opacity:1; filter:blur(0px)}
-  .lfb-row.in-view:hover .lfb-name{color:var(--paper); --hover-x:6px}
 
-  /* Con una foto encendida DETRAS, los nombres opacos la tapaban. Mientras dura el hover
-     pasan a un blanco muy translucido y la dejan pasar; el que se esta mirando se queda
-     opaco y en blanco pleno, asi el contraste entre uno y el resto se vuelve mayor, no
-     menor.
-     Va como COLOR con alfa y no como opacity a proposito: opacity afectaria tambien al
-     numero de orden y al blur de entrada, y ademas dejaria el elemento entero traslucido
-     en vez de solo el relleno de las letras.
-     El valor es bajo (.16) porque donde dos nombres se cruzan los alfas se suman: a .16 el
-     cruce llega a .29 y sigue leyendose como parte del fondo, no como una mancha. */
-  /* La transparencia se aplica a la LISTA ENTERA, no a cada nombre. Es la diferencia que
-     resuelve el problema de los cruces: con un color semitransparente por nombre, donde dos
-     se superponen los alfas se suman (.16 sobre .16 da .29) y el cruce se ve como una
-     mancha mas clara. Con opacity en el contenedor, el navegador dibuja todos los nombres
-     OPACOS en una capa aparte -donde el de arriba simplemente tapa al de abajo, sin sumar-
-     y recien despues aplica la transparencia a esa capa completa. El cruce queda del mismo
-     tono que el resto.
-     El precio es que el nombre activo tambien se atenua, por eso el grupo va en .65 y no
-     mas bajo: a ese valor el blanco del activo sigue destacando muy por encima del gris de
-     los demas. */
-  html.lfb-viendo .lfb-list{opacity:.65}
-  .lfb-list{transition:opacity .35s ease}
+  /* FOTO AL HOVER: al apuntar un logo aparece una foto del cliente que acompania al mouse
+     (con un poco de retraso, para que se sienta suelta y no pegada al cursor). Alterna
+     entre las dos fotos de cada cliente (data-a / data-b) mientras dure el hover. Si el
+     cursor esta en la mitad derecha de la pantalla la foto se abre hacia la izquierda, asi
+     nunca se sale. Respeta la proporcion de cada foto: el ancho es fijo y el alto lo da la
+     imagen. En tactil no existe (no hay hover). */
+  .lfg-prev{position:fixed;top:0;left:0;z-index:5;width:clamp(200px,18vw,300px);
+    pointer-events:none;opacity:0;transform:translate3d(-999px,-999px,0);
+    transition:opacity .25s ease}
+  .lfg-prev.on{opacity:1}
+  .lfg-prev-in{position:relative;transform:scale(.92);transition:transform .45s cubic-bezier(.22,.61,.36,1)}
+  .lfg-prev.on .lfg-prev-in{transform:scale(1)}
+  /* la caja toma la proporcion de la foto que se esta viendo (--ar, la pone el JS), asi
+     ninguna de las dos se recorta */
+  .lfg-prev-in{aspect-ratio:var(--ar,4/5);transition:transform .45s cubic-bezier(.22,.61,.36,1),aspect-ratio .35s ease}
+  .lfg-prev img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s ease}
+  .lfg-prev img.on{opacity:1}
+  @media(hover:none){ .lfg-prev{display:none} }
 
-  /* FUERA DEL FLUJO. Siendo inline-block creaba un punto de corte de linea entre el numero
-     y la palabra: cuando el nombre no entraba, el navegador mandaba el numero a un renglon
-     y el nombre a otro, sumando una linea fantasma. Eso producia los "espacios raros" entre
-     clientes y ademas obligaba a achicar nombres que en realidad entraban. Absoluto no
-     participa del salto de linea ni suma alto. */
-  .lfb-idx{position:absolute;left:0;top:.06em;font-family:var(--disp);font-weight:400;
-    letter-spacing:0;font-size:.13em;opacity:.5;transform:translateX(-1.6em)}
-
-  /* foto en un lugar FIJO por cliente (izquierda o derecha + una altura propia, ver
-     data-side/data-top en el HTML), NO siguiendo al mouse — Paula pidio que cada
-     cliente tenga su lugar fijo para poder ubicarse, y que esos lugares varien de
-     altura/posicion en vez de ser siempre el mismo. el "top" lo pone JS por fila
-     (custom property --top), la animacion es un bounce real (varios rebotes, no un
-     solo overshoot) reiniciable en cada hover via la clase .bounce. */
-  /* Ahora los DOS paneles se muestran a la vez (uno por lado) y cada uno lleva solo la
-     foto: el bloque de logo+nombre+industria se mudo a .lfb-info, fijo arriba a la
-     izquierda, para no duplicarse. Comparten --top, asi que quedan centrados
-     verticalmente entre si aunque tengan alturas distintas. */
-  .lfb-preview{position:fixed;top:var(--top,50%);width:var(--lfb-panel-w);
-    display:flex;flex-direction:column;
-    pointer-events:none;z-index:1;opacity:0;overflow:hidden;
-    transform:translateY(-50%) scale(.92);
-    transition:opacity .4s ease, top .7s cubic-bezier(.22,.61,.36,1)}
-  .lfb-preview.side-left{left:var(--lfb-panel-x);align-items:flex-start}
-  .lfb-preview.side-right{right:var(--lfb-panel-x);align-items:flex-end}
-  .lfb-preview.on{opacity:1}
-  /* bounce sutil/flowy (ref materialized.webflow.io: un solo asentamiento suave,
-     nada de rebotes duros ni escalas exageradas) */
-  .lfb-preview.on.bounce{animation:lfbBounce 1.1s cubic-bezier(.22,.61,.36,1) forwards}
-  @keyframes lfbBounce{
-    0%{transform:translateY(-50%) scale(.92)}
-    60%{transform:translateY(-50%) scale(1.025)}
-    100%{transform:translateY(-50%) scale(1)}
+  /* ---------- GALERIA AL CLICK (solo clientes con mas de 2 fotos) ----------
+     El fondo se desenfoca y las fotos del cliente pasan en una fila horizontal, todas al
+     mismo ALTO y cada una con su ancho natural (nada se recorta). Se recorre con la rueda
+     del mouse (la rueda vertical mueve la fila), arrastrando, con las flechas del teclado
+     o con el dedo. Cierra con la X, con Esc o clickeando el fondo.
+     Las fotos salen de la seleccion curada de cada proyecto del Selected Work (PROJECTS en
+     index.html), no de la carpeta entera: ahi ya estaban sacadas las repetidas y las que
+     no se leen. */
+  .lfg-cell.tiene-gal{cursor:pointer}
+  .lfg-prev-n{position:absolute;left:0;bottom:-22px;font-family:var(--disp);font-size:11px;
+    letter-spacing:.12em;text-transform:uppercase;color:#d4d4d4;white-space:nowrap}
+  .lfg-prev-n:empty{display:none}
+  .lfg-gal{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;justify-content:center;
+    background:rgba(0,0,0,.5);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);
+    opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s linear .45s}
+  .lfg-gal.open{opacity:1;visibility:visible;transition:opacity .45s ease}
+  .lfg-gal-top{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:16px;
+    padding:22px var(--gmargin)}
+  .lfg-gal-logo{height:40px;width:auto;max-width:120px;object-fit:contain}
+  .lfg-gal-name{font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;font-size:20px;
+    text-transform:uppercase;letter-spacing:-.02em}
+  .lfg-gal-tag{font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+  .lfg-gal-tag::before{content:"/ "}
+  .lfg-gal-n{margin-left:auto;font-size:12px;letter-spacing:.12em;opacity:.8;font-variant-numeric:tabular-nums}
+  .lfg-gal-x{background:none;border:1px solid rgba(255,255,255,.35);color:var(--paper);
+    width:34px;height:34px;font-size:14px;cursor:pointer;transition:.2s}
+  .lfg-gal-x:hover{background:var(--paper);color:var(--ink)}
+  .lfg-gal-track{display:flex;align-items:center;gap:14px;height:64vh;overflow-x:auto;overflow-y:hidden;
+    padding:0 var(--gmargin);scrollbar-width:none;cursor:grab;user-select:none;-webkit-user-select:none}
+  .lfg-gal-track::-webkit-scrollbar{display:none}
+  .lfg-gal-track.arrastrando{cursor:grabbing}
+  .lfg-gal-track > *{height:100%;width:auto;flex:0 0 auto;display:block;background:#111;
+    -webkit-user-drag:none;
+    opacity:0;transform:translateX(70px);transition:opacity .6s ease,transform .8s cubic-bezier(.16,1,.3,1)}
+  .lfg-gal.open .lfg-gal-track > *{opacity:1;transform:none}
+  .lfg-gal-hint{position:absolute;bottom:22px;left:var(--gmargin);font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;opacity:.55}
+  html.gal-abierta{overflow:hidden}
+  @media(max-width:640px){
+    .lfg-gal-track{height:52vh;gap:8px}
+    .lfg-gal-name{font-size:16px}
+    .lfg-gal-logo{height:30px}
+    .lfg-gal-tag{display:none}
   }
-  /* tarjeta neutra de fondo (placeholder) para los clientes que todavia no
-     tienen foto/textura real — Paula aclaro que el logo NUNCA va como imagen
-     principal. mientras no llega la foto real, el fondo de la mitad de abajo
-     es liso, no el logo agrandado. */
-  /* PROPORCION NATURAL de cada foto (pedido de Paula: "respeta las proporciones, no las
-     cambies"). Antes habia un aspect-ratio:4/5 fijo + object-fit:cover, o sea que toda
-     imagen que no fuera 4:5 se RECORTABA. Ahora el alto de la caja lo define la propia
-     imagen: el JS lee naturalWidth/naturalHeight y lo escribe en --ar, y object-fit:contain
-     garantiza que nunca se recorte aunque la medicion falle. Se mantienen las dos <img>
-     superpuestas para poder cruzar de una a otra con opacidad al cambiar de fila. */
-  .lfb-preview-photo{position:relative;width:var(--w,100%);aspect-ratio:var(--ar,4/5);
-    overflow:hidden;flex-shrink:0;background:#141414}
-  .lfb-preview-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
-    opacity:0;transition:opacity .25s ease}
-  .lfb-preview-photo img.on{opacity:1}
-
-  /* isotipo en positivo (blanco) + nombre + tag EN SU PROPIO ESPACIO arriba,
-     antes de que empiece la foto (ref "ejemplo logo-16.svg" de Paula, caso
-     Boota) — bloque aparte, no superpuesto, y SIN fondo propio (nada de caja
-     negra detras del nombre, que se vea flotando igual que en la referencia).
-     escala +30% pedida por Paula (estaba muy chico). */
-  /* Ya NO vive adentro de los paneles: con dos fotos a la vez el bloque se duplicaba.
-     Ahora es un unico elemento fijo con lugar propio arriba a la izquierda, debajo del
-     header. Al ser position:fixed con top/left fijos, ocupa siempre el mismo lugar y no
-     salta al cambiar de cliente, sin importar el alto de las fotos. Escala +33% respecto
-     del tamano que tenia adentro del panel (logo 42->56, nombre 17->22, tag 10->12). */
-  /* Si una foto queda debajo del bloque, se desenfoca y oscurece SOLO esa zona para que el
-     texto siga legible (pedido de Paula). backdrop-filter es ideal aca: sobre el fondo negro
-     de la pagina no produce ningun cambio visible (oscurecer y desenfocar negro sigue dando
-     negro), asi que no aparece ninguna placa fantasma; el efecto solo se nota cuando
-     efectivamente hay una imagen atras. El padding hace que el desenfoque respire un poco
-     mas alla del texto, y el top/left lo compensan para que el bloque no se mueva de lugar. */
-  .lfb-info{position:fixed;top:96px;left:var(--gmargin);z-index:6;
-    display:flex;align-items:center;gap:16px;
-    pointer-events:none;opacity:0;transition:opacity .35s ease}
-  .lfb-info.on{opacity:1}
-  .lfb-info img{width:auto;height:auto;max-height:56px;max-width:150px;
-    object-fit:contain;opacity:1}
-  /* por defecto oculto: solo los 3 pares fusionados (Boota, Franja, Malika) tienen un
-     segundo logo. Sin esto se veria el icono de imagen rota antes del primer hover. */
-  .logo2{display:none}
-  .lfb-overlay-text{display:flex;flex-direction:column;gap:3px;min-width:0}
-  .lfb-overlay-name{font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;
-    font-size:22px;color:#f4f4f4;text-transform:uppercase;letter-spacing:0;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .lfb-overlay-tag{font-family:var(--disp);font-weight:400;font-size:12px;
-    letter-spacing:.2em;text-transform:uppercase;color:#f4f4f4;opacity:.8;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .lfb-overlay-tag:empty{display:none}
-  .lfb-overlay-tag::before{content:"/ "}
-  .lfb-overlay-tag:empty::before{content:none}
+  /* en tactil no hay hover: los logos van a blanco pleno de entrada */
+  @media(hover:none){ .lfg-cell img{opacity:.85} }
 
   /* cursor a medida (mismo sistema que index.html, ref tol.is): crosshair fino que
      se convierte en corners+diamante sobre una fila. sin esto el cursor nativo
@@ -376,104 +230,6 @@
     .xc-diamond{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;
       border:1px solid #fff;transform:rotate(45deg)}
   }
-
-  @media(hover:none){
-    /* La foto ya NO se oculta en tactil. Esa regla es de cuando los paneles iban a los
-       costados y le comian el ancho al nombre; ahora van detras, asi que no le quitan
-       lugar a nada y un toque sobre un nombre la revela igual. */
-    .lfb-name{opacity:1}
-  }
-  @media(max-width:680px){
-    /* clamp anterior (32px,12vw,60px) daba ~44px a 370px de ancho — suficiente para nombres
-       cortos, pero "Camalote Seeds"/"Lucila Vallejos" (los mas largos de la lista) se salian
-       de pantalla (detectado por auditoria responsive: "Camalote Seeds" llegaba a 378px de
-       ancho en un viewport de 370px). Coeficiente vw mas chico para que el nombre mas largo
-       entre siempre, incluso sumado al corrimiento zigzag de cada fila. */
-    /* El aire va ENTRE clientes, no entre los renglones de un mismo nombre. Antes estaba
-       todo en un line-height de 1.42 y eso separaba tambien las dos lineas de
-       "Microblading / Santa Fe", que es un solo cliente y tiene que leerse como un bloque.
-       Ahora el nombre queda casi sin interlinea (.84, practicamente el .72 de escritorio) y
-       la separacion entre clientes la da un margin en el <li>, que no puede meterse adentro
-       de un nombre. */
-    .lfb-name{font-size:clamp(26px,8.5vw,60px);max-width:100%;line-height:.84}
-    .lfb-list>li{margin-bottom:37px}
-    .lfb-list>li:last-child{margin-bottom:0}
-    /* sin corrimiento: aca el nombre llega a ocupar todo el ancho, asi que no hay
-       sobrante contra los bordes del cual descontar el desplazamiento. */
-    .lfb-list>li>.lfb-row{--dx:0%}
-    /* UNA sola foto por cliente y a lo ANCHO DE LA PANTALLA, en una banda fija.
-       Antes iba detras del texto y no se veia nada: una foto de 74vw compitiendo contra 30
-       nombres superpuestos encima. A 100vw no queda nada de lista asomando a los costados,
-       y al estar fuera del flujo el texto nunca se le encima.
-       El de la derecha se apaga (pedido de Paula: una sola foto). */
-    :root{--lfb-panel-w:100vw;--lfb-panel-x:0px;--lfb-panel-hmax:40vh}
-    .lfb-preview.side-right{display:none}
-    /* left/right y NO width:100vw: 100vw incluye el ancho de la barra de scroll, asi que
-       la foto quedaba 10px mas ancha que la pantalla y se cortaba de un lado (medido: 385
-       sobre 375). Con los dos bordes anclados, el ancho lo da el viewport real. */
-    /* z-index 4 y no 1: .lfb-stage -que contiene la lista- esta en z-index 2, asi que con
-       el 1 de escritorio la lista entera se pintaba ENCIMA de la foto y los nombres le
-       pasaban por arriba (medido con elementsFromPoint en el centro de la banda: devolvia
-       span.lfb-name, y habia 6 nombres cayendo dentro de la foto). En escritorio el orden
-       inverso es el correcto -los nombres adelante, la foto detras-, por eso el cambio vive
-       solo aca. Queda debajo de .lfb-info (6), que es lo que se busca.
-       overflow visible: los degradados de abajo cuelgan FUERA de la caja del panel y con
-       el hidden de escritorio quedaban recortados. */
-    .lfb-preview.side-left{left:0;right:0;width:auto;align-items:center;
-      z-index:4;overflow:visible}
-    /* Los nombres se disuelven en el negro de la pagina ANTES de tocar la foto y vuelven a
-       aparecer del otro lado, en vez de quedar cortados a mitad de letra contra el borde.
-       Van colgados del PANEL y no fijos a una altura del viewport a proposito: la banda
-       cambia de alto segun la proporcion de cada foto (medido: entre 183 y 385 de ancho),
-       asi que un degradado a altura fija dejaria de tocarla en cuanto la foto es mas
-       apaisada. Colgados asi, siempre arrancan exactamente en el borde.
-       100px = poco mas de un renglon de la lista (64.5px por cliente), que es lo que tarda
-       un nombre en desaparecer del todo. */
-    .lfb-preview.side-left::before,
-    .lfb-preview.side-left::after{content:"";position:absolute;left:0;right:0;
-      pointer-events:none}
-    .lfb-preview.side-left::before{bottom:100%;height:150px;
-      background:linear-gradient(to top,var(--bg),rgba(5,5,5,0))}
-    /* el de abajo va mas corto que el de arriba (50 contra 100) por una razon concreta: la
-       linea de activacion esta ahi debajo, y con 100px el nombre ACTIVO -el unico blanco de
-       la lista- caia adentro del degradado y quedaba velado un 39%. Arriba no pasa porque
-       ahi solo hay nombres grises saliendo de escena, que es justo lo que se quiere. */
-    .lfb-preview.side-left::after{top:100%;height:50px;
-      background:linear-gradient(to bottom,var(--bg),rgba(5,5,5,0))}
-    /* align-items:flex-start: la lista ya no entra en el alto del stage, y centrada se
-       desbordaba por arriba dejando los primeros clientes fuera de alcance del scroll. */
-    .lfb-stage{padding:110px var(--gmargin) 70px;align-items:flex-start}
-    /* aire arriba y abajo para que el PRIMER y el ULTIMO cliente tambien puedan llegar a
-       la linea de activacion (56vh). Sin esto los de las puntas nunca se encienden. */
-    /* El padding de arriba es exactamente lo que necesita el PRIMER cliente para caer en
-       la linea de activacion con la pagina sin scrollear (si sobra, el 01 no se enciende
-       nunca y se arranca en el 02). Estaba en 57vh con la linea en 72vh, y eso dejaba al
-       "2001" al 70% de la pantalla, con 250px de aire repartido alrededor de una foto de
-       194px: 107 arriba y 143 abajo. Al subir la linea a 62vh el padding baja a 39vh y la
-       lista arranca 82px mas arriba, con los dos huecos mucho mas parejos. */
-    .lfb-list{padding:58.5vh 0 30vh}
-    /* el bloque de datos pasa a ser el encabezado de la foto, arriba de la banda, pero con
-       EL MISMO FORMATO que en escritorio (pedido de Paula): isotipo + NOMBRE + / rubro,
-       alineado al margen izquierdo. Solo cambia el tamano del isotipo, que a 150px de
-       escritorio no le dejaria lugar al nombre en 375px de pantalla.
-       right ademas de left: sin el, el bloque tomaba el ancho de su contenido y un nombre
-       largo se salia en vez de recortarse con puntos suspensivos como en escritorio. */
-    .lfb-info{top:11vh;left:var(--gmargin);right:var(--gmargin);width:auto;
-      align-items:flex-start;justify-content:center}
-    .lfb-info img{max-height:40px;max-width:110px}
-    /* en escritorio el nombre va en una linea y lo que sobra se recorta con puntos
-       suspensivos. Aca no alcanza: descontando el isotipo quedan ~209px y "SALON DE ARTES
-       VISUALES" mide 280, o sea que el cliente se leia "SALON DE ARTES VIS...". Se deja
-       partir en dos renglones, que es lo unico que cambia respecto de la version web. */
-    .lfb-overlay-name{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.04}
-    /* la lista se atenua mas que en escritorio (.65): aca compite con una foto a pantalla
-       completa, no con dos estampillas laterales. */
-    html.lfb-viendo .lfb-list{opacity:.34}
-    /* la fila que esta en la linea de activacion. Es el unico blanco de la lista, y lo que
-       vincula lo que estas scrolleando con la foto que aparece. */
-    .lfb-row.activo .lfb-name{color:var(--paper)}
-  }
-
   /* ---------- menu lateral (portado 1:1 desde index.html) ----------
      Antes aca solo decia "Logofolio" como texto muerto. Ahora es el mismo waffle 3x3 y
      el mismo panel que el resto del sitio, para que el menu este disponible tambien en
@@ -588,6 +344,12 @@
      la pagina y no contra si mismo. */
   .header-eye,.lfb-eye{mix-blend-mode:screen}
   .header-eye-wrap,.lfb-back{isolation:isolate}
+
+  /* misma escala tipografica de 6 niveles que index.html (ver alli) */
+  :root{--t4:clamp(19px,1.94vw,36px);--t5:clamp(14px,1.11vw,19px);--t6:clamp(11px,.83vw,14px)}
+  .lfg-head,.lfg-gal-tag,.lfg-gal-n,.lfg-prev-n,.lfg-gal-hint{font-size:var(--t6) !important}
+  .lfg-cta a{font-size:var(--t5) !important}
+  .lfg-gal-name{font-size:var(--t4) !important}
 </style>
 </head>
 <body>
@@ -617,53 +379,53 @@
     </button>
   </div>
 
-  <div class="lfb-stage">
-    <div class="lfb-dim" id="lfbDim" aria-hidden="true"></div>
-    <ol class="lfb-list" id="lfbList">
-      <li><a class="lfb-row" data-pos-left="0.30" data-pos-right="0.64" data-img-left="work/logofolio/img/2001-a.jpg" data-img-right="work/logofolio/img/2001-b.jpg" data-tag="Visuals" data-hover data-logo="work/logofolio/2001.png"><span class="lfb-name"><span class="lfb-idx">01</span>2001</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.56" data-pos-right="0.34" data-img-left="work/logofolio/img/492-a.jpg" data-img-right="work/logofolio/img/492-b.jpg" data-hover data-logo="work/logofolio/492.png" data-tag="Media Group"><span class="lfb-name"><span class="lfb-idx">02</span>492</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.42" data-pos-right="0.70" data-img-left="work/logofolio/img/archivo-deportivo-a.jpg" data-img-right="work/logofolio/img/archivo-deportivo-b.jpg" data-tag="Clothing" data-hover data-logo="work/logofolio/archivo-deportivo.png"><span class="lfb-name"><span class="lfb-idx">03</span>Archivo Deportivo</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.58" data-pos-right="0.34" data-img-left="work/logofolio/img/belvedere-a.jpg" data-img-right="work/logofolio/img/belvedere-b.jpg" data-tag="Real Estate" data-hover data-logo="work/logofolio/belvedere.png"><span class="lfb-name"><span class="lfb-idx">04</span>Belvedere</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.68" data-pos-right="0.46" data-img-left="work/logofolio/img/boota-a.jpg" data-img-right="work/logofolio/img/boota-b.jpg" data-hover data-logo="work/logofolio/boota-isotipo.png" data-logo2="work/logofolio/boota-logotipo.png" data-tag="Festival Urbano"><span class="lfb-name"><span class="lfb-idx">05</span>Boota</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.36" data-pos-right="0.58" data-img-left="work/logofolio/img/camalote-seeds-a.jpg" data-img-right="work/logofolio/img/camalote-seeds-b.jpg" data-tag="Seed Bank" data-hover data-logo="work/logofolio/camalote-seeds.png"><span class="lfb-name"><span class="lfb-idx">06</span>Camalote Seeds</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.62" data-pos-right="0.30" data-img-left="work/logofolio/img/coinxbet-a.jpg" data-img-right="work/logofolio/img/coinxbet-b.jpg" data-tag="Gambling" data-hover data-logo="work/logofolio/coinxbet.png"><span class="lfb-name"><span class="lfb-idx">07</span>CoinXBet</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.48" data-pos-right="0.68" data-img-left="work/logofolio/img/cwe-lawyers-a.jpg" data-img-right="work/logofolio/img/cwe-lawyers-b.jpg" data-tag="Law Firm" data-hover data-logo="work/logofolio/cwe-lawyers.png"><span class="lfb-name"><span class="lfb-idx">08</span>CWE</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.72" data-pos-right="0.40" data-img-left="work/logofolio/img/dedicarte-a.jpg" data-img-right="work/logofolio/img/dedicarte-b.jpg" data-tag="Candles" data-hover data-logo="work/logofolio/dedicarte.png"><span class="lfb-name"><span class="lfb-idx">09</span>DedicArte</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.30" data-pos-right="0.64" data-img-left="work/logofolio/img/divino-a.jpg" data-img-right="work/logofolio/img/divino-b.jpg" data-tag="Productions" data-hover data-logo="work/logofolio/divino.png"><span class="lfb-name"><span class="lfb-idx">10</span>Divino</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.56" data-pos-right="0.34" data-img-left="work/logofolio/img/franja-a.jpg" data-img-right="work/logofolio/img/franja-b.jpg" data-tag="Sport Brand" data-hover data-logo="work/logofolio/franja.png" data-logo2="work/logofolio/frnj.png"><span class="lfb-name"><span class="lfb-idx">11</span>Franja</span></a></li>
-<li class="ancla"><a class="lfb-row" data-pos-left="0.42" data-pos-right="0.70" data-img-left="work/logofolio/img/global-spain-a.jpg" data-img-right="work/logofolio/img/global-spain-b.jpg" data-tag="Citizenship Consultant" data-hover data-logo="work/logofolio/global-spain.png"><span class="lfb-name"><span class="lfb-idx">12</span>Global Spain</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.68" data-pos-right="0.46" data-img-left="work/logofolio/img/kimun-a.jpg" data-img-right="work/logofolio/img/kimun-b.jpg" data-tag="Holistic Therapy" data-hover data-logo="work/logofolio/kimun.png"><span class="lfb-name"><span class="lfb-idx">13</span>Kimun</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.36" data-pos-right="0.58" data-img-left="work/logofolio/img/klik-a.jpg" data-img-right="work/logofolio/img/klik-b.jpg" data-tag="Vending Machines" data-hover data-logo="work/logofolio/klik.png"><span class="lfb-name"><span class="lfb-idx">14</span>Klik</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.62" data-pos-right="0.30" data-img-left="work/logofolio/img/la-tercera-a.jpg" data-img-right="work/logofolio/img/la-tercera-b.jpg" data-hover data-logo="work/logofolio/la-tercera.png" data-tag="Drugstore"><span class="lfb-name"><span class="lfb-idx">15</span>La Tercera</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.48" data-pos-right="0.68" data-img-left="work/logofolio/img/lapa-a.jpg" data-img-right="work/logofolio/img/lapa-b.jpg" data-tag="3D Printing" data-hover data-logo="work/logofolio/lapa.png"><span class="lfb-name"><span class="lfb-idx">16</span>Lapa</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.72" data-pos-right="0.40" data-img-left="work/logofolio/img/lumen-optics-a.jpg" data-img-right="work/logofolio/img/lumen-optics-b.jpg" data-tag="Optical" data-hover data-logo="work/logofolio/lumen-optics.png"><span class="lfb-name"><span class="lfb-idx">17</span>Lunet</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.30" data-pos-right="0.64" data-img-left="work/logofolio/img/lv-lashes-a.jpg" data-img-right="work/logofolio/img/lv-lashes-b.jpg" data-tag="Lash Artist" data-hover data-logo="work/logofolio/lv-lashes.png"><span class="lfb-name"><span class="lfb-idx">18</span>LV Lashes</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.56" data-pos-right="0.34" data-img-left="work/logofolio/img/malika-a.jpg" data-img-right="work/logofolio/img/malika-b.jpg" data-hover data-logo="work/logofolio/malika.png" data-tag="Outdoor and Sport"><span class="lfb-name"><span class="lfb-idx">19</span>Malika</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.42" data-pos-right="0.70" data-img-left="work/logofolio/img/medicina-china-sf-a.jpg" data-img-right="work/logofolio/img/medicina-china-sf-b.jpg" data-tag="Chinese Medicine" data-hover data-logo="work/logofolio/medicina-china-sf.png"><span class="lfb-name"><span class="lfb-idx">20</span>Medicina China SF</span></a></li>
-<li class="ancla"><a class="lfb-row" data-pos-left="0.36" data-pos-right="0.64" data-img-left="work/logofolio/img/microblading-sf-a.jpg" data-img-right="work/logofolio/img/microblading-sf-b.jpg" data-tag="Beauty" data-hover data-logo="work/logofolio/microblading-sf.png"><span class="lfb-name"><span class="lfb-idx">21</span>Microblading<br>Santa Fe</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.68" data-pos-right="0.46" data-img-left="work/logofolio/img/ofiuras-a.jpg" data-img-right="work/logofolio/img/ofiuras-b.jpg" data-tag="Band" data-hover data-logo="work/logofolio/ofiuras.png"><span class="lfb-name"><span class="lfb-idx">22</span>Ofiuras</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.36" data-pos-right="0.58" data-img-left="work/logofolio/img/r-o-podcast-a.jpg" data-img-right="work/logofolio/img/r-o-podcast-b.jpg" data-tag="Podcast" data-hover data-logo="work/logofolio/r-o-podcast.png"><span class="lfb-name"><span class="lfb-idx">23</span>R&amp;O</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.62" data-pos-right="0.30" data-img-left="work/logofolio/img/reclamar-a.jpg" data-img-right="work/logofolio/img/reclamar-b.jpg" data-tag="Legal Tech" data-hover data-logo="work/logofolio/reclamar.png"><span class="lfb-name"><span class="lfb-idx">24</span>Reclamar</span></a></li>
-<li class="ancla"><a class="lfb-row" data-pos-left="0.48" data-pos-right="0.68" data-img-left="work/logofolio/img/salon-artes-litoral-a.jpg" data-img-right="work/logofolio/img/salon-artes-litoral-b.jpg" data-tag="Art Exhibition" data-hover data-logo="work/logofolio/salon-artes-litoral.png"><span class="lfb-name"><span class="lfb-idx">25</span>Salón de Artes<br>Visuales</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.72" data-pos-right="0.40" data-img-left="work/logofolio/img/scorpio-a.jpg" data-img-right="work/logofolio/img/scorpio-b.jpg" data-tag="Productions" data-hover data-logo="work/logofolio/scorpio.png"><span class="lfb-name"><span class="lfb-idx">26</span>Scorpio</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.30" data-pos-right="0.64" data-img-left="work/logofolio/img/shot-lab-a.jpg" data-img-right="work/logofolio/img/shot-lab-b.jpg" data-tag="Productions" data-hover data-logo="work/logofolio/shot-lab.png"><span class="lfb-name"><span class="lfb-idx">27</span>Shot Lab</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.56" data-pos-right="0.34" data-img-left="work/logofolio/img/sicilian-a.jpg" data-img-right="work/logofolio/img/sicilian-b.jpg" data-tag="Handmade Objects" data-hover data-logo="work/logofolio/sicilian.png"><span class="lfb-name"><span class="lfb-idx">28</span>Sicilian</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.42" data-pos-right="0.70" data-img-left="work/logofolio/img/tierra-clothing-a.jpg" data-img-right="work/logofolio/img/tierra-clothing-b.jpg" data-tag="Clothing" data-hover data-logo="work/logofolio/tierra-clothing.png"><span class="lfb-name"><span class="lfb-idx">29</span>Tierra</span></a></li>
-<li><a class="lfb-row" data-pos-left="0.68" data-pos-right="0.46" data-img-left="work/logofolio/img/velco-a.jpg" data-img-right="work/logofolio/img/velco-b.jpg" data-tag="Coffee Brand" data-hover data-logo="work/logofolio/velco.png"><span class="lfb-name"><span class="lfb-idx">30</span>Velco</span></a></li>
-    </ol>
+  <main class="lfg">
+    <div class="lfg-head"><span>Logofolio</span><span>+78 clients</span></div>
+    <ul class="lfg-grid">
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/2001-a.jpg" data-b="work/logofolio/img/2001-b.jpg" role="img" aria-label="2001"><img src="work/logofolio/grilla/2001.png" alt="" style="--w:76px;--h:47px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell tiene-gal" data-slug="492" data-n="16" data-hover data-a="work/logofolio/img/492-a.jpg" data-b="work/logofolio/img/492-b.jpg" role="img" aria-label="492"><img src="work/logofolio/grilla/492.png" alt="" style="--w:87px;--h:42px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/archivo-deportivo-a.jpg" data-b="work/logofolio/img/archivo-deportivo-b.jpg" role="img" aria-label="Archivo Deportivo"><img src="work/logofolio/grilla/archivo-deportivo.png" alt="" style="--w:50px;--h:59px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/belvedere-a.jpg" data-b="work/logofolio/img/belvedere-b.jpg" role="img" aria-label="Belvedere"><img src="work/logofolio/grilla/belvedere.png" alt="" style="--w:123px;--h:37px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell tiene-gal" data-slug="boota" data-n="18" data-hover data-a="work/logofolio/img/boota-a.jpg" data-b="work/logofolio/img/boota-b.jpg" role="img" aria-label="Boota"><img src="work/logofolio/grilla/boota-isotipo.png" alt="" style="--w:55px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell lfg-cta"><a href="index.html#contacto" data-hover>Your logo here</a></li>
+      <li class="lfg-cell tiene-gal" data-slug="camalote-seeds" data-n="28" data-hover data-a="work/logofolio/img/camalote-seeds-a.jpg" data-b="work/logofolio/img/camalote-seeds-b.jpg" role="img" aria-label="Camalote Seeds"><img src="work/logofolio/grilla/camalote-seeds.png" alt="" style="--w:92px;--h:36px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/coinxbet-a.jpg" data-b="work/logofolio/img/coinxbet-b.jpg" role="img" aria-label="CoinXBet"><img src="work/logofolio/grilla/coinxbet.png" alt="" style="--w:88px;--h:39px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/cwe-lawyers-a.jpg" data-b="work/logofolio/img/cwe-lawyers-b.jpg" role="img" aria-label="CWE"><img src="work/logofolio/grilla/cwe-lawyers.png" alt="" style="--w:83px;--h:32px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/dedicarte-a.jpg" data-b="work/logofolio/img/dedicarte-b.jpg" role="img" aria-label="DedicArte"><img src="work/logofolio/grilla/dedicarte.png" alt="" style="--w:116px;--h:38px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/divino-a.jpg" data-b="work/logofolio/img/divino-b.jpg" role="img" aria-label="Divino"><img src="work/logofolio/grilla/divino.png" alt="" style="--w:111px;--h:35px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/franja-a.jpg" data-b="work/logofolio/img/franja-b.jpg" role="img" aria-label="Franja"><img src="work/logofolio/grilla/franja.png" alt="" style="--w:72px;--h:43px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/global-spain-a.jpg" data-b="work/logofolio/img/global-spain-b.jpg" role="img" aria-label="Global Spain"><img src="work/logofolio/grilla/global-spain.png" alt="" style="--w:54px;--h:57px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/kimun-a.jpg" data-b="work/logofolio/img/kimun-b.jpg" role="img" aria-label="Kimun"><img src="work/logofolio/grilla/kimun.png" alt="" style="--w:83px;--h:49px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/klik-a.jpg" data-b="work/logofolio/img/klik-b.jpg" role="img" aria-label="Klik"><img src="work/logofolio/grilla/klik.png" alt="" style="--w:85px;--h:31px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/la-tercera-a.jpg" data-b="work/logofolio/img/la-tercera-b.jpg" role="img" aria-label="La Tercera"><img src="work/logofolio/grilla/la-tercera.png" alt="" style="--w:67px;--h:45px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/lapa-a.jpg" data-b="work/logofolio/img/lapa-b.jpg" role="img" aria-label="Lapa"><img src="work/logofolio/grilla/lapa.png" alt="" style="--w:48px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/lumen-optics-a.jpg" data-b="work/logofolio/img/lumen-optics-b.jpg" role="img" aria-label="Lunet"><img src="work/logofolio/grilla/lumen-optics.png" alt="" style="--w:62px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/lv-lashes-a.jpg" data-b="work/logofolio/img/lv-lashes-b.jpg" role="img" aria-label="LV Lashes"><img src="work/logofolio/grilla/lv-lashes.png" alt="" style="--w:70px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell tiene-gal" data-slug="malika" data-n="15" data-hover data-a="work/logofolio/img/malika-a.jpg" data-b="work/logofolio/img/malika-b.jpg" role="img" aria-label="Malika"><img src="work/logofolio/grilla/malika.png" alt="" style="--w:59px;--h:48px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/medicina-china-sf-a.jpg" data-b="work/logofolio/img/medicina-china-sf-b.jpg" role="img" aria-label="Medicina China SF"><img src="work/logofolio/grilla/medicina-china-sf.png" alt="" style="--w:45px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/microblading-sf-a.jpg" data-b="work/logofolio/img/microblading-sf-b.jpg" role="img" aria-label="Microblading Santa Fe"><img src="work/logofolio/grilla/microblading-sf.png" alt="" style="--w:50px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/ofiuras-a.jpg" data-b="work/logofolio/img/ofiuras-b.jpg" role="img" aria-label="Ofiuras"><img src="work/logofolio/grilla/ofiuras.png" alt="" style="--w:60px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/r-o-podcast-a.jpg" data-b="work/logofolio/img/r-o-podcast-b.jpg" role="img" aria-label="R&amp;O"><img src="work/logofolio/grilla/r-o-podcast.png" alt="" style="--w:64px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/reclamar-a.jpg" data-b="work/logofolio/img/reclamar-b.jpg" role="img" aria-label="Reclamar"><img src="work/logofolio/grilla/reclamar.png" alt="" style="--w:55px;--h:53px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/salon-artes-litoral-a.jpg" data-b="work/logofolio/img/salon-artes-litoral-b.jpg" role="img" aria-label="Salón de Artes Visuales"><img src="work/logofolio/grilla/salon-artes-litoral.png" alt="" style="--w:52px;--h:53px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/scorpio-a.jpg" data-b="work/logofolio/img/scorpio-b.jpg" role="img" aria-label="Scorpio"><img src="work/logofolio/grilla/scorpio.png" alt="" style="--w:92px;--h:39px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/shot-lab-a.jpg" data-b="work/logofolio/img/shot-lab-b.jpg" role="img" aria-label="Shot Lab"><img src="work/logofolio/grilla/shot-lab.png" alt="" style="--w:69px;--h:46px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/sicilian-a.jpg" data-b="work/logofolio/img/sicilian-b.jpg" role="img" aria-label="Sicilian"><img src="work/logofolio/grilla/sicilian.png" alt="" style="--w:66px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/tierra-clothing-a.jpg" data-b="work/logofolio/img/tierra-clothing-b.jpg" role="img" aria-label="Tierra"><img src="work/logofolio/grilla/tierra-clothing.png" alt="" style="--w:52px;--h:62px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/velco-a.jpg" data-b="work/logofolio/img/velco-b.jpg" role="img" aria-label="Velco"><img src="work/logofolio/grilla/velco.png" alt="" style="--w:103px;--h:41px" decoding="async" draggable="false"></li>
+    </ul>
+  </main>
+  <div class="lfg-gal" id="lfgGal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="lfg-gal-top">
+      <img class="lfg-gal-logo" alt="">
+      <span class="lfg-gal-name"></span><span class="lfg-gal-tag"></span>
+      <span class="lfg-gal-n"></span>
+      <button class="lfg-gal-x" type="button" aria-label="Close">&#10005;</button>
+    </div>
+    <div class="lfg-gal-track" id="lfgTrack"></div>
+    <div class="lfg-gal-hint">Scroll / drag &rarr;</div>
   </div>
-
-  <div class="lfb-info" id="lfbInfo">
-    <img class="logo" alt="">
-    <img class="logo2" alt="">
-    <span class="lfb-overlay-text"><span class="lfb-overlay-name"></span><span class="lfb-overlay-tag"></span></span>
-  </div>
-  <div class="lfb-preview side-left" id="lfbPreviewLeft">
-    <div class="lfb-preview-photo"><img class="a" alt=""><img class="b" alt=""></div>
-  </div>
-  <div class="lfb-preview side-right" id="lfbPreviewRight">
-    <div class="lfb-preview-photo"><img class="a" alt=""><img class="b" alt=""></div>
-  </div>
+  <div class="lfg-prev" id="lfgPrev" aria-hidden="true"><div class="lfg-prev-in"><img class="a" alt=""><img class="b" alt=""><span class="lfg-prev-n"></span></div></div>
 
   <div class="menu-overlay" id="menuOverlay"></div>
   <aside class="menu-panel" id="menuPanel" aria-hidden="true">
@@ -685,7 +447,6 @@
     </div>
     <a href="index.html#contacto" class="menu-talk">[ let&#39;s talk ]</a>
   </aside>
-
 <script>
 /* menu lateral: mismo comportamiento que en index.html (abrir/cerrar + Escape + click en
    el overlay). Los items apuntan a otra pagina, asi que cerrar al clickear es cosmetico,
@@ -722,204 +483,156 @@
   document.addEventListener('mouseleave', ()=> cursor.classList.remove('on'));
 })();
 
-/* foto en un lugar fijo POR CLIENTE (izquierda o derecha + su propia altura, ver
-   data-side/data-top de cada fila) — ya no sigue al mouse, y cada una tiene su
-   propio lugar (no siempre el mismo) para que se note mas variado. bounce real
-   (keyframes con varios rebotes) reiniciado en cada hover via remove+reflow+add,
-   asi vuelve a jugar aunque se pase de un nombre a otro del mismo lado seguido. */
+/* foto que acompania al mouse sobre cada logo (ver .lfg-prev en el CSS) */
 (function(){
-  const panels = {
-    left: document.getElementById('lfbPreviewLeft'),
-    right: document.getElementById('lfbPreviewRight')
-  };
-  const state = {
-    left: {active:0, imgs:null},
-    right: {active:0, imgs:null}
-  };
-  Object.keys(panels).forEach(side=>{
-    state[side].imgs = [panels[side].querySelector('.a'), panels[side].querySelector('.b')];
+  const prev = document.getElementById('lfgPrev');
+  if(!prev || !matchMedia('(hover:hover)').matches) return;
+  const A = prev.querySelector('.a'), B = prev.querySelector('.b');
+  let mx = 0, my = 0, x = 0, y = 0, activa = null, giro = 0, corriendo = false;
+  // precarga: la primera vez que se apunta un logo la foto ya esta lista
+  document.querySelectorAll('.lfg-cell[data-a]').forEach(c => { new Image().src = c.dataset.a; new Image().src = c.dataset.b; });
+  const inner = prev.querySelector('.lfg-prev-in');
+  function mostrar(ver, ocultar){
+    ocultar.classList.remove('on'); ver.classList.add('on');
+    const ar = () => { if(ver.naturalWidth) inner.style.setProperty('--ar', ver.naturalWidth + ' / ' + ver.naturalHeight); };
+    if(ver.complete) ar(); else ver.onload = ar;
+  }
+  function loop(){
+    x += (mx - x) * .16; y += (my - y) * .16;
+    const w = prev.offsetWidth, h = prev.offsetHeight;
+    const izq = mx > innerWidth / 2;
+    let px = izq ? x - w - 28 : x + 28;
+    let py = Math.max(12, Math.min(innerHeight - h - 12, y - h / 2));
+    prev.style.transform = `translate3d(${px}px,${py}px,0)`;
+    if(activa || Math.abs(mx - x) > .5) requestAnimationFrame(loop); else corriendo = false;
+  }
+  addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY;
+    if(!corriendo){ corriendo = true; requestAnimationFrame(loop); } });
+  document.querySelectorAll('.lfg-cell[data-a]').forEach(c => {
+    c.addEventListener('mouseenter', e => {
+      if(!activa){ x = mx = e.clientX; y = my = e.clientY; }   // aparece donde esta el mouse, sin viajar
+      activa = c; A.src = c.dataset.a; B.src = c.dataset.b;
+      mostrar(A, B);
+      clearInterval(giro); giro = setInterval(() => B.classList.contains('on') ? mostrar(A, B) : mostrar(B, A), 1300);
+      prev.classList.add('on');
+      if(!corriendo){ corriendo = true; requestAnimationFrame(loop); }
+    });
+    c.addEventListener('mouseleave', () => {
+      if(activa !== c) return;
+      activa = null; clearInterval(giro); prev.classList.remove('on');
+    });
   });
-
-  function retriggerBounce(panel){
-    panel.classList.remove('bounce');
-    void panel.offsetWidth; // fuerza reflow para poder re-jugar la animacion
-    panel.classList.add('bounce');
-  }
-
-  var info = document.getElementById('lfbInfo');
-  var dim  = document.getElementById('lfbDim');
-
-  /* Las tres coordenadas del layout tactil, en fracciones del alto de pantalla.
-     De arriba a abajo: bloque de datos (CSS, 11vh) -> banda de foto -> linea de activacion.
-     No se pisan entre si, que es todo el punto: la foto deja de estar detras del texto. */
-  var TACTIL  = matchMedia('(hover:none)').matches;
-  var BANDA_Y = 0.44;   // centro de la banda de foto (cerca del medio de pantalla)
-  var LINEA_Y = 0.72;   // altura donde se activa el nombre (debajo del degradado)
-
-  /* Carga una foto en un panel respetando su proporcion real. Se precarga la imagen para
-     poder leer naturalWidth/naturalHeight ANTES de mostrarla y escribir --ar en la caja:
-     sin eso la caja mantendria la proporcion de la foto anterior por un instante y se
-     veria un salto. Si el panel no tiene foto para esa fila, se esconde. */
-  // token de secuencia: el onload de abajo es asincrono, asi que al pasar rapido de una
-  // fila a otra la carga de la ANTERIOR puede resolverse despues y pisar la proporcion y
-  // la foto de la fila actual (se veia el --ar de otro cliente). Cada hover incrementa
-  // este contador y el onload solo aplica si sigue siendo el pedido vigente.
-  var pedido = 0;
-  function ponerFoto(side, src, id, frac){
-    var panel = panels[side], st = state[side];
-    if(!src){ panel.classList.remove('on','bounce'); return; }
-    var photo = panel.querySelector('.lfb-preview-photo');
-    var pre = new Image();
-    pre.onload = function(){
-      if(id !== pedido) return;            // llego tarde: ya hay otra fila activa
-      var ratio = pre.naturalWidth / pre.naturalHeight;
-      // el ancho sale de respetar LOS DOS topes (ancho maximo y alto maximo) sin tocar la
-      // proporcion: si la foto es muy vertical, se angosta en vez de recortarse o salirse.
-      var maxW = parseFloat(getComputedStyle(panel).width);
-      var maxH = window.innerHeight * (parseFloat(getComputedStyle(document.documentElement)
-                   .getPropertyValue('--lfb-panel-hmax')) || 70) / 100;
-
-      // El panel IZQUIERDO comparte columna con el bloque de datos de arriba a la izquierda,
-      // asi que no puede invadir esa franja: su techo pasa a ser el pie del bloque. Eso
-      // limita tambien su alto disponible, si no una foto muy vertical no entraria entre el
-      // bloque y el borde inferior. El derecho no tiene esa restriccion.
-      var m = 14;
-      var techo = m;
-      if(side === 'left' && !TACTIL){
-        var ib = info.getBoundingClientRect();
-        techo = Math.max(m, ib.bottom + 22);
-        maxH = Math.min(maxH, window.innerHeight - techo - m);
-      }
-
-      var w = Math.min(maxW, maxH * ratio);
-      photo.style.width = w + 'px';
-      photo.style.setProperty('--ar', pre.naturalWidth + ' / ' + pre.naturalHeight);
-
-      // altura: la fraccion pedida por la fila, recortada para que el panel entre entero en
-      // pantalla y, del lado izquierdo, para que arranque debajo del bloque de datos.
-      var h = w / ratio;
-      var t = frac * window.innerHeight;
-      // en tactil la banda NO varia de altura por cliente: es un lugar fijo de la pantalla,
-      // entre el bloque de datos (11vh) y la linea de activacion (56vh). Que cada foto
-      // cayera a una altura distinta tenia sentido cuando seguian al mouse; con el scroll
-      // manejando el revelado, una banda que salta en cada cliente marea.
-      if(TACTIL) t = window.innerHeight * BANDA_Y;
-      t = Math.max(techo + h/2, Math.min(window.innerHeight - h/2 - m, t));
-      panel.style.setProperty('--top', t + 'px');
-
-      var next = 1 - st.active;
-      st.imgs[st.active].classList.remove('on');
-      st.imgs[next].src = src;
-      st.imgs[next].classList.add('on');
-      st.active = next;
-    };
-    pre.src = src;
-    panel.classList.add('on');
-    retriggerBounce(panel);
-  }
-
-  function activar(row){
-      var id = ++pedido;
-      ponerFoto('left',  row.getAttribute('data-img-left'),  id,
-                parseFloat(row.getAttribute('data-pos-left'))  || 0.5);
-      ponerFoto('right', row.getAttribute('data-img-right'), id,
-                parseFloat(row.getAttribute('data-pos-right')) || 0.5);
-
-      // bloque de datos: uno solo, fijo arriba a la izquierda (antes se dibujaba adentro
-      // del panel, lo que con dos paneles lo habria duplicado).
-      info.querySelector('.logo').src = row.getAttribute('data-logo') || '';
-      var logo2Src = row.getAttribute('data-logo2');
-      var logo2El = info.querySelector('.logo2');
-      if(logo2Src){ logo2El.src = logo2Src; logo2El.style.display = 'block'; }
-      else { logo2El.removeAttribute('src'); logo2El.style.display = 'none'; }
-
-      const nameEl = row.querySelector('.lfb-name');
-      // el nombre puede tener <br> manuales y el span del indice adelante: se clona, se
-      // saca el indice y se convierten los <br> en espacios para leer el nombre completo.
-      const nameClone = nameEl.cloneNode(true);
-      const idxEl = nameClone.querySelector('.lfb-idx');
-      if(idxEl) idxEl.remove();
-      nameClone.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode(' ')));
-      info.querySelector('.lfb-overlay-name').textContent =
-        nameClone.textContent.replace(/\s+/g,' ').trim();
-      info.querySelector('.lfb-overlay-tag').textContent = row.getAttribute('data-tag') || '';
-      info.classList.add('on');
-      dim.classList.add('on');
-      document.documentElement.classList.add('lfb-viendo');
-  }
-  function apagar(){
-    info.classList.remove('on');
-    dim.classList.remove('on');
-    document.documentElement.classList.remove('lfb-viendo');
-    panels.left.classList.remove('on','bounce');
-    panels.right.classList.remove('on','bounce');
-  }
-  var stage = document.querySelector('.lfb-stage');
-  var filas = [].slice.call(document.querySelectorAll('.lfb-row'));
-
-  if(!TACTIL){
-    filas.forEach(function(row){
-      row.addEventListener('mouseenter', function(){ activar(row); });
-    });
-    // Todo se apaga en cuanto el cursor NO esta sobre un nombre: sobre el fondo negro vuelven
-    // los nombres a verse nitidos y desaparecen las dos fotos.
-    // Se usa mouseover delegado (que si informa el elemento de destino) en vez de un
-    // mouseleave por fila: al pasar de un nombre al de al lado, el destino sigue siendo una
-    // fila, asi que no se apaga y se evita el parpadeo entre filas contiguas.
-    stage.addEventListener('mouseover', function(e){
-      if(!e.target.closest('.lfb-row')) apagar();
-    });
-    stage.addEventListener('mouseleave', apagar);
-  } else {
-    /* En un telefono no hay hover, asi que el revelado lo maneja el SCROLL: se activa el
-       cliente cuyo nombre esta mas cerca de una linea fija de la pantalla (56vh). Es el
-       mismo mecanismo que ya usan las filas de Services en index.html.
-       Nunca se apaga: siempre hay un cliente en pantalla, que es justamente la gracia —
-       las fotos van cambiando solas mientras scrolleas, igual que el hover en escritorio. */
-    var actual = null;
-    function porScroll(){
-      var linea = window.innerHeight * LINEA_Y;
-      var elegida = null, min = Infinity;
-      for(var i = 0; i < filas.length; i++){
-        var r = filas[i].getBoundingClientRect();
-        var d = Math.abs((r.top + r.bottom) / 2 - linea);
-        if(d < min){ min = d; elegida = filas[i]; }
-      }
-      if(!elegida || elegida === actual) return;
-      if(actual) actual.classList.remove('activo');
-      elegida.classList.add('activo');
-      actual = elegida;
-      activar(elegida);
-    }
-    var pidiendo = false;
-    function pedir(){
-      if(pidiendo) return;
-      pidiendo = true;
-      requestAnimationFrame(function(){ pidiendo = false; porScroll(); });
-    }
-    window.addEventListener('scroll', pedir, {passive:true});
-    window.addEventListener('resize', pedir);
-    porScroll();
-  }
 })();
 
-/* Ya NO hay auto-achique por cantidad de lineas: Paula pidio que TODOS los nombres midan
-   lo mismo. Para que eso sea posible sin que ninguno se pase de la banda libre, la banda se
-   ensancho (paneles algo mas angostos, margen lateral menor y zigzag en cero). Los cortes de
-   linea puntuales se resuelven con <br> a mano en el HTML. */
-
-/* entrada por scroll (mismo patron que .svl-row de index.html): cada nombre aparece
-   desde la izquierda con blur+opacidad al entrar en pantalla, y se deshace igual
-   al salir (para cualquier lado) — sin libreria, solo IntersectionObserver + CSS. */
+/* ---------- galeria horizontal al click (ver .lfg-gal en el CSS) ---------- */
+const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofolio/492.png", "items": ["work/logofolio/img/492-a.jpg", "work/logofolio/img/492-b.jpg", "work/492-media-group/guidelines.jpg", "work/492-media-group/construction.jpg", "work/492-media-group/logo-black.jpg", "work/492-media-group/logo-white.jpg", "work/492-media-group/signage.jpg", "work/492-media-group/stationery.jpg", "work/492-media-group/id-card.jpg", "work/492-media-group/cards-1.jpg", "work/492-media-group/cards-embossed.jpg", "work/492-media-group/notebooks.jpg", "work/492-media-group/tee.jpg", "work/492-media-group/hoodie.jpg", "work/492-media-group/mug.jpg", "work/492-media-group/tote.jpg"]}, "boota": {"name": "Boota", "tag": "Festival Urbano", "logo": "work/logofolio/boota-isotipo.png", "items": ["work/logofolio/img/boota-a.jpg", "work/logofolio/img/boota-b.jpg", "work/boota/gothic-spray.jpg", "work/boota/star-texture.jpg", "work/boota/pattern-dark.jpg", "work/boota/boceto.jpg", "work/boota/lockups.jpg", "work/boota/icon-grid.jpg", "work/boota/type.jpg", "work/boota/palette.jpg", "work/boota/pattern-blue.jpg", "work/boota/pattern-concrete.jpg", "work/boota/gothic-blue.jpg", "work/boota/gothic-white.jpg", "work/boota/crt.jpg", "work/boota/flare.jpg", "work/boota/chrome.jpg", "work/boota/lockups-three.jpg"]}, "camalote-seeds": {"name": "Camalote Seeds", "tag": "Seed Bank", "logo": "work/logofolio/camalote-seeds.png", "items": ["work/logofolio/img/camalote-seeds-a.jpg", "work/logofolio/img/camalote-seeds-b.jpg", "work/camalote-seeds/stickers.jpg", "work/camalote-seeds/tote-cielo.jpg", "work/camalote-seeds/b.jpg", "work/camalote-seeds/c.jpg", "work/camalote-seeds/genetics.jpg", "work/camalote-seeds/catalogo.jpg", "work/camalote-seeds/proceso.mp4", "work/camalote-seeds/alto-verde.jpg", "work/camalote-seeds/dia-padre.jpg", "work/camalote-seeds/variedad-data.jpg", "work/camalote-seeds/ambiente.jpg", "work/camalote-seeds/terpenos-tipos.jpg", "work/camalote-seeds/terpenos-efecto.jpg", "work/camalote-seeds/mix.jpg", "work/camalote-seeds/cultiva.jpg", "work/camalote-seeds/mayorista.jpg", "work/camalote-seeds/brochure.jpg", "work/camalote-seeds/stand.jpg", "work/camalote-seeds/tote.jpg", "work/camalote-seeds/tees.jpg", "work/camalote-seeds/tote-mano.jpg", "work/camalote-seeds/keychains.jpg", "work/camalote-seeds/keychains-mesa.jpg", "work/camalote-seeds/stand2.jpg", "work/camalote-seeds/rollup.jpg", "work/camalote-seeds/santafesino.jpg"]}, "malika": {"name": "Malika", "tag": "Outdoor and Sport", "logo": "work/logofolio/malika.png", "items": ["work/logofolio/img/malika-a.jpg", "work/logofolio/img/malika-b.jpg", "work/malika/apertura.mp4", "work/malika/submarcas-anim.mp4", "work/malika/logo.jpg", "work/malika/submarcas.jpg", "work/malika/construccion.jpg", "work/malika/paleta.jpg", "work/malika/tipografia.jpg", "work/malika/outdoor.jpg", "work/malika/sports.jpg", "work/malika/travel.jpg", "work/malika/local-noche.jpg", "work/malika/bolsa.jpg", "work/malika/etiquetas.jpg"]}};
 (function(){
-  const rows = [...document.querySelectorAll('.lfb-row')];
-  if(!rows.length || !('IntersectionObserver' in window)) return;
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      entry.target.classList.toggle('in-view', entry.isIntersecting);
+  const gal = document.getElementById('lfgGal'), track = document.getElementById('lfgTrack');
+  const nEl = gal.querySelector('.lfg-gal-n'), prev = document.getElementById('lfgPrev');
+  let objetivo = 0, anim = 0, movido = false;
+  const dos = n => String(n).padStart(2,'0');
+
+  // la foto del hover avisa cuantas hay, para que se sepa que hay galeria
+  document.querySelectorAll('.lfg-cell[data-a]').forEach(c => c.addEventListener('mouseenter', () => {
+    prev.querySelector('.lfg-prev-n').textContent = c.dataset.n ? c.dataset.n + ' photos — click' : '';
+  }));
+
+  function contador(){
+    const items = [...track.children]; if(!items.length) return;
+    const ref = track.getBoundingClientRect().left + innerWidth * .3;
+    let k = 0; items.forEach((it,i) => { if(it.getBoundingClientRect().left <= ref) k = i; });
+    if(track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) k = items.length - 1;
+    nEl.textContent = dos(k + 1) + ' / ' + dos(items.length);
+  }
+  function abrir(slug){
+    const g = GAL[slug]; if(!g) return;
+    gal.querySelector('.lfg-gal-logo').src = g.logo;
+    gal.querySelector('.lfg-gal-name').textContent = g.name;
+    gal.querySelector('.lfg-gal-tag').textContent = g.tag;
+    track.innerHTML = '';
+    g.items.forEach((src, i) => {
+      let el;
+      if(src.endsWith('.mp4')){
+        el = document.createElement('video'); el.muted = true; el.loop = true; el.playsInline = true;
+        el.autoplay = true; el.setAttribute('muted', ''); el.src = src;
+      } else {
+        el = document.createElement('img'); el.alt = g.name; el.decoding = 'async'; el.draggable = false;
+        if(i > 3) el.loading = 'lazy';
+        el.src = src;
+      }
+      el.style.transitionDelay = Math.min(i, 6) * 0.07 + 's';   // entran en cascada desde la derecha
+      track.appendChild(el);
     });
-  }, {threshold:0.2, rootMargin:'0px 0px -8% 0px'});
-  rows.forEach(row=> io.observe(row));
+    track.scrollLeft = 0; objetivo = 0;
+    prev.classList.remove('on');
+    document.documentElement.classList.add('gal-abierta');
+    gal.setAttribute('aria-hidden', 'false');
+    void gal.offsetWidth;            // fuerza el estado inicial para que la entrada se anime
+    gal.classList.add('open');
+    contador();
+  }
+  function cerrar(){
+    gal.classList.remove('open'); gal.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('gal-abierta');
+    track.querySelectorAll('video').forEach(v => v.pause());
+    setTimeout(() => { if(!gal.classList.contains('open')) track.innerHTML = ''; }, 500);
+  }
+  document.querySelectorAll('.lfg-cell.tiene-gal').forEach(c => c.addEventListener('click', () => abrir(c.dataset.slug)));
+  gal.querySelector('.lfg-gal-x').addEventListener('click', cerrar);
+  gal.addEventListener('click', e => {
+    if(movido) return;
+    if(e.target === gal || e.target === track) cerrar();
+  });
+
+  // rueda / flechas: la fila se desliza suave hacia el objetivo (no a saltos)
+  function ir(x){
+    objetivo = Math.max(0, Math.min(track.scrollWidth - track.clientWidth, x));
+    if(!anim) anim = requestAnimationFrame(paso);
+  }
+  function paso(){
+    const d = objetivo - track.scrollLeft;
+    if(Math.abs(d) < .5){ track.scrollLeft = objetivo; anim = 0; contador(); return; }
+    track.scrollLeft += d * .14; contador();
+    anim = requestAnimationFrame(paso);
+  }
+  addEventListener('keydown', e => {
+    if(!gal.classList.contains('open')) return;
+    if(e.key === 'Escape') cerrar();
+    if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+      const items = [...track.children];
+      const x0 = track.getBoundingClientRect().left + parseFloat(getComputedStyle(track).paddingLeft);
+      const sig = e.key === 'ArrowRight'
+        ? items.find(it => it.getBoundingClientRect().left > x0 + 4)
+        : items.slice().reverse().find(it => it.getBoundingClientRect().left < x0 - 4);
+      if(sig) ir(track.scrollLeft + sig.getBoundingClientRect().left - x0);
+    }
+  });
+  track.addEventListener('wheel', e => {
+    e.preventDefault();
+    const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    ir((anim ? objetivo : track.scrollLeft) + delta * 1.2);
+  }, {passive:false});
+  gal.addEventListener('wheel', e => { if(e.target === gal) e.preventDefault(); }, {passive:false});
+  track.addEventListener('scroll', () => { if(!anim) contador(); }, {passive:true});
+
+  // arrastre con el mouse (en tactil el scroll nativo ya lo resuelve)
+  let px0 = 0, s0 = 0, abajo = false;
+  track.addEventListener('pointerdown', e => {
+    if(e.pointerType !== 'mouse') return;
+    abajo = true; movido = false; px0 = e.clientX; s0 = track.scrollLeft;
+    cancelAnimationFrame(anim); anim = 0;
+  });
+  addEventListener('pointermove', e => {
+    if(!abajo) return;
+    const dx = e.clientX - px0;
+    if(Math.abs(dx) > 4){ movido = true; track.classList.add('arrastrando'); }
+    track.scrollLeft = s0 - dx; objetivo = track.scrollLeft;
+  });
+  addEventListener('pointerup', () => {
+    if(!abajo) return;
+    abajo = false; track.classList.remove('arrastrando');
+    setTimeout(() => { movido = false; }, 0);
+  });
 })();
 </script>
 </body>

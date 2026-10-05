@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
 <link rel="preload" href="fonts/DigitalPaulaContact.woff2?v=5" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&amp;family=Permanent+Marker&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&amp;family=Permanent+Marker&amp;family=Geist+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
 <!-- El ojo del hero es lo PRIMERO que se ve y tardaba en aparecer (fondo negro liso unos
      instantes). Se precarga el POSTER, que es el fotograma 1 exacto del video: aparece de
      inmediato y cuando el video arranca la imagen ya es identica, asi que no se nota el
@@ -71,9 +71,9 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
     --grad-ini:#d4d4d4; --grad-fin:#909090; --grad-medio:#b2b2b2;
     --grad:linear-gradient(90deg,var(--grad-ini),var(--grad-fin));
     --blue:#8a8a8a;       /* acento secundario = gris medio */
-    --ink:#0a0a0a;        /* casi negro neutro */
+    --ink:#000;        /* casi negro neutro */
     --paper:#fff;
-    --bg:#050505;         /* base oscura del sitio, neutra */
+    --bg:#000;         /* base oscura del sitio, neutra */
     --disp:"Helvetica Neue",Helvetica,Arial,sans-serif;   /* primaria = Helvetica Black (weight 900) MAYUS */
     --body:Roboto,"Helvetica Neue",Arial,sans-serif;       /* secundaria = Roboto */
     /* Thei eliminada del sitio (Paula: "solamente helvetica y digital paula font") */
@@ -681,6 +681,13 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
   /* la etiqueta sale de atras del texto: la de arriba sube, la de abajo baja */
   .hlink-arriba .hlink-tag{bottom:100%;margin-bottom:.42em;transform:translateY(.45em)}
   .hlink-abajo .hlink-tag{top:100%;margin-top:.42em;transform:translateY(-.45em)}
+  /* etiquetas del hover en GEIST MONO, minuscula, blanco plano y SIN animacion (pedido de
+     Paula: "// see my work", en una linea). Pisa la DigitalPaulaContact con degradado y el
+     deslizamiento de arriba: aparecen y desaparecen de golpe, en su lugar final. */
+  .hlink-tag{font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase !important;
+    background:none;-webkit-text-fill-color:#fff;color:#fff;letter-spacing:0;line-height:1.2;
+    font-size:clamp(12px,.9vw,17px);transition:none !important;transform:none !important}
+  .hlink:hover .hlink-tag{transition:none !important}
   .hlink-izq .hlink-tag{left:0}
   .hlink-der .hlink-tag{right:0;text-align:right}
 
@@ -2516,6 +2523,253 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
     .wov-next-name .wnn-l:first-child{font-family:"HelveticaNeueRoman",var(--disp);font-weight:400}
     .wov-next-name .wnn-l:last-child{font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800}
   }
+
+  /* ---------- GEIST MONO, SOLO DONDE LA PIDIO PAULA (2026-10-05) ----------
+     Ella marco cada lugar a mano ("yo te digo donde aplicarla"): no extender a otros
+     textos sin que lo pida. Dos grupos:
+     - mono FIJA (sin efecto): los headers de seccion (01 / SELECTED WORK ... ACTIVE 01/04)
+       y el "WHERE I COME IN" de servicios.
+     - mono + se ESCRIBE SOLA al entrar en pantalla (ref project-cult): los dos textos del
+       hero (rol y descripcion), el "+78 CLIENTS" de la franja del logofolio, el "SCROLL TO
+       SEE MY SERVICES", las 3 palabras de cada servicio y el "EYE & TASTE FOR DESIGN" del
+       about. La lista del efecto vive en TW_SEL, en el ultimo bloque de JS. */
+  .slabel,.svl-cue .k,
+  .hc-role .hlink-txt,.hc-desc .hlink-txt,.lfh-mid,.lfh-mid .lfh-h,.lfh-mid .lfh-s,
+  .svl-cue .s,.svl-tags,.svl-tag,.about-tag{font-family:"Geist Mono",ui-monospace,monospace}
+  /* la mono va SIEMPRE en minuscula (pedido de Paula). !important porque varios de estos
+     textos heredan text-transform:uppercase de reglas mas especificas del sitio, y algunos
+     vienen escritos en mayuscula en el HTML (lowercase los baja igual). */
+  .slabel,.slabel *,.svl-cue .k,.hc-role .hlink-txt,.hc-role .hlink-txt *,.hc-desc .hlink-txt,
+  .hc-desc .hlink-txt *,.lfh-mid,.lfh-mid *,.svl-cue .s,.svl-tags,.svl-tag,.about-tag,
+  .about-tag *{text-transform:lowercase !important}
+  /* el tipeo NO agrega texto: cada letra ya esta en su lugar, invisible, y se va prendiendo,
+     asi el bloque ocupa desde el principio lo que va a ocupar y nada salta */
+  .twc{visibility:hidden}
+  .twc.on{visibility:visible}
+  .tw-cur{display:inline-block;width:.6em;height:1em;margin-left:.04em;vertical-align:-.12em;
+    background:currentColor;animation:twBlink .7s steps(1) infinite;pointer-events:none}
+  @keyframes twBlink{50%{opacity:0}}
+  /* SOFTWARES & TOOLS sacada "por el momento" (pedido de Paula). Oculta y no borrada: para
+     volver a mostrarla alcanza con borrar esta regla. */
+  section#lab{display:none !important}
+
+  /* ---------- LET'S TALK nuevo (ref "new lets talk-01-01.svg", lienzo 1920x1080) ----------
+     Todo se posiciona en --u = 1/100 del ancho del lienzo. El lienzo es 16:9 y entra
+     SIEMPRE entero en pantalla: --u es el menor entre 1vw y 1.7778vh, asi que en una
+     pantalla mas apaisada que 16:9 manda el alto y nada se corta. Cada medida sale del svg:
+     x/19.2 = u. Fondo: video desenfocado + placa negra al 60% (pedido de Paula). */
+  #contacto.lt-sec{--u:min(1vw,1.7778vh);background:#000}
+  .lt-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+  /* scale 1.12: el blur deja los bordes transparentes, agrandando un poco no se ven */
+  .lt-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:blur(22px);transform:scale(1.12)}
+  .lt-dim{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+  .lt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;
+    width:calc(100 * var(--u));height:calc(56.25 * var(--u))}
+  .lt > *,.lt-form > *{position:absolute}
+  .lt-form{position:static}
+
+  /* textos en mono (siempre minuscula, regla de Paula) */
+  .lt-tag,.lt-lab,.lt-social-lab,.lt-estado{font-family:"Geist Mono",ui-monospace,monospace;
+    text-transform:lowercase !important;font-weight:400;color:#f4f4f4;line-height:1;
+    letter-spacing:.1em;white-space:nowrap}
+  .lt-tag{left:calc(6.09 * var(--u));top:calc(5.4 * var(--u));font-size:calc(1.25 * var(--u))}
+  .lt-lab,.lt-social-lab{font-size:calc(1.15 * var(--u))}
+  .lt-social-lab{left:calc(5.78 * var(--u));top:calc(41.98 * var(--u));color:#848484}
+
+  /* Helvetica Heavy 195.3px, interlineado 142.6 (.73). top = linea de base del svg menos
+     la distancia caja->base de la fuente con ese interlineado (.7345em) */
+  .lt-title{left:calc(5.2 * var(--u));top:calc(22.28 * var(--u));margin:0;
+    font-family:"HelveticaNeueHeavy","Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:800;
+    font-size:calc(10.17 * var(--u));line-height:.73;letter-spacing:0;text-transform:uppercase;color:#fff}
+  .lt-title span{display:block}
+
+  .lt-social a{position:absolute;color:#fff;display:block;transition:opacity .2s ease}
+  .lt-social a:hover{opacity:.55}
+  .lt-social svg{display:block;width:100%;height:100%}
+  .lt-social{left:0;top:0}
+  .lt-social a:nth-child(1){left:calc(5.57 * var(--u));top:calc(45.21 * var(--u));width:calc(2.14 * var(--u));height:calc(2.14 * var(--u))}
+  .lt-social a:nth-child(2){left:calc(13.85 * var(--u));top:calc(45.57 * var(--u));width:calc(2.34 * var(--u));height:calc(1.51 * var(--u))}
+  .lt-social a:nth-child(3){left:calc(22.4 * var(--u));top:calc(45.42 * var(--u));width:calc(1.72 * var(--u));height:calc(1.72 * var(--u))}
+  .lt-social a:nth-child(4){left:calc(31.3 * var(--u));top:calc(45.26 * var(--u));width:calc(2.14 * var(--u));height:calc(2.14 * var(--u))}
+
+  .lt-mail{left:calc(5.43 * var(--u));top:calc(49.58 * var(--u));color:#f4f4f4;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:700;font-size:calc(1.18 * var(--u));
+    line-height:1;letter-spacing:.2em;text-transform:uppercase;transition:opacity .2s ease}
+  .lt-mail:hover{opacity:.6}
+
+  /* campos: la caja va del borde de arriba del rotulo hasta la linea del svg (border-bottom) */
+  .lt-f{display:flex;flex-direction:column;justify-content:space-between;
+    border-bottom:.5px solid rgba(255,255,255,.85);cursor:text}
+  .lt-f input,.lt-f textarea,.lt-f select{background:transparent;border:0;outline:0;color:#fff;
+    font-family:"Geist Mono",ui-monospace,monospace;font-size:calc(1.3 * var(--u));
+    padding:0 0 calc(.45 * var(--u));width:100%;border-radius:0;-webkit-appearance:none;appearance:none}
+  .lt-name,.lt-email{left:calc(41.15 * var(--u));width:calc(23.93 * var(--u))}
+  .lt-corp,.lt-tel{left:calc(67.32 * var(--u));width:calc(27.77 * var(--u))}
+  .lt-name,.lt-corp{top:calc(11.56 * var(--u));height:calc(5.39 * var(--u))}
+  .lt-email,.lt-tel{top:calc(21.77 * var(--u));height:calc(5.85 * var(--u))}
+  .lt-subj,.lt-msg{left:calc(41.15 * var(--u));width:calc(54.33 * var(--u))}
+  .lt-subj{top:calc(33.39 * var(--u));height:calc(2.02 * var(--u))}
+  .lt-msg{top:calc(41.82 * var(--u));min-height:calc(2.07 * var(--u));height:auto}
+  .lt-f:focus-within{border-bottom-color:#fff;border-bottom-width:1px}
+  .lt-f.mal{border-bottom-color:#ff6b6b}
+
+  /* asunto y mensaje: el rotulo esta sobre la linea, asi que hace de placeholder y se va
+     cuando el campo tiene contenido (.lleno lo pone el JS) */
+  .lt-sobre .lt-lab{position:absolute;left:0;bottom:calc(.55 * var(--u));pointer-events:none;
+    transition:opacity .2s ease}
+  .lt-sobre.lleno .lt-lab{opacity:0}
+  .lt-sobre{justify-content:flex-end}
+  .lt-f select{cursor:pointer;position:absolute;inset:0;height:100%;padding-right:calc(2 * var(--u))}
+  .lt-f select:invalid,.lt-subj:not(.lleno) select{color:transparent}
+  .lt-f select option{color:#fff;background:#111;font-size:15px}
+  .lt-chev{position:absolute;right:0;bottom:calc(.75 * var(--u));width:calc(.8 * var(--u));height:auto;
+    fill:none;stroke:#f4f4f4;stroke-width:1.2;pointer-events:none}
+  .lt-f textarea{resize:none;overflow:hidden;line-height:1.4;min-height:calc(1.9 * var(--u));display:block}
+
+  .lt-send{left:calc(91.3 * var(--u));top:calc(48.02 * var(--u));width:calc(3.23 * var(--u));
+    height:calc(3.23 * var(--u));background:none;border:0;padding:0;cursor:pointer;color:#f4f4f4}
+  .lt-send svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;overflow:visible;
+    transition:transform .35s cubic-bezier(.22,.61,.36,1)}
+  .lt-send:hover svg{transform:translate(5px,-5px)}
+  .lt-send[disabled]{opacity:.4;cursor:default}
+  .lt-estado{left:calc(41.15 * var(--u));top:calc(49.3 * var(--u));font-size:calc(1.05 * var(--u));
+    color:#c9c9c9;white-space:normal;max-width:calc(48 * var(--u));line-height:1.4}
+  .lt-trampa{position:absolute !important;left:-9999px;opacity:0;pointer-events:none}
+
+  /* telefono / tablet angosta: el lienzo 16:9 no entra, todo pasa a una columna en flujo */
+  @media(max-width:900px){
+    #contacto.lt-sec{--u:3.6px}
+    .lt{position:relative;left:auto;top:auto;transform:none;width:auto;height:auto;
+      padding:96px var(--gmargin) 56px;display:flex;flex-direction:column}
+    .lt > *,.lt-form > *{position:relative;left:auto !important;top:auto !important}
+    .lt-tag{font-size:13px;order:1}
+    .lt-title{font-size:21vw;order:2;margin:22px 0 40px}
+    .lt-form{order:3;display:flex;flex-direction:column;gap:30px}
+    .lt-f{width:100% !important;height:auto !important;min-height:62px}
+    .lt-sobre{min-height:44px}
+    .lt-lab,.lt-social-lab{font-size:12px}
+    .lt-f input,.lt-f textarea,.lt-f select{font-size:16px;padding-bottom:8px}
+    .lt-f select{position:absolute}
+    .lt-sobre .lt-lab{bottom:10px}
+    .lt-chev{width:12px;bottom:14px}
+    .lt-estado{font-size:12px;max-width:none;order:9}
+    .lt-send{width:46px;height:46px;align-self:flex-end;margin-top:4px}
+    .lt-social-lab{order:4;margin-top:56px}
+    .lt-social{order:5;display:flex;gap:30px;margin-top:16px}
+    .lt-social a{position:relative;left:auto !important;top:auto !important;width:28px !important;height:28px !important}
+    .lt-mail{order:6;font-size:12px;margin-top:26px;letter-spacing:.14em}
+  }
+
+  /* datos del About (pedido de Paula 2026-10-05): WORK / EXPERIENCE en mono que se escribe
+     sola; los numeros en la fuente de marca DigitalPaulaContact con tracking -20; las
+     etiquetas en mono, minuscula, blanco, SIN animar y con el formato "// brand identities" */
+  .ab-label{font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase !important;
+    background:none;-webkit-text-fill-color:#f4f4f4;color:#f4f4f4;letter-spacing:0}
+  .ab-num{font-family:"DigitalPaulaContact",var(--disp);font-weight:400;letter-spacing:-.02em}
+  .ab-unit{font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase !important;
+    color:#fff;letter-spacing:0}
+
+  /* ---------- FILTRO DE WORK (mockup de Paula) ----------
+     Franja debajo del titulo: la pregunta en mono minuscula espaciada y tres opciones en
+     Helvetica Heavy. La elegida en blanco nitido; las otras desenfocadas y apagadas, y se
+     aclaran un poco al apuntarlas para que se entienda que son clickeables. */
+  .wfilt{grid-column:1/-1;margin-top:clamp(22px,2.6vw,44px);border-top:1px solid rgba(255,255,255,.14);
+    background:#0b0b0b;padding:clamp(26px,3vw,56px) 0 clamp(26px,2.8vw,50px);text-align:center}
+  .wfilt-q{margin:0 0 clamp(14px,1.4vw,26px);font-family:"Geist Mono",ui-monospace,monospace;
+    text-transform:lowercase !important;letter-spacing:.32em;color:#f4f4f4;
+    font-size:clamp(10px,.72vw,13px)}
+  .wfilt-opts{display:grid;grid-template-columns:repeat(3,1fr);align-items:center}
+  .wfilt-b{background:none;border:0;padding:.1em .2em;cursor:pointer;color:#fff;
+    font-family:"HelveticaNeueHeavy","Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:800;
+    letter-spacing:-.03em;font-size:clamp(20px,2.5vw,48px);line-height:1;
+    filter:blur(5px);opacity:.32;transition:filter .45s ease,opacity .45s ease}
+  .wfilt-b:hover{filter:blur(2px);opacity:.6}
+  .wfilt-b.on{filter:none;opacity:1;cursor:default}
+  .wrow.fuera{display:none}
+  .wrow.entra{animation:wrowEntra .55s ease both}
+  @keyframes wrowEntra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @media(max-width:640px){
+    .wfilt-q{letter-spacing:.18em}
+    .wfilt-b{font-size:clamp(17px,5vw,22px);filter:blur(3px)}
+  }
+
+  /* NEGRO PLENO SIEMPRE (regla de Paula, 2026-10-05: "tenes que mantener negro pleno
+     siempre"). Fuera todo lo que aclaraba el fondo: el brillo radial fijo del body, el gris
+     de la franja del filtro y el tinte de la fila abierta de WORK. Las lineas divisorias
+     siguen (son lineas, no fondo). */
+  html,body{background:#000}
+  body::before{display:none}
+  .wfilt{background:none}
+  .wrow.is-open{background:none}
+  .logofolio-teaser:hover{background:none}
+
+  /* ---------- NUEVO ACCESO AL LOGOFOLIO (ref NEW ACCESS LOGOFOLIO-08.svg) ----------
+     Franja del ancho util (1702.8 x 575.5 en el svg) con una grilla de logos mas grande
+     que ella. --cw/--ch = tamano de celda (4 columnas visibles, como en la referencia).
+     Los logos usan el tamano balanceado del logofolio nuevo (--w/--h sin unidad, en px a
+     1440 de ancho) escalado con el ancho de pantalla. Negro pleno, sin placas. */
+  .lfx{position:relative;display:block;margin:0 var(--gmargin);overflow:hidden;cursor:pointer;
+    aspect-ratio:1702.8/575.5;background:#000;color:#fff;text-decoration:none;
+    --cw:calc((100vw - 2 * var(--gmargin)) / 4);--ch:calc(var(--cw) * .435)}
+  .lfx-world{position:absolute;left:0;top:0;display:grid;
+    grid-template-columns:repeat(8,var(--cw));grid-auto-rows:var(--ch);will-change:transform}
+  .lfx-c{display:flex;align-items:center;justify-content:center;
+    border-right:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+  .lfx-c img{display:block;width:calc(var(--w) * .0694vw);height:calc(var(--h) * .0694vw);
+    object-fit:contain;opacity:var(--o,.28);transform:scale(var(--z,1));
+    transition:opacity .6s ease,transform .8s cubic-bezier(.22,.61,.36,1)}
+  .lfx-cta{font-family:var(--disp);font-size:clamp(12px,1.1vw,20px);color:#fff;
+    text-decoration:underline;text-underline-offset:4px;opacity:var(--o,.5);transition:opacity .25s ease}
+  /* fundido a negro arriba y abajo, transparente al medio (el degradado del svg) */
+  .lfx-fade{position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(to bottom,#000 0%,rgba(0,0,0,0) 50%,#000 100%)}
+  .lfx-txt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;
+    font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase !important;
+    font-size:clamp(11px,1.15vw,20px);letter-spacing:.02em;color:#fff;white-space:nowrap;
+    transition:letter-spacing .5s cubic-bezier(.22,.61,.36,1)}
+  .lfx:hover .lfx-txt{letter-spacing:.14em}
+  @media(max-width:640px){
+    .lfx{aspect-ratio:1/0.62;--cw:calc((100vw - 2 * var(--gmargin)) / 2.4);--ch:calc(var(--cw) * .6)}
+    .lfx-c img{width:calc(var(--w) * .16vw);height:calc(var(--h) * .16vw)}
+  }
+
+  /* ================= ESCALA TIPOGRAFICA DE 6 NIVELES (Paula 2026-10-05) =================
+     "Mantene el mismo tamano de las tipografias en todo el sitio, jerarquiza". Antes habia
+     25 tamanos distintos. Cada nivel es ~1.5x el siguiente; valores pensados a 1440 de
+     ancho y escalados con la pantalla (clamp). Para mover un nivel se toca SOLO la variable.
+       1 Display    144  Let's talk (las letras del hero NO entran: salen del .ai)
+       2 Titulo      72  titulos de seccion, nombre del About
+       3 Subtitulo   44  nombres de proyecto/servicio, manifiesto, CTA de servicios, numeros About
+       4 Destacado   28  opciones del filtro, & this is me
+       5 Texto       16  hero, datos de proyecto, mail, formulario, enter the logofolio
+       6 Etiqueta    12  mono minuscula: headers de seccion, keys, tags, pie, idiomas
+     Las letras en tipografia de marca de SELECTED y /WHAT I DO quedan como estaban. */
+  :root{
+    --t1:clamp(64px,10vw,190px);
+    --t2:clamp(40px,5vw,96px);
+    --t3:clamp(24px,3.06vw,58px);
+    --t4:clamp(19px,1.94vw,36px);
+    --t5:clamp(14px,1.11vw,19px);
+    --t6:clamp(11px,.83vw,14px);
+  }
+  #contacto .lt-title{font-size:var(--t1) !important}
+  .wt-work,.svc-title-b,.about-name,.about-name .an-w{font-size:var(--t2) !important}
+  .svl-name,.wrow-name,.ml-line,.ml-line a,.svl-cta-a,.svl-cta-b,.ab-num{font-size:var(--t3) !important}
+  .ml-line,.ml-line a{font-family:"HelveticaNeueHeavy",var(--disp) !important}
+  /* la frase final conserva su contraste fina/gruesa, ahora en Helvetica (antes Roboto) */
+  @media(max-width:640px){ .wrow-name{white-space:normal !important;line-height:1} }
+  .ml-cta a{font-family:"HelveticaNeueLight",var(--disp) !important;font-weight:300 !important}
+  .ml-cta a b{font-family:"HelveticaNeueHeavy",var(--disp) !important;font-weight:800 !important}
+  .wfilt-b,.about-me-tag,.about-me-tag b{font-size:var(--t4) !important}
+  .hc-role,.hc-desc,.hc-eyetag,.hc-svcs,.hc-role .hlink-txt,.hc-desc .hlink-txt,.lt-mail,.wrow-v,
+  .lt-f input,.lt-f textarea,.lt-f select,.lfx-txt,.lfx-cta{font-size:var(--t5) !important}
+  .slabel,.slabel *,.wrow-k,.svl-tag,.svl-cue .k,.svl-cue .s,.svl-num,.hlink-tag,.ab-label,.ab-unit,
+  .wfilt-q,footer,footer *,header .lang button,.hc-foot-l,.hc-foot-c,.hc-foot-r,.hc-foot-r *,
+  .lt-lab,.lt-social-lab,.lt-tag,.lt-estado,.about-credit,.contact-credit,.about-tag,.ab-more{font-size:var(--t6) !important}
+  .lt-f select option{font-size:var(--t5) !important}
+  /* lo que todavia estaba en Roboto pasa a mono (son etiquetas) */
+  .svl-num,footer,footer *{font-family:"Geist Mono",ui-monospace,monospace !important;text-transform:lowercase !important}
 </style>
 </head>
 <body>
@@ -2617,11 +2871,11 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
     <div class="hero-copy">
       <div class="hcopy hc-eyetag" data-es="OJO Y GUSTO&lt;br&gt;&lt;b&gt;POR EL DISEÑO.&lt;/b&gt;" data-it="OCCHIO E GUSTO&lt;br&gt;&lt;b&gt;PER IL DESIGN.&lt;/b&gt;" data-deu="AUGE &amp; GESPÜR&lt;br&gt;&lt;b&gt;FÜR DESIGN.&lt;/b&gt;">EYE &amp; TASTE<br><b>FOR DESIGN.</b></div>
       <div class="hcopy hc-svcs" data-es="&lt;b&gt;[ DESDE 2020 ]&lt;/b&gt; IDENTIDADES &lt;b&gt;VISUALES,&lt;/b&gt;&lt;br&gt;EXPERIENCIAS &lt;b&gt;DIGITALES&lt;/b&gt;, &lt;b&gt;MOTION&lt;/b&gt;,&lt;br&gt;VISUALES &lt;b&gt;EN VIVO&lt;/b&gt; &amp; MODELADO &lt;b&gt;3D&lt;/b&gt;" data-it="&lt;b&gt;[ DAL 2020 ]&lt;/b&gt; IDENTITÀ &lt;b&gt;VISIVE,&lt;/b&gt;&lt;br&gt;ESPERIENZE &lt;b&gt;DIGITALI&lt;/b&gt;, &lt;b&gt;MOTION&lt;/b&gt;,&lt;br&gt;VISUAL &lt;b&gt;LIVE&lt;/b&gt; &amp; MODELLAZIONE &lt;b&gt;3D&lt;/b&gt;" data-deu="&lt;b&gt;[ SEIT 2020 ]&lt;/b&gt; VISUELLE &lt;b&gt;IDENTITÄTEN,&lt;/b&gt;&lt;br&gt;DIGITALE &lt;b&gt;ERLEBNISSE&lt;/b&gt;, &lt;b&gt;MOTION&lt;/b&gt;,&lt;br&gt;LIVE &lt;b&gt;VISUALS&lt;/b&gt; &amp; &lt;b&gt;3D&lt;/b&gt;-MODELLING"><b>[ EST. 2020 ]</b> VISUAL <b>IDENTITIES,</b><br>DIGITAL <b>EXPERIENCES</b>, <b>MOTION</b>,<br>LIVE <b>VISUALS</b> &amp; <b>3D</b> MODELING</div>
-      <a class="hcopy hc-role hlink hlink-abajo hlink-izq" href="#work"><span class="hlink-txt" data-es="&lt;i class='solo-mb'&gt;&lt;b&gt;DIRECTORA CREATIVA,&lt;/b&gt;&lt;/i&gt;&lt;b&gt;DISEÑADORA&lt;/b&gt; MULTIMEDIA &lt;br&gt;y &lt;b&gt;VJ&lt;/b&gt; &lt;span class='br'&gt;[ VISUALES EN VIVO ]&lt;/span&gt;" data-it="&lt;i class='solo-mb'&gt;&lt;b&gt;DIREZIONE CREATIVA,&lt;/b&gt;&lt;/i&gt;&lt;b&gt;DESIGNER&lt;/b&gt; MULTIMEDIALE &lt;br&gt;e &lt;b&gt;VJ&lt;/b&gt; &lt;span class='br'&gt;[ VISUAL LIVE ]&lt;/span&gt;" data-deu="&lt;i class='solo-mb'&gt;&lt;b&gt;CREATIVE DIRECTION,&lt;/b&gt;&lt;/i&gt;&lt;b&gt;MULTIMEDIA-DESIGNERIN&lt;/b&gt; &lt;br&gt;&amp; &lt;b&gt;VJ&lt;/b&gt; &lt;span class='br'&gt;[ LIVE VISUALS ]&lt;/span&gt;"><i class="solo-mb"><b>CREATIVE&nbsp;DIRECTOR,</b></i><b>MULTIMEDIA</b> DESIGNER <br>&amp; <b>VJ</b> <span class="br">[ LIVE VISUALS ]</span></span><span class="hlink-tag" aria-hidden="true" data-es="/ VER MIS&lt;br&gt;TRABAJOS" data-it="/ VEDI I MIEI&lt;br&gt;LAVORI" data-deu="/ MEINE&lt;br&gt;ARBEITEN">/ SEE MY<br>WORK</span></a>
-      <a class="hcopy hc-desc hlink hlink-abajo hlink-izq" href="#servicios"><span class="hlink-txt" data-es="Creo &lt;b&gt;experiencias digitales&lt;/b&gt;&lt;i class='solo-esc'&gt;.&lt;/i&gt;&lt;i class='solo-mb'&gt;,&lt;/i&gt;&lt;i class='mbr'&gt;&lt;/i&gt; &lt;b&gt;Branding&lt;i class='solo-mb'&gt;s&lt;/i&gt;&lt;/b&gt;, &lt;span class='wide'&gt;&lt;b&gt;3D&lt;/b&gt;,&lt;/span&gt; &lt;b&gt;generativo&lt;/b&gt; y &lt;b&gt;motion&lt;/b&gt; &lt;span class='br'&gt;[ desde 2020 ]&lt;/span&gt;" data-it="Creo &lt;b&gt;esperienze digitali&lt;/b&gt;&lt;i class='solo-esc'&gt;.&lt;/i&gt;&lt;i class='solo-mb'&gt;,&lt;/i&gt;&lt;i class='mbr'&gt;&lt;/i&gt; &lt;b&gt;Branding&lt;i class='solo-mb'&gt;s&lt;/i&gt;&lt;/b&gt;, &lt;span class='wide'&gt;&lt;b&gt;3D&lt;/b&gt;,&lt;/span&gt; &lt;b&gt;generativo&lt;/b&gt; e &lt;b&gt;motion&lt;/b&gt; &lt;span class='br'&gt;[ dal 2020 ]&lt;/span&gt;" data-deu="Ich erschaffe &lt;b&gt;digitale Erlebnisse&lt;/b&gt;&lt;i class='solo-esc'&gt;.&lt;/i&gt;&lt;i class='solo-mb'&gt;,&lt;/i&gt;&lt;i class='mbr'&gt;&lt;/i&gt; &lt;b&gt;Branding&lt;i class='solo-mb'&gt;s&lt;/i&gt;&lt;/b&gt;, &lt;span class='wide'&gt;&lt;b&gt;3D&lt;/b&gt;,&lt;/span&gt; &lt;b&gt;generativ&lt;/b&gt; &amp; &lt;b&gt;Motion&lt;/b&gt; &lt;span class='br'&gt;[ seit 2020 ]&lt;/span&gt;">I create <b>digital&nbsp;experiences</b><i class="solo-esc">.</i><i class="solo-mb">,</i><i class="mbr"></i> <b>Branding<i class="solo-mb">s</i></b>, <span class="wide"><b>3D</b>,</span> <b>generative</b> &amp; <b>motion</b> <span class="br">[ est. 2020 ]</span></span><span class="hlink-tag" aria-hidden="true" data-es="/ VER MIS&lt;br&gt;SERVICIOS" data-it="/ VEDI I MIEI&lt;br&gt;SERVIZI" data-deu="/ MEINE&lt;br&gt;LEISTUNGEN">/ SEE MY<br>SERVICES</span></a>
+      <a class="hcopy hc-role hlink hlink-abajo hlink-izq" href="#work"><span class="hlink-txt" data-es="&lt;i class='solo-mb'&gt;&lt;b&gt;DIRECTORA CREATIVA,&lt;/b&gt;&lt;/i&gt;&lt;b&gt;DISEÑADORA&lt;/b&gt; MULTIMEDIA &lt;br&gt;y &lt;b&gt;VJ&lt;/b&gt; &lt;span class='br'&gt;[ VISUALES EN VIVO ]&lt;/span&gt;" data-it="&lt;i class='solo-mb'&gt;&lt;b&gt;DIREZIONE CREATIVA,&lt;/b&gt;&lt;/i&gt;&lt;b&gt;DESIGNER&lt;/b&gt; MULTIMEDIALE &lt;br&gt;e &lt;b&gt;VJ&lt;/b&gt; &lt;span class='br'&gt;[ VISUAL LIVE ]&lt;/span&gt;" data-deu="&lt;i class='solo-mb'&gt;&lt;b&gt;CREATIVE DIRECTION,&lt;/b&gt;&lt;/i&gt;&lt;b&gt;MULTIMEDIA-DESIGNERIN&lt;/b&gt; &lt;br&gt;&amp; &lt;b&gt;VJ&lt;/b&gt; &lt;span class='br'&gt;[ LIVE VISUALS ]&lt;/span&gt;"><i class="solo-mb"><b>CREATIVE&nbsp;DIRECTOR,</b></i><b>MULTIMEDIA</b> DESIGNER <br>&amp; <b>VJ</b> <span class="br">[ LIVE VISUALS ]</span></span><span class="hlink-tag" aria-hidden="true" data-es="// ver mis trabajos" data-it="// vedi i miei lavori" data-deu="// meine arbeiten">// see my work</span></a>
+      <a class="hcopy hc-desc hlink hlink-abajo hlink-izq" href="#servicios"><span class="hlink-txt" data-es="Creo &lt;b&gt;brandings&lt;/b&gt;,&lt;i class='mbr'&gt;&lt;/i&gt; &lt;b&gt;experiencias digitales&lt;/b&gt;, &lt;span class='wide'&gt;&lt;b&gt;3D&lt;/b&gt;,&lt;/span&gt; &lt;b&gt;generativo&lt;/b&gt; y &lt;b&gt;motion&lt;/b&gt; &lt;span class='br'&gt;[ desde 2020 ]&lt;/span&gt;" data-it="Creo &lt;b&gt;brandings&lt;/b&gt;,&lt;i class='mbr'&gt;&lt;/i&gt; &lt;b&gt;esperienze digitali&lt;/b&gt;, &lt;span class='wide'&gt;&lt;b&gt;3D&lt;/b&gt;,&lt;/span&gt; &lt;b&gt;generativo&lt;/b&gt; e &lt;b&gt;motion&lt;/b&gt; &lt;span class='br'&gt;[ dal 2020 ]&lt;/span&gt;" data-deu="Ich erschaffe &lt;b&gt;Brandings&lt;/b&gt;,&lt;i class='mbr'&gt;&lt;/i&gt; &lt;b&gt;digitale Erlebnisse&lt;/b&gt;, &lt;span class='wide'&gt;&lt;b&gt;3D&lt;/b&gt;,&lt;/span&gt; &lt;b&gt;generativ&lt;/b&gt; &amp; &lt;b&gt;motion&lt;/b&gt; &lt;span class='br'&gt;[ seit 2020 ]&lt;/span&gt;">I create <b>brandings</b>,<i class="mbr"></i> <b>digital&nbsp;experiences</b>, <span class="wide"><b>3D</b>,</span> <b>generative</b> &amp; <b>motion</b> <span class="br">[ est. 2020 ]</span></span><span class="hlink-tag" aria-hidden="true" data-es="// ver mis servicios" data-it="// vedi i miei servizi" data-deu="// meine leistungen">// see my services</span></a>
       <div class="hcopy hc-foot-l"><b>Portfolio 2026</b>© digitalpaula</div>
       <div class="hcopy hc-foot-c" data-es="Con base en Argentina&lt;br&gt;&lt;b&gt;[ working worldwide&amp;nbsp;]&lt;/b&gt;" data-it="Con sede in Argentina&lt;br&gt;&lt;b&gt;[ working worldwide&amp;nbsp;]&lt;/b&gt;" data-deu="Ansässig in Argentinien&lt;br&gt;&lt;b&gt;[ working worldwide&amp;nbsp;]&lt;/b&gt;">Based in Argentina<br><b>[ working worldwide&nbsp;]</b></div>
-      <div class="hcopy hc-foot-r"><a class="hlink hlink-arriba hlink-der" href="#contacto"><span class="hlink-txt" data-es="&lt;i class='cor'&gt;[ &lt;/i&gt;contactame&lt;i class='mbr'&gt;&lt;/i&gt;&lt;span class='tk'&gt; acá&lt;/span&gt;&lt;i class='cor'&gt; ]&lt;/i&gt;" data-it="&lt;i class='cor'&gt;[ &lt;/i&gt;scrivi&lt;i class='mbr'&gt;&lt;/i&gt;&lt;span class='tk'&gt; a me&lt;/span&gt;&lt;i class='cor'&gt; ]&lt;/i&gt;" data-deu="&lt;i class='cor'&gt;[ &lt;/i&gt;reden&lt;i class='mbr'&gt;&lt;/i&gt;&lt;span class='tk'&gt; wir?&lt;/span&gt;&lt;i class='cor'&gt; ]&lt;/i&gt;"><i class="cor">[ </i>let's<i class="mbr"></i><span class="tk"> talk</span><i class="cor"> ]</i></span><span class="hlink-tag" aria-hidden="true" data-es="/ CONTACTO" data-it="/ CONTATTI" data-deu="/ KONTAKT">/ CONTACT</span></a></div>
+      <div class="hcopy hc-foot-r"><a class="hlink hlink-arriba hlink-der" href="#contacto"><span class="hlink-txt" data-es="&lt;i class='cor'&gt;[ &lt;/i&gt;contactame&lt;i class='mbr'&gt;&lt;/i&gt;&lt;span class='tk'&gt; acá&lt;/span&gt;&lt;i class='cor'&gt; ]&lt;/i&gt;" data-it="&lt;i class='cor'&gt;[ &lt;/i&gt;scrivi&lt;i class='mbr'&gt;&lt;/i&gt;&lt;span class='tk'&gt; a me&lt;/span&gt;&lt;i class='cor'&gt; ]&lt;/i&gt;" data-deu="&lt;i class='cor'&gt;[ &lt;/i&gt;reden&lt;i class='mbr'&gt;&lt;/i&gt;&lt;span class='tk'&gt; wir?&lt;/span&gt;&lt;i class='cor'&gt; ]&lt;/i&gt;"><i class="cor">[ </i>let's<i class="mbr"></i><span class="tk"> talk</span><i class="cor"> ]</i></span><span class="hlink-tag" aria-hidden="true" data-es="// contacto" data-it="// contatti" data-deu="// kontakt">// contact</span></a></div>
     </div>
     <div class="hblur" aria-hidden="true">
       <span></span><span></span><span></span><span></span>
@@ -2655,7 +2909,20 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
            nacen desenfocadas/transparentes y se asientan solas al entrar en pantalla,
            una por una — mismo mecanismo que las filas de SERVICIOS (ver bloque JS). -->
       <!-- orden alfabetico (pedido explicito de Paula) — los numeros van antes que las
-           letras: 492, Boota, Camalote Seeds, Malika, Yotto. -->
+           letras: 492, Boota, Camalote Seeds, Malika, Ruido y Orden, Salon de Artes Visuales,
+           Yotto. PROVISORIO: Paula va a pasar su orden de prioridad (el orden = orden de
+           estos <article>, y el "siguiente proyecto" del detalle lo lee de aca). -->
+      <!-- FILTRO (mockup de Paula 2026-10-05): "what do you want to see?" + tres opciones.
+           Arranca en Brand Identities. La elegida queda nitida y blanca, las otras
+           desenfocadas. Filtra por el data-cat de cada .wrow (branding / vj). -->
+      <div class="wfilt">
+        <p class="wfilt-q" data-es="¿qué querés ver?" data-it="cosa vuoi vedere?" data-deu="was willst du sehen?">what do you want to see?</p>
+        <div class="wfilt-opts" role="tablist">
+          <button class="wfilt-b on" type="button" role="tab" aria-selected="true" data-f="branding" data-es="Identidades de Marca" data-it="Identità di Marca" data-deu="Markenidentitäten">Brand Identities</button>
+          <button class="wfilt-b" type="button" role="tab" aria-selected="false" data-f="vj" data-es="Visuales en Vivo" data-it="Visual Live" data-deu="Live Visuals">Live Visuals</button>
+          <button class="wfilt-b" type="button" role="tab" aria-selected="false" data-f="all" data-es="Todo" data-it="Tutto" data-deu="Alles">All</button>
+        </div>
+      </div>
       <div class="wlist" id="wgrid">
         <!-- is-open: el primer proyecto arranca ya desplegado, como pista de que el resto
              de las filas hace lo mismo al pasar el mouse (pedido de Paula). -->
@@ -2771,6 +3038,62 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
             </div>
           </div></div>
         </article>
+        <!-- RUIDO Y ORDEN sacado "por ahora" (Paula 2026-10-05: "esta muy verde"). La fila
+             esta abajo, comentada, y su entrada en PROJECTS sigue intacta: para volver a
+             mostrarlo alcanza con descomentarla.
+        <article class="wrow" data-project="ruido-y-orden" data-cat="branding">
+          <div class="wrow-head">
+            <div class="wrow-col wrow-col-client">
+              <span class="wrow-k" data-es="Cliente" data-it="Cliente" data-deu="Kunde">Client</span>
+              <h3 class="wrow-name">Ruido y Orden</h3>
+            </div>
+            <div class="wrow-col wrow-col-meta">
+              <span class="wrow-k" data-es="Industria" data-it="Settore" data-deu="Branche">Industry</span>
+              <span class="wrow-v" data-es="Podcast" data-it="Podcast" data-deu="Podcast">Podcast</span>
+            </div>
+            <div class="wrow-col wrow-col-meta">
+              <span class="wrow-k" data-es="Año" data-it="Anno" data-deu="Jahr">Year</span>
+              <span class="wrow-v">2026</span>
+            </div>
+            <div class="wrow-col wrow-col-meta wrow-col-loc"><span class="wrow-k" data-es="Ubicación" data-it="Località" data-deu="Standort">Location</span><span class="wrow-v">Santa Fe</span></div>
+            <div class="wrow-col wrow-col-meta wrow-col-role">
+              <span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span>
+              <span class="wrow-v" data-es="Identidad de marca, manual de marca, motion" data-it="Identità di marca, brand guidelines, motion" data-deu="Markenidentität, Brand Guidelines, Motion">Brand Identity, Brand Guidelines, Motion</span>
+            </div>
+          </div>
+          <div class="wrow-fold"><div class="wrow-fold-inner">
+            <div class="wrow-thumbs">
+              <button class="wrow-thumb"><video src="work/ruido-y-orden/animation.mp4" poster="work/ruido-y-orden/animation-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Ruido y Orden"></video></button>
+              <button class="wrow-thumb"><img src="work/ruido-y-orden/campo-glow.jpg" alt="Ruido y Orden" loading="lazy"></button>
+              <button class="wrow-thumb"><img src="work/ruido-y-orden/construccion.jpg" alt="Ruido y Orden" loading="lazy"></button>
+              <button class="wrow-thumb"><img src="work/ruido-y-orden/tarjeta.jpg" alt="Ruido y Orden" loading="lazy"></button>
+            </div>
+          </div></div>
+        </article>
+        -->
+        <article class="wrow" data-project="salon-artes-visuales" data-cat="branding">
+          <div class="wrow-head">
+            <div class="wrow-col wrow-col-client">
+              <span class="wrow-k" data-es="Cliente" data-it="Cliente" data-deu="Kunde">Client</span>
+              <h3 class="wrow-name">Salón de Artes Visuales</h3>
+            </div>
+            <div class="wrow-col wrow-col-meta">
+              <span class="wrow-k" data-es="Industria" data-it="Settore" data-deu="Branche">Industry</span>
+              <span class="wrow-v" data-es="Muestra de arte" data-it="Mostra d’arte" data-deu="Kunstausstellung">Art Exhibition</span>
+            </div>
+            <div class="wrow-col wrow-col-meta wrow-col-loc"><span class="wrow-k" data-es="Ubicación" data-it="Località" data-deu="Standort">Location</span><span class="wrow-v">Santa Fe</span></div>
+            <div class="wrow-col wrow-col-meta wrow-col-role">
+              <span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span>
+              <span class="wrow-v" data-es="Identidad de marca" data-it="Identità di Marca" data-deu="Markenidentität">Brand Identity</span>
+            </div>
+          </div>
+          <div class="wrow-fold"><div class="wrow-fold-inner">
+            <div class="wrow-thumbs">
+              <button class="wrow-thumb"><img src="work/salon-artes-visuales/a.jpg" alt="Salón de Artes Visuales" loading="lazy"></button>
+              <button class="wrow-thumb"><img src="work/salon-artes-visuales/b.jpg" alt="Salón de Artes Visuales" loading="lazy"></button>
+            </div>
+          </div></div>
+        </article>
         <!-- unico proyecto de VJ del grid: en vez de fotos, los tres thumbs son videos
              (el reel real de la fecha va al medio, pedido de Paula; a los costados dos
              piezas de los visuales generados para el show). -->
@@ -2834,7 +3157,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
       <div class="wov-head">
         <h3 class="wov-title" id="wovTitle"></h3>
         <div class="wov-meta">
-          <span><b data-es="Año" data-it="Anno" data-deu="Jahr">Year</b><span id="wovYear"></span></span>
+          <span id="wovYearWrap"><b data-es="Año" data-it="Anno" data-deu="Jahr">Year</b><span id="wovYear"></span></span>
           <span><b data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</b><span id="wovRole"></span></span>
           <span><b data-es="Categoría" data-it="Categoria" data-deu="Kategorie">Category</b><span id="wovCat"></span></span>
           <span id="wovLocationWrap" hidden=""><b data-es="Ubicación" data-it="Località" data-deu="Standort">Location</b><span id="wovLocation"></span></span>
@@ -2881,77 +3204,73 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
   </div>
 
 
-  <!-- ============ LOGOFOLIO (acceso directo) ============ -->
-  <a class="logofolio-teaser" href="logofolio.html" aria-label="Logofolio">
-    <div class="logofolio-head">
-      <span class="lfh-left"><span class="lfh-h">LOGO</span><span class="lfh-s">FOLIO</span></span>
-      <span class="lfh-mid"><span class="lfh-h">+78</span><span class="lfh-s">CLIENTS</span></span>
-      <span class="lfh-right"><span class="lfh-r lfh-pre">CLICK TO </span><span class="lfh-h">SEE SOME OF MY WORK</span><span class="lfh-r lfh-tag"> [ BRANDING ]</span></span>
+  <!-- ============ LOGOFOLIO (acceso directo) ============
+       Ref "NEW ACCESS LOGOFOLIO-08.svg" de Paula (2026-10-05): la grilla de logos del
+       logofolio nuevo, fundida a negro arriba y abajo, con "// enter the logofolio" al centro.
+       La grilla es MAS GRANDE que la franja (8x7 celdas): al mover el mouse el espacio se
+       desliza hacia ese lado y se recorre; los logos cercanos al cursor se prenden. Sin mouse
+       (o en reposo) deriva sola, despacio, para que se vea viva. Click = logofolio nuevo. -->
+  <a class="lfx" href="logofolio.html" aria-label="Enter the logofolio" id="lfx">
+    <div class="lfx-world" id="lfxWorld" aria-hidden="true">
+      <span class="lfx-c"><img src="work/logofolio/grilla/2001.png" alt="" style="--w:76;--h:47" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/492.png" alt="" style="--w:87;--h:42" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/archivo-deportivo.png" alt="" style="--w:50;--h:59" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/belvedere.png" alt="" style="--w:123;--h:37" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/boota-isotipo.png" alt="" style="--w:55;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/camalote-seeds.png" alt="" style="--w:92;--h:36" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/coinxbet.png" alt="" style="--w:88;--h:39" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/cwe-lawyers.png" alt="" style="--w:83;--h:32" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/dedicarte.png" alt="" style="--w:116;--h:38" decoding="async" draggable="false"></span>
+      <span class="lfx-c lfx-cta">Your logo here</span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/divino.png" alt="" style="--w:111;--h:35" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/franja.png" alt="" style="--w:72;--h:43" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/global-spain.png" alt="" style="--w:54;--h:57" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/kimun.png" alt="" style="--w:83;--h:49" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/klik.png" alt="" style="--w:85;--h:31" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/la-tercera.png" alt="" style="--w:67;--h:45" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/lapa.png" alt="" style="--w:48;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/lumen-optics.png" alt="" style="--w:62;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/lv-lashes.png" alt="" style="--w:70;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/malika.png" alt="" style="--w:59;--h:48" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/medicina-china-sf.png" alt="" style="--w:45;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/microblading-sf.png" alt="" style="--w:50;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/ofiuras.png" alt="" style="--w:60;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/r-o-podcast.png" alt="" style="--w:64;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/reclamar.png" alt="" style="--w:55;--h:53" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/salon-artes-litoral.png" alt="" style="--w:52;--h:53" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/scorpio.png" alt="" style="--w:92;--h:39" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/shot-lab.png" alt="" style="--w:69;--h:46" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/sicilian.png" alt="" style="--w:66;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/tierra-clothing.png" alt="" style="--w:52;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/velco.png" alt="" style="--w:103;--h:41" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/2001.png" alt="" style="--w:76;--h:47" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/492.png" alt="" style="--w:87;--h:42" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/archivo-deportivo.png" alt="" style="--w:50;--h:59" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/belvedere.png" alt="" style="--w:123;--h:37" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/boota-isotipo.png" alt="" style="--w:55;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/camalote-seeds.png" alt="" style="--w:92;--h:36" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/coinxbet.png" alt="" style="--w:88;--h:39" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/cwe-lawyers.png" alt="" style="--w:83;--h:32" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/dedicarte.png" alt="" style="--w:116;--h:38" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/divino.png" alt="" style="--w:111;--h:35" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/franja.png" alt="" style="--w:72;--h:43" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/global-spain.png" alt="" style="--w:54;--h:57" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/kimun.png" alt="" style="--w:83;--h:49" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/klik.png" alt="" style="--w:85;--h:31" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/la-tercera.png" alt="" style="--w:67;--h:45" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/lapa.png" alt="" style="--w:48;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/lumen-optics.png" alt="" style="--w:62;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/lv-lashes.png" alt="" style="--w:70;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/malika.png" alt="" style="--w:59;--h:48" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/medicina-china-sf.png" alt="" style="--w:45;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/microblading-sf.png" alt="" style="--w:50;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/ofiuras.png" alt="" style="--w:60;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/r-o-podcast.png" alt="" style="--w:64;--h:62" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/reclamar.png" alt="" style="--w:55;--h:53" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/salon-artes-litoral.png" alt="" style="--w:52;--h:53" decoding="async" draggable="false"></span>
     </div>
-    <div class="logofolio-wrap" aria-hidden="true">
-      <div class="logofolio-track">
-          <img class="lf-logo" decoding="async" src="work/logofolio/2001.png" alt="2001">
-          <img class="lf-logo" decoding="async" src="work/logofolio/492.png" alt="492">
-          <img class="lf-logo" decoding="async" src="work/logofolio/archivo-deportivo.png" alt="Archivo Deportivo">
-          <img class="lf-logo" decoding="async" src="work/logofolio/belvedere.png" alt="Belvedere">
-          <img class="lf-logo" decoding="async" src="work/logofolio/boota-isotipo.png" alt="Boota">
-          <img class="lf-logo" decoding="async" src="work/logofolio/camalote-seeds.png" alt="Camalote Seeds">
-          <img class="lf-logo" decoding="async" src="work/logofolio/coinxbet.png" alt="CoinXBet">
-          <img class="lf-logo" decoding="async" src="work/logofolio/cwe-lawyers.png" alt="CWE">
-          <img class="lf-logo" decoding="async" src="work/logofolio/dedicarte.png" alt="DedicArte">
-          <img class="lf-logo" decoding="async" src="work/logofolio/divino.png" alt="Divino">
-          <img class="lf-logo" decoding="async" src="work/logofolio/franja.png" alt="Franja">
-          <img class="lf-logo" decoding="async" src="work/logofolio/global-spain.png" alt="Global Spain">
-          <img class="lf-logo" decoding="async" src="work/logofolio/kimun.png" alt="Kimun">
-          <img class="lf-logo" decoding="async" src="work/logofolio/klik.png" alt="Klik">
-          <img class="lf-logo" decoding="async" src="work/logofolio/la-tercera.png" alt="La Tercera">
-          <img class="lf-logo" decoding="async" src="work/logofolio/lapa.png" alt="Lapa">
-          <img class="lf-logo" decoding="async" src="work/logofolio/lumen-optics.png" alt="Lunet">
-          <img class="lf-logo" decoding="async" src="work/logofolio/lv-lashes.png" alt="LV Lashes">
-          <img class="lf-logo" decoding="async" src="work/logofolio/malika.png" alt="Malika">
-          <img class="lf-logo" decoding="async" src="work/logofolio/medicina-china-sf.png" alt="Medicina China SF">
-          <img class="lf-logo" decoding="async" src="work/logofolio/microblading-sf.png" alt="Microblading Santa Fe">
-          <img class="lf-logo" decoding="async" src="work/logofolio/ofiuras.png" alt="Ofiuras">
-          <img class="lf-logo" decoding="async" src="work/logofolio/r-o-podcast.png" alt="R&amp;O">
-          <img class="lf-logo" decoding="async" src="work/logofolio/reclamar.png" alt="Reclamar">
-          <img class="lf-logo" decoding="async" src="work/logofolio/salon-artes-litoral.png" alt="Salón de Artes Visuales">
-          <img class="lf-logo" decoding="async" src="work/logofolio/scorpio.png" alt="Scorpio">
-          <img class="lf-logo" decoding="async" src="work/logofolio/shot-lab.png" alt="Shot Lab">
-          <img class="lf-logo" decoding="async" src="work/logofolio/sicilian.png" alt="Sicilian">
-          <img class="lf-logo" decoding="async" src="work/logofolio/tierra-clothing.png" alt="Tierra">
-          <img class="lf-logo" decoding="async" src="work/logofolio/velco.png" alt="Velco">
-          <img class="lf-logo" decoding="async" src="work/logofolio/2001.png" alt="2001">
-          <img class="lf-logo" decoding="async" src="work/logofolio/492.png" alt="492">
-          <img class="lf-logo" decoding="async" src="work/logofolio/archivo-deportivo.png" alt="Archivo Deportivo">
-          <img class="lf-logo" decoding="async" src="work/logofolio/belvedere.png" alt="Belvedere">
-          <img class="lf-logo" decoding="async" src="work/logofolio/boota-isotipo.png" alt="Boota">
-          <img class="lf-logo" decoding="async" src="work/logofolio/camalote-seeds.png" alt="Camalote Seeds">
-          <img class="lf-logo" decoding="async" src="work/logofolio/coinxbet.png" alt="CoinXBet">
-          <img class="lf-logo" decoding="async" src="work/logofolio/cwe-lawyers.png" alt="CWE">
-          <img class="lf-logo" decoding="async" src="work/logofolio/dedicarte.png" alt="DedicArte">
-          <img class="lf-logo" decoding="async" src="work/logofolio/divino.png" alt="Divino">
-          <img class="lf-logo" decoding="async" src="work/logofolio/franja.png" alt="Franja">
-          <img class="lf-logo" decoding="async" src="work/logofolio/global-spain.png" alt="Global Spain">
-          <img class="lf-logo" decoding="async" src="work/logofolio/kimun.png" alt="Kimun">
-          <img class="lf-logo" decoding="async" src="work/logofolio/klik.png" alt="Klik">
-          <img class="lf-logo" decoding="async" src="work/logofolio/la-tercera.png" alt="La Tercera">
-          <img class="lf-logo" decoding="async" src="work/logofolio/lapa.png" alt="Lapa">
-          <img class="lf-logo" decoding="async" src="work/logofolio/lumen-optics.png" alt="Lunet">
-          <img class="lf-logo" decoding="async" src="work/logofolio/lv-lashes.png" alt="LV Lashes">
-          <img class="lf-logo" decoding="async" src="work/logofolio/malika.png" alt="Malika">
-          <img class="lf-logo" decoding="async" src="work/logofolio/medicina-china-sf.png" alt="Medicina China SF">
-          <img class="lf-logo" decoding="async" src="work/logofolio/microblading-sf.png" alt="Microblading Santa Fe">
-          <img class="lf-logo" decoding="async" src="work/logofolio/ofiuras.png" alt="Ofiuras">
-          <img class="lf-logo" decoding="async" src="work/logofolio/r-o-podcast.png" alt="R&amp;O">
-          <img class="lf-logo" decoding="async" src="work/logofolio/reclamar.png" alt="Reclamar">
-          <img class="lf-logo" decoding="async" src="work/logofolio/salon-artes-litoral.png" alt="Salón de Artes Visuales">
-          <img class="lf-logo" decoding="async" src="work/logofolio/scorpio.png" alt="Scorpio">
-          <img class="lf-logo" decoding="async" src="work/logofolio/shot-lab.png" alt="Shot Lab">
-          <img class="lf-logo" decoding="async" src="work/logofolio/sicilian.png" alt="Sicilian">
-          <img class="lf-logo" decoding="async" src="work/logofolio/tierra-clothing.png" alt="Tierra">
-          <img class="lf-logo" decoding="async" src="work/logofolio/velco.png" alt="Velco">
-        </div>
-    </div>
+    <span class="lfx-fade" aria-hidden="true"></span>
+    <span class="lfx-txt" data-es="// entrá al logofolio" data-it="// entra nel logofolio" data-deu="// zum logofolio">// enter the logofolio</span>
   </a>
 
   <!-- ============ SERVICIOS ============ -->
@@ -3155,68 +3474,77 @@ Gen-4.5"><img src="work/softwares/logo-31.svg" alt=""></div>
     <div class="about-stats">
       <div class="ab-row">
         <span class="ab-label" data-es="TRABAJO" data-it="LAVORO" data-deu="ARBEIT">WORK</span>
-        <a class="ab-cell ab-cell-hov ab-cell-link" href="logofolio.html"><b class="ab-num">78</b><em class="ab-unit" data-es="/IDENTIDADES&lt;br&gt;DE MARCA" data-it="/IDENTITÀ&lt;br&gt;DI MARCA" data-deu="/MARKEN&lt;br&gt;IDENTITÄTEN">/BRAND<br>IDENTITIES</em><span class="ab-more" aria-hidden="true"><i data-es="Ver mi" data-it="Vedi il mio" data-deu="Mein">See my</i><i data-es="Logofolio" data-it="Logofolio" data-deu="Logofolio ansehen">Logofolio</i></span></a>
-        <span class="ab-cell"><b class="ab-num">44</b><em class="ab-unit" data-es="/CLIENTES&lt;br&gt;DE AGENCIA" data-it="/CLIENTI&lt;br&gt;D’AGENZIA" data-deu="/AGENTUR&lt;br&gt;KUNDEN">/AGENCY<br>CLIENTS</em></span>
-        <span class="ab-cell"><b class="ab-num">12</b><em class="ab-unit" data-es="/SHOWS&lt;br&gt;EN VIVO" data-it="/SHOW&lt;br&gt;DAL VIVO" data-deu="/LIVE&lt;br&gt;SHOWS">/LIVE<br>SHOWS</em></span>
+        <a class="ab-cell ab-cell-hov ab-cell-link" href="logofolio.html"><b class="ab-num">78</b><em class="ab-unit" data-es="// identidades de marca" data-it="// identità di marca" data-deu="// markenidentitäten">// brand identities</em><span class="ab-more" aria-hidden="true"><i data-es="Ver mi" data-it="Vedi il mio" data-deu="Mein">See my</i><i data-es="Logofolio" data-it="Logofolio" data-deu="Logofolio ansehen">Logofolio</i></span></a>
+        <span class="ab-cell"><b class="ab-num">44</b><em class="ab-unit" data-es="// clientes de agencia" data-it="// clienti d’agenzia" data-deu="// agenturkunden">// agency clients</em></span>
+        <span class="ab-cell"><b class="ab-num">12</b><em class="ab-unit" data-es="// shows en vivo" data-it="// show dal vivo" data-deu="// live-shows">// live shows</em></span>
       </div>
       <div class="ab-row">
         <span class="ab-label" data-es="EXPERIENCIA" data-it="ESPERIENZA" data-deu="ERFAHRUNG">EXPERIENCE</span>
-        <span class="ab-cell ab-cell-hov"><b class="ab-num">06</b><em class="ab-unit" data-es="/AÑOS&lt;br&gt;EN DISEÑO" data-it="/ANNI&lt;br&gt;NEL DESIGN" data-deu="/JAHRE&lt;br&gt;IM DESIGN">/YEARS<br>IN DESIGN</em><span class="ab-more" aria-hidden="true"><i data-es="Diseñadora &amp; VJ" data-it="Designer e VJ" data-deu="Designerin &amp; VJ">Designer &amp; VJ</i><i data-es="Basada en Argentina" data-it="Con sede in Argentina" data-deu="Ansässig in Argentinien">Based in Argentina</i><i class="ab-more-tag">[ Working worldwide ]</i></span></span>
-        <span class="ab-cell ab-cell-hov"><b class="ab-num">04</b><em class="ab-unit" data-es="/IDIOMAS&lt;br&gt;QUE HABLO" data-it="/LINGUE&lt;br&gt;PARLATE" data-deu="/SPRACHEN&lt;br&gt;GESPROCHEN">/LANGUAGES<br>SPOKEN</em><span class="ab-more" aria-hidden="true"><i>Spanish <u data-es="/ nativo" data-it="/ madrelingua" data-deu="/ Muttersprache">/ native</u></i><i>English</i><i>Italian</i><i>Deutsch</i></span></span>
-        <span class="ab-cell"><b class="ab-num">03</b><em class="ab-unit" data-es="/AÑOS&lt;br&gt;EN VISUALES" data-it="/ANNI&lt;br&gt;NEI VISUAL" data-deu="/JAHRE&lt;br&gt;IN VISUALS">/YEARS<br>IN VISUALS</em></span>
+        <span class="ab-cell ab-cell-hov"><b class="ab-num">06</b><em class="ab-unit" data-es="// años en diseño" data-it="// anni nel design" data-deu="// jahre im design">// years in design</em><span class="ab-more" aria-hidden="true"><i data-es="Diseñadora &amp; VJ" data-it="Designer e VJ" data-deu="Designerin &amp; VJ">Designer &amp; VJ</i><i data-es="Basada en Argentina" data-it="Con sede in Argentina" data-deu="Ansässig in Argentinien">Based in Argentina</i><i class="ab-more-tag">[ Working worldwide ]</i></span></span>
+        <span class="ab-cell ab-cell-hov"><b class="ab-num">04</b><em class="ab-unit" data-es="// idiomas que hablo" data-it="// lingue parlate" data-deu="// gesprochene sprachen">// languages spoken</em><span class="ab-more" aria-hidden="true"><i>Spanish <u data-es="/ nativo" data-it="/ madrelingua" data-deu="/ Muttersprache">/ native</u></i><i>English</i><i>Italian</i><i>Deutsch</i></span></span>
+        <span class="ab-cell"><b class="ab-num">03</b><em class="ab-unit" data-es="// años en visuales" data-it="// anni nei visual" data-deu="// jahre in visuals">// years in visuals</em></span>
       </div>
     </div>
 <div class="about-credit">© digitalpaula</div>
   </section>
 
   <!-- ============ CONTACTO ============ -->
-    <section class="blk ink contact-hero" id="contacto" data-sl-sec="4">
+    <section class="blk ink contact-hero lt-sec" id="contacto" data-sl-sec="4">
     <div class="slabel" data-sec="4">
       <span class="sl-left"><b>04</b><span class="sl-sep">/</span><span class="sl-name" data-es="Contacto" data-it="Contatti" data-deu="Kontakt">Contact</span></span>
       <span class="sl-right"><span data-es="ACTIVA" data-it="ATTIVA" data-deu="AKTIV">ACTIVE</span> <b class="sl-now">01</b><span class="sl-sep">/</span><b>04</b></span>
     </div>
-    <!-- rediseno ref "lets talk new-14.svg" de Paula. Todas las posiciones salen de MEDIR
-         el svg (bbox real de cada trazo) y convertirlas de coordenadas de TINTA a
-         coordenadas CSS de caja, descontando el side-bearing de cada glifo y la distancia
-         de la linea de base al top de la caja — por eso los left/top no son numeros
-         redondos. El fondo (video + ventana scan) queda intacto, como pidio. -->
-    <div class="cs-lienzo">
-    <div class="contact-tag">[ <span data-es="¿TENÉS PROYECTOS?" data-it="HAI PROGETTI?" data-deu="HAST DU PROJEKTE?">GOT PROJECTS?</span> ]</div>
-
-    <!-- "LET'S TALK" disperso, mismo criterio que el wordmark del hero: texto vivo
-         posicionado (no vectorizado), asi se selecciona, se traduce y escala solo.
-         El "top" de cada letra salio de medir el bbox de tinta de cada una por separado
-         en el svg de referencia, con pequenios errores de un par de px entre letras.
-         En el svg original todas son UN mismo <text>, asi que comparten linea de base real:
-         re-nivelado a un solo top% por palabra (excepto el apostrofe, que va mas arriba
-         a proposito). -->
-    <div class="cs-type" role="img" aria-label="Let's talk">
-      <span class="cs-word"><span class="cs-ch" style="left:5.56%;top:21.62%">L</span><span class="cs-ch" style="left:20.6%;top:21.62%">E</span><span class="cs-ch" style="left:35.4%;top:21.62%">T</span><span class="cs-ch cs-ap" style="left:47.39%;top:16.44%">'</span><span class="cs-ch" style="left:52.46%;top:21.62%">S</span></span>
-      <span class="cs-word"><span class="cs-ch" style="left:35.75%;top:58.39%">T</span><span class="cs-ch" style="left:51.13%;top:58.39%">A</span><span class="cs-ch" style="left:68.78%;top:58.39%">L</span><span class="cs-ch" style="left:83.94%;top:58.39%">K</span></span>
+    <!-- LET'S TALK nuevo (ref "new lets talk-01-01.svg" de Paula, 2026-10-05). Posiciones
+         medidas sobre el svg (lienzo 1920x1080) y pasadas a vw: x/19.2. Fondo = "efecto ball
+         2.mp4" desenfocado + placa negra al 60% (pedido de Paula). El formulario manda los
+         mensajes con Web3Forms (ver LT_KEY en el JS): el sitio es estatico y no tiene donde
+         recibirlos, Web3Forms los recibe y los reenvia al mail de Paula. -->
+    <div class="lt-bg" aria-hidden="true">
+      <video class="lt-vid vid-io" src="contact-ball.mp4" poster="contact-ball-poster.jpg" muted loop playsinline preload="none"></video>
+      <span class="lt-dim"></span>
     </div>
+    <div class="lt">
+      <div class="lt-tag" data-es="[ ¿tenés proyectos? ]" data-it="[ hai progetti? ]" data-deu="[ hast du projekte? ]">[ got projects? ]</div>
+      <h2 class="lt-title" aria-label="Let's talk"><span>Let’s</span><span>Talk</span></h2>
 
-    <div class="cs-info">
-      <span class="cs-info-label" data-es="Consultas comerciales" data-it="Richiesta di lavoro" data-deu="Geschäftliche Anfrage">Business enquiry</span>
-      <span class="cs-info-mail">
-        <a class="contact-mail" href="mailto:contactdigitalpaula@gmail.com" draggable="false">contactdigitalpaula@gmail.com</a>
-        <button class="contact-mail-copy" type="button" data-mail="contactdigitalpaula@gmail.com" aria-label="Copy email" data-tip-es="Copiar mail" data-tip-it="Copia email" data-tip-deu="E-Mail kopieren">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="8" y="8" width="13" height="13" rx="2"></rect>
-            <path d="M4.5 16.5H4a1.5 1.5 0 0 1-1.5-1.5V4A1.5 1.5 0 0 1 4 2.5h11a1.5 1.5 0 0 1 1.5 1.5v.5"></path>
-          </svg>
+      <span class="lt-social-lab" data-es="redes" data-it="social" data-deu="netzwerke">social</span>
+      <div class="lt-social">
+        <a href="https://instagram.com/digitalpaula_" target="_blank" rel="noopener" aria-label="Instagram"><svg class="lt-ic" viewBox="0 0 40.7 40.8" fill="currentColor" aria-hidden="true"><g transform="translate(-118.52 -925.97)"><path d="M147.73,966.78h-17.57c-6.32.01-11.64-5.09-11.64-11.43v-17.98c0-6.19,5.18-11.4,11.37-11.4h18.14c6.07.02,11.23,5.17,11.23,11.24v18.14c.01,6.28-5.22,11.29-11.54,11.43ZM148.11,963.02c3.93,0,7.34-3.36,7.34-7.24l.02-18.56c0-3.89-3.43-7.3-7.26-7.3h-18.62c-3.82,0-7.26,3.41-7.26,7.3l.02,18.55c0,4.03,3.61,7.28,7.58,7.28l18.18-.03Z"></path> <path d="M137.21,935.99c5.93-.95,11.29,3.1,12.18,8.85s-3.05,11.2-8.86,12.1c-5.69.89-11.1-2.97-12.08-8.68s2.81-11.32,8.76-12.27ZM137.65,939.74c-3.83.71-6.15,4.38-5.47,7.96s4.28,6.17,7.99,5.47c3.65-.68,6.11-4.22,5.47-7.87s-4.14-6.28-7.99-5.56Z"></path> <path d="M149.27,933.05c1.45-.33,2.7.57,2.98,1.84.3,1.37-.49,2.71-1.88,3.01-1.29.28-2.6-.46-2.95-1.8-.32-1.25.37-2.71,1.84-3.05Z"></path></g></svg></a>
+        <a href="https://www.behance.net/paulatoniolo1" target="_blank" rel="noopener" aria-label="Behance"><svg class="lt-ic" viewBox="0 0 45.1 28.8" fill="currentColor" aria-hidden="true"><g transform="translate(-219.76 -932.13)"><path d="M238.62,945.09c2.6,1.34,3.91,3.32,4.07,6,.31,5.13-3.41,8.99-8.58,9.02l-14.35.09v-28.07s14.93.14,14.93.14c4.39.04,7.54,3.42,7.04,7.73-.02,2.09-.9,3.7-3.12,5.1ZM233.34,943.12c2.22-.02,3.09-1.77,2.92-3.51s-1.63-2.57-3.49-2.57l-7.49.02.05,6.14,8.01-.09ZM236.84,951.48c.03-2.2-1.37-3.58-3.53-3.6l-7.97-.08-.06,7.45,7.78.03c2.28,0,3.75-1.51,3.78-3.8Z"></path> <path d="M254.96,956.5c1.84-.05,3.3-.78,4.09-2.38l5.58-.05c-1.03,4.1-4.84,6.69-9.2,6.8-3.74.09-7.46-1.21-9.56-4.39-1.57-2.38-1.58-5.31-1.46-8.03.25-5.88,4.73-9.68,10.43-9.57,5.28.11,9.4,3.46,9.88,8.94l.09,3.47h-15c-.2,3.09,2.07,5.29,5.15,5.2ZM259.24,947.62c-.17-2.8-2.15-4.18-4.41-4.23-2.71-.32-4.79,1.73-4.88,4.38l9.29-.15Z"></path> <polygon points="260.3 936.54 248.15 936.55 248.14 933.81 260.32 933.82 260.3 936.54"></polygon></g></svg></a>
+        <a href="https://www.linkedin.com/in/paula-toniolo-pellegrini/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="lt-ic" viewBox="0 0 32.7 33.1" fill="currentColor" aria-hidden="true"><g transform="translate(-331.99 -928.83)"><path d="M356.47,946.05c-1.36-1-3.51-.77-4.74.23-1.08.88-1.2,2.18-1.42,3.51l-.02,12.1-6.78.02v-21.89s6.56,0,6.56,0c0,.82-.23,1.59.18,2.67,1.64-2.32,4.08-3.33,6.81-3.21,5.01.22,7.05,2.79,7.53,7.72l.07,14.67h-6.71s-.04-12.08-.04-12.08c-.15-1.34-.19-2.82-1.44-3.74Z"></path> <polygon points="339.23 961.88 332.47 961.88 332.46 940.01 339.24 940.01 339.23 961.88"></polygon> <path d="M335.25,929.19c2.32-.36,4.19,1.31,4.47,3.28.31,2.21-1.16,4.13-3.22,4.47-2.2.36-4.12-1.06-4.51-3.13s.95-4.26,3.26-4.62Z"></path></g></svg></a>
+        <a href="https://wa.me/5493424064399" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="lt-ic" viewBox="0 0 40.7 40.4" fill="currentColor" aria-hidden="true"><g transform="translate(-443.60 -926.21)"><path d="M466.22,926.21c0,.07.12.15.21.13.39-.09.61.07.93.13,8.65,1.4,15.36,8.16,16.73,16.8l.23.94v4.5l-.22.96c-.62,3.42-1.97,6.61-4.19,9.27l-.42.51c-3.22,3.86-7.79,6.25-12.8,6.87-.47.06-.81.25-1.3.12-.09-.02-.22.08-.21.13h-2.54c-.02-.09-.2-.16-.33-.13-.46.1-.78-.05-1.19-.11-2.47-.39-4.8-1.15-7-2.32-.28-.15-.6-.15-.9-.06l-8.7,2.46c-.12.03-.18.11-.22.16h-.58l2.61-9.28c.15-.53.07-.86-.2-1.32-1.35-2.38-2.1-4.99-2.53-7.61l.07-4.26c.24-1.83.67-3.57,1.37-5.27,2.85-6.92,9.23-11.64,16.58-12.55l4.58-.05ZM453.5,960.85c.39-.11.81-.22,1.15,0,2.98,1.93,6.38,2.79,9.97,2.7,5.82-.14,11.09-3.29,14.17-8.14,4.83-7.62,2.82-17.65-4.55-22.87-2.97-2.11-6.49-3.28-10.22-3.45-6.77-.31-13.05,4.06-15.89,10.05-2.47,5.21-2.12,11.3,1.04,16.1.34.51.55.87.36,1.51-.55,1.85-1.18,3.64-1.65,5.65l5.62-1.53Z"></path> <path d="M468.65,948.99c.19-.21.63-.21.85-.1,1.51.74,2.96,1.42,4.56,1.97.65,1.49.28,3.13-.94,4.14-1.67,1.38-3.73,1.65-5.76.93-2.26-.8-4.41-1.65-6.4-3.05-3.06-2.15-5.5-5-7.15-8.37-1.17-2.38-.66-6.03,1.67-7.34.81-.45,1.78-.41,2.65-.12.69,1.33,1.29,2.64,1.78,4.05.33.96.04,1.91-.61,2.64l-.7.8c-.18.2-.26.51-.11.77,1.6,2.75,4.05,4.76,6.99,5.94.38.15.74.3,1.07-.04l2.09-2.23Z"></path></g></svg></a>
+      </div>
+      <a class="lt-mail" href="mailto:contactdigitalpaula@gmail.com">contactdigitalpaula@gmail.com</a>
+
+      <form class="lt-form" id="ltForm" novalidate>
+        <input type="checkbox" name="botcheck" class="lt-trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="lt-f lt-name"><span class="lt-lab" data-es="nombre *" data-it="nome *" data-deu="name *">name *</span>
+          <input name="name" type="text" autocomplete="name" required></label>
+        <label class="lt-f lt-corp"><span class="lt-lab" data-es="empresa" data-it="azienda" data-deu="firma">corporation</span>
+          <input name="company" type="text" autocomplete="organization"></label>
+        <label class="lt-f lt-email"><span class="lt-lab" data-es="email *" data-it="email *" data-deu="e-mail *">email *</span>
+          <input name="email" type="email" autocomplete="email" required></label>
+        <label class="lt-f lt-tel"><span class="lt-lab" data-es="celular" data-it="cellulare" data-deu="handy">cellphone</span>
+          <input name="phone" type="tel" autocomplete="tel"></label>
+        <label class="lt-f lt-subj lt-sobre"><span class="lt-lab" data-es="asunto" data-it="oggetto" data-deu="betreff">subject</span>
+          <select name="subject">
+            <option value="" selected></option>
+            <option value="Branding" data-es="branding" data-it="branding" data-deu="branding">branding</option>
+            <option value="VJ & live visuals" data-es="vj y visuales en vivo" data-it="vj e visual live" data-deu="vj &amp; live visuals">vj &amp; live visuals</option>
+            <option value="Creative direction" data-es="dirección creativa" data-it="direzione creativa" data-deu="kreativdirektion">creative direction</option>
+            <option value="Web design" data-es="diseño web" data-it="web design" data-deu="webdesign">web design</option>
+            <option value="3D & motion" data-es="3d y motion" data-it="3d e motion" data-deu="3d &amp; motion">3d &amp; motion</option>
+            <option value="Data visualization" data-es="visualización de datos" data-it="visualizzazione dati" data-deu="datenvisualisierung">data visualization</option>
+            <option value="Other" data-es="otra cosa" data-it="altro" data-deu="etwas anderes">something else</option>
+          </select>
+          <svg class="lt-chev" viewBox="0 0 14 8" aria-hidden="true"><polyline points="1 1 7 7 13 1"/></svg></label>
+        <label class="lt-f lt-msg lt-sobre"><span class="lt-lab" data-es="contame brevemente qué tenés en mente *" data-it="raccontami in breve cosa hai in mente *" data-deu="erzähl mir kurz, was du vorhast *">tell me briefly about what you have in mind *</span>
+          <textarea name="message" rows="1" required></textarea></label>
+        <span class="lt-estado" id="ltEstado" role="status" aria-live="polite"></span>
+        <button class="lt-send" type="submit" aria-label="Send">
+          <svg viewBox="0 0 62 62" aria-hidden="true"><polyline points="2 2 60 2 60 60"/><line x1="6" y1="56" x2="60" y2="2"/></svg>
         </button>
-      </span>
-      <a class="cs-info-tel" href="https://wa.me/5493424064399" target="_blank" rel="noopener">+ 54 342 4064 399</a>
-    </div>
-
-    <span class="cs-social-label" data-es="Redes" data-it="Social" data-deu="Netzwerke">Social</span>
-    <div class="cs-social">
-      <a href="https://instagram.com/digitalpaula_" target="_blank" rel="noopener" aria-label="Instagram"><svg class="cs-ic" viewBox="0 0 40.7 40.8" fill="currentColor" aria-hidden="true"><g transform="translate(-118.52 -925.97)"><path d="M147.73,966.78h-17.57c-6.32.01-11.64-5.09-11.64-11.43v-17.98c0-6.19,5.18-11.4,11.37-11.4h18.14c6.07.02,11.23,5.17,11.23,11.24v18.14c.01,6.28-5.22,11.29-11.54,11.43ZM148.11,963.02c3.93,0,7.34-3.36,7.34-7.24l.02-18.56c0-3.89-3.43-7.3-7.26-7.3h-18.62c-3.82,0-7.26,3.41-7.26,7.3l.02,18.55c0,4.03,3.61,7.28,7.58,7.28l18.18-.03Z"></path> <path d="M137.21,935.99c5.93-.95,11.29,3.1,12.18,8.85s-3.05,11.2-8.86,12.1c-5.69.89-11.1-2.97-12.08-8.68s2.81-11.32,8.76-12.27ZM137.65,939.74c-3.83.71-6.15,4.38-5.47,7.96s4.28,6.17,7.99,5.47c3.65-.68,6.11-4.22,5.47-7.87s-4.14-6.28-7.99-5.56Z"></path> <path d="M149.27,933.05c1.45-.33,2.7.57,2.98,1.84.3,1.37-.49,2.71-1.88,3.01-1.29.28-2.6-.46-2.95-1.8-.32-1.25.37-2.71,1.84-3.05Z"></path></g></svg></a>
-      <a href="https://www.behance.net/paulatoniolo1" target="_blank" rel="noopener" aria-label="Behance"><svg class="cs-ic" viewBox="0 0 45.1 28.8" fill="currentColor" aria-hidden="true"><g transform="translate(-219.76 -932.13)"><path d="M238.62,945.09c2.6,1.34,3.91,3.32,4.07,6,.31,5.13-3.41,8.99-8.58,9.02l-14.35.09v-28.07s14.93.14,14.93.14c4.39.04,7.54,3.42,7.04,7.73-.02,2.09-.9,3.7-3.12,5.1ZM233.34,943.12c2.22-.02,3.09-1.77,2.92-3.51s-1.63-2.57-3.49-2.57l-7.49.02.05,6.14,8.01-.09ZM236.84,951.48c.03-2.2-1.37-3.58-3.53-3.6l-7.97-.08-.06,7.45,7.78.03c2.28,0,3.75-1.51,3.78-3.8Z"></path> <path d="M254.96,956.5c1.84-.05,3.3-.78,4.09-2.38l5.58-.05c-1.03,4.1-4.84,6.69-9.2,6.8-3.74.09-7.46-1.21-9.56-4.39-1.57-2.38-1.58-5.31-1.46-8.03.25-5.88,4.73-9.68,10.43-9.57,5.28.11,9.4,3.46,9.88,8.94l.09,3.47h-15c-.2,3.09,2.07,5.29,5.15,5.2ZM259.24,947.62c-.17-2.8-2.15-4.18-4.41-4.23-2.71-.32-4.79,1.73-4.88,4.38l9.29-.15Z"></path> <polygon points="260.3 936.54 248.15 936.55 248.14 933.81 260.32 933.82 260.3 936.54"></polygon></g></svg></a>
-      <a href="https://www.linkedin.com/in/paula-toniolo-pellegrini/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="cs-ic" viewBox="0 0 32.7 33.1" fill="currentColor" aria-hidden="true"><g transform="translate(-331.99 -928.83)"><path d="M356.47,946.05c-1.36-1-3.51-.77-4.74.23-1.08.88-1.2,2.18-1.42,3.51l-.02,12.1-6.78.02v-21.89s6.56,0,6.56,0c0,.82-.23,1.59.18,2.67,1.64-2.32,4.08-3.33,6.81-3.21,5.01.22,7.05,2.79,7.53,7.72l.07,14.67h-6.71s-.04-12.08-.04-12.08c-.15-1.34-.19-2.82-1.44-3.74Z"></path> <polygon points="339.23 961.88 332.47 961.88 332.46 940.01 339.24 940.01 339.23 961.88"></polygon> <path d="M335.25,929.19c2.32-.36,4.19,1.31,4.47,3.28.31,2.21-1.16,4.13-3.22,4.47-2.2.36-4.12-1.06-4.51-3.13s.95-4.26,3.26-4.62Z"></path></g></svg></a>
-      <a href="https://wa.me/5493424064399" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="cs-ic" viewBox="0 0 40.7 40.4" fill="currentColor" aria-hidden="true"><g transform="translate(-443.60 -926.21)"><path d="M466.22,926.21c0,.07.12.15.21.13.39-.09.61.07.93.13,8.65,1.4,15.36,8.16,16.73,16.8l.23.94v4.5l-.22.96c-.62,3.42-1.97,6.61-4.19,9.27l-.42.51c-3.22,3.86-7.79,6.25-12.8,6.87-.47.06-.81.25-1.3.12-.09-.02-.22.08-.21.13h-2.54c-.02-.09-.2-.16-.33-.13-.46.1-.78-.05-1.19-.11-2.47-.39-4.8-1.15-7-2.32-.28-.15-.6-.15-.9-.06l-8.7,2.46c-.12.03-.18.11-.22.16h-.58l2.61-9.28c.15-.53.07-.86-.2-1.32-1.35-2.38-2.1-4.99-2.53-7.61l.07-4.26c.24-1.83.67-3.57,1.37-5.27,2.85-6.92,9.23-11.64,16.58-12.55l4.58-.05ZM453.5,960.85c.39-.11.81-.22,1.15,0,2.98,1.93,6.38,2.79,9.97,2.7,5.82-.14,11.09-3.29,14.17-8.14,4.83-7.62,2.82-17.65-4.55-22.87-2.97-2.11-6.49-3.28-10.22-3.45-6.77-.31-13.05,4.06-15.89,10.05-2.47,5.21-2.12,11.3,1.04,16.1.34.51.55.87.36,1.51-.55,1.85-1.18,3.64-1.65,5.65l5.62-1.53Z"></path> <path d="M468.65,948.99c.19-.21.63-.21.85-.1,1.51.74,2.96,1.42,4.56,1.97.65,1.49.28,3.13-.94,4.14-1.67,1.38-3.73,1.65-5.76.93-2.26-.8-4.41-1.65-6.4-3.05-3.06-2.15-5.5-5-7.15-8.37-1.17-2.38-.66-6.03,1.67-7.34.81-.45,1.78-.41,2.65-.12.69,1.33,1.29,2.64,1.78,4.05.33.96.04,1.91-.61,2.64l-.7.8c-.18.2-.26.51-.11.77,1.6,2.75,4.05,4.76,6.99,5.94.38.15.74.3,1.07-.04l2.09-2.23Z"></path></g></svg></a>
-    </div>
-    <div class="contact-credit">© digitalpaula</div>
+      </form>
     </div>
   </section>
 
@@ -3785,6 +4113,7 @@ function setLang(l){
   // el swap de arriba reescribio el innerHTML: hay que reponer los espacios duros
   if(typeof arreglarViudasHero === 'function') arreglarViudasHero();
   if(typeof arreglarViudasManifiesto === 'function') arreglarViudasManifiesto();
+  if(typeof window.twRefrescar === 'function') window.twRefrescar();
 }
 /* ---------- VIUDAS DEL HERO ----------
    El hero no tenia ninguna proteccion: la que ya existia vive adentro del overlay de
@@ -3838,7 +4167,7 @@ function atarUltimasPalabras(el, cuantas){
 }
 const arreglarViudasManifiesto = ()=>{
   const lineas = [...document.querySelectorAll('.manifesto-lines .ml-line:not(.ml-cta)')];
-  atarUltimasPalabras(lineas[lineas.length - 1], 3);
+  atarUltimasPalabras(lineas[lineas.length - 1], 2);   // 2 y no 3: con la escala nueva "connections through design." atado no entra en un telefono
   atarUltimasPalabras(document.querySelector('.ml-cta'), 3);
 };
 arreglarViudasManifiesto();
@@ -4649,6 +4978,7 @@ arreglarViudasHero();
   const C = l => `work/camalote-seeds/${l}.jpg`;
   const MK = l => `work/malika/${l}.jpg`;
   const Y  = l => `work/yotto-set/${l}.mp4`;
+  const RY = l => `work/ruido-y-orden/${l}.jpg`;
   const PROJECTS = {
     '492-media-group': {
       name: '492 Media Group',
@@ -4844,6 +5174,10 @@ arreglarViudasHero();
           es:'Visuales en vivo para Yotto en Lemon Arena. La pantalla no es una pantalla: son tres, un panel central y dos laterales, y <b>cada clip había que construirlo para las tres a la vez.</b>',
           it:'Visual live per Yotto al Lemon Arena. Lo schermo non è uno schermo: sono tre, un pannello centrale e due laterali, e <b>ogni clip andava costruita per tutti e tre insieme.</b>',
           deu:'Live Visuals für Yotto in der Lemon Arena. Der Screen ist nicht ein Screen: es sind drei, ein Mittelpanel und zwei Seiten, und <b>jeder Clip musste für alle drei zugleich gebaut werden.</b>' },
+        // el reel real de la fecha (9:16, grabado en vertical): va como bloque angosto
+        // para que se vea en su proporcion. Estaba en la fila del archivo, pero ahi la
+        // celda es 16/10 y lo recortaba a una franja del medio.
+        { type:'img', src:'work/yotto/reel-thumb.mp4', ar:'9/16', w:'330px' },
         { type:'img', src:Y('blades'), ar:'3/1' },
         { type:'img', src:Y('cora'), ar:'3/1' },
         { type:'text', col:2, label:{en:'How it was built',es:'Cómo se construyó'},
@@ -4864,6 +5198,61 @@ arreglarViudasHero();
         // que van de a tres en una linea y no a ancho completo — a ~320px cada uno
         // ocupan lo mismo que un clip de 3:1 y no compiten con las piezas del show.
         { type:'trio', src:[Y('proceso-01'),Y('proceso-02'),Y('proceso-03')], ar:'9/16' }
+      ]
+    },
+    /* SALON DE ARTES VISUALES — entrada MINIMA a proposito.
+       De este proyecto solo hay material en la carpeta del logofolio: dos capturas de 900px
+       y el logo. No hay ano, ni rol detallado, ni fotos de aplicacion, y NO se inventan: el
+       bloque de Ano se esconde solo cuando falta (ver arriba) y el texto describe unicamente
+       lo que se puede leer en las piezas -el monograma y donde se usa-. Cuando Paula pase
+       mas material y el relato, esto crece como los demas: un texto lede, piezas, un texto
+       de "como lo resolvi" y el despliegue. */
+    'salon-artes-visuales': {
+      name: 'Sal\u00f3n de Artes Visuales',
+      titleHTML: 'Sal\u00f3n <em>de Artes Visuales</em>',
+      role: { en:'Brand identity', es:'Identidad de marca', it:'Identit\u00e0 di marca', deu:'Markenidentit\u00e4t' },
+      cat: { en:'Art Exhibition', es:'Muestra de arte', it:'Mostra d\u2019arte', deu:'Kunstausstellung' },
+      location: 'Santa Fe',
+      blocks: [
+        { type:'text', lede:true, label:{en:'The mark',es:'La marca'},
+          en:'The annual Litoral salon of visual arts, at the Alianza Francesa de Santa Fe. The mark is <b>a monogram built out of the room itself</b>: the S, the L and the A cut from the same few shapes \u2014 a bar, a quarter turn, a triangle \u2014 with two red dots as the only colour.',
+          es:'El sal\u00f3n anual del Litoral de artes visuales, en la Alianza Francesa de Santa Fe. La marca es <b>un monograma hecho con las mismas pocas formas</b>: la S, la L y la A recortadas de una barra, un cuarto de giro y un tri\u00e1ngulo \u2014 con dos puntos rojos como \u00fanico color.',
+          it:'Il salone annuale del Litoral di arti visive, all\u2019Alianza Francesa de Santa Fe. Il marchio \u00e8 <b>un monogramma costruito con le stesse poche forme</b>: la S, la L e la A ricavate da una barra, un quarto di giro e un triangolo \u2014 con due punti rossi come unico colore.',
+          deu:'Der j\u00e4hrliche Litoral-Salon f\u00fcr visuelle Kunst, an der Alianza Francesa de Santa Fe. Das Zeichen ist <b>ein Monogramm aus immer denselben wenigen Formen</b>: S, L und A, geschnitten aus einem Balken, einer Vierteldrehung und einem Dreieck \u2014 mit zwei roten Punkten als einziger Farbe.' },
+        { type:'pair', src:['work/salon-artes-visuales/a.jpg','work/salon-artes-visuales/b.jpg'], ar:'16/9' }
+      ]
+    },
+    'ruido-y-orden': {
+      name: 'Ruido y Orden',
+      titleHTML: 'Ruido <em>y Orden</em>',
+      year: '2026',
+      role: { en:'Brand identity, brand guidelines, motion', es:'Identidad de marca, manual de marca, motion', it:'Identità di marca, brand guidelines, motion', deu:'Markenidentität, Brand Guidelines, Motion' },
+      cat: { en:'Branding', es:'Branding', it:'Branding', deu:'Branding' },
+      location: 'Santa Fe',
+      // abre con la animacion porque el isotipo se entiende mejor armandose que quieto:
+      // es una sinapsis encendiendose, y el video lo muestra en 16 segundos.
+      blocks: [
+        { type:'text', lede:true, label:{en:'What they wanted',es:'Qué quería el cliente'},
+          en:'A podcast about neuroscience, women and biology, hosted by two people who take apart how a person is built. The name sounds like two things fighting, and it is the opposite: <b>first the noise, then an order that was already there.</b> What looks like chance usually has latent structure — and you don’t find it by looking harder, but by knowing what to look at.',
+          es:'Un podcast de neurociencia, mujeres y biología, conducido por dos personas que desarman cómo está hecha una persona. El nombre suena a dos cosas peleándose, y es al revés: <b>primero el ruido, después un orden que ya estaba ahí.</b> Lo que parece azar suele tener estructura latente — y no se ve mirando más fuerte, sino sabiendo qué mirar.',
+          it:'Un podcast di neuroscienze, donne e biologia, condotto da due persone che smontano come è fatta una persona. Il nome sembra due cose che litigano, ed è il contrario: <b>prima il rumore, poi un ordine che era già lì.</b> Quello che sembra caso di solito ha una struttura latente — e non si vede guardando più forte, ma sapendo cosa guardare.',
+          deu:'Ein Podcast über Neurowissenschaft, Frauen und Biologie, geführt von zwei Menschen, die auseinandernehmen, wie ein Mensch gebaut ist. Der Name klingt nach zwei Dingen, die sich streiten, und ist das Gegenteil: <b>zuerst das Rauschen, dann eine Ordnung, die schon da war.</b> Was wie Zufall aussieht, hat meist eine latente Struktur — und man sieht sie nicht, indem man stärker hinschaut, sondern indem man weiß, wohin.' },
+        { type:'img', src:'work/ruido-y-orden/animation.mp4', ar:'16/9' },
+        { type:'pair', src:[RY('campo-glow'),RY('campo-ondas')], ar:'16/9' },
+        { type:'text', col:2, label:{en:'How I solved it',es:'Cómo lo resolví'},
+          en:'The mark is a synapse: a field of nodes and a hub firing connections out of it. Everything comes off a single module — spacing, stroke, clear space, the lot. Two decisions carry the idea. The hub sits <b>off centre on purpose: order is not symmetry.</b> And four nodes receive no connection at all — smaller, waiting. <b>That is the structure that is there but not yet.</b>',
+          es:'El isotipo es una sinapsis: un campo de nodos y un centro que dispara conexiones hacia afuera. Todo sale de un solo módulo — el paso de la retícula, el trazo, el resguardo, todo. Dos decisiones sostienen la idea. El centro está <b>corrido a propósito: el orden no es simetría.</b> Y hay cuatro nodos que no reciben ninguna conexión — más chicos, esperando. <b>Esa es la estructura que está, pero todavía no.</b>',
+          it:'Il marchio è una sinapsi: un campo di nodi e un centro che spara connessioni verso l’esterno. Tutto nasce da un solo modulo — passo della griglia, tratto, area di rispetto, tutto. Due decisioni reggono l’idea. Il centro è <b>spostato apposta: l’ordine non è simmetria.</b> E quattro nodi non ricevono nessuna connessione — più piccoli, in attesa. <b>Quella è la struttura che c’è, ma non ancora.</b>',
+          deu:'Das Zeichen ist eine Synapse: ein Feld aus Knoten und ein Zentrum, das Verbindungen nach außen feuert. Alles leitet sich aus einem einzigen Modul ab — Rasterschritt, Strichstärke, Schutzraum, alles. Zwei Entscheidungen tragen die Idee. Das Zentrum sitzt <b>absichtlich außermittig: Ordnung ist nicht Symmetrie.</b> Und vier Knoten bekommen gar keine Verbindung — kleiner, wartend. <b>Das ist die Struktur, die da ist, aber noch nicht.</b>' },
+        { type:'img', src:RY('construccion'), ar:'17/10' },
+        { type:'pair', src:[RY('particulas'),RY('tipografia')], ar:'16/9' },
+        { type:'text', col:3, label:{en:'The rollout',es:'El despliegue'},
+          en:'A manual of nine chapters, six official versions of the mark — including a reduction family for small sizes — and a palette of two colours <b>that never touch each other</b> (side by side they are illegible; each one holds the field on its own, with the mark in white on top). Plus sixteen seconds of animation where the thing builds itself.',
+          es:'Un manual de nueve capítulos, seis versiones oficiales de la marca — incluida una familia de reducción para tamaños chicos — y una paleta de dos colores <b>que nunca se tocan entre sí</b> (juntos son ilegibles; cada uno sostiene el campo solo, con la marca en blanco encima). Más dieciséis segundos de animación donde la marca se arma sola.',
+          it:'Un manuale di nove capitoli, sei versioni ufficiali del marchio — inclusa una famiglia di riduzione per le misure piccole — e una palette di due colori <b>che non si toccano mai tra loro</b> (accostati sono illeggibili; ognuno regge il campo da solo, con il marchio in bianco sopra). Più sedici secondi di animazione in cui il marchio si costruisce da sé.',
+          deu:'Ein Manual mit neun Kapiteln, sechs offizielle Versionen der Marke — inklusive einer Reduktionsfamilie für kleine Größen — und eine Palette aus zwei Farben, <b>die einander nie berühren</b> (nebeneinander sind sie unlesbar; jede trägt das Feld für sich, mit der Marke in Weiß darauf). Dazu sechzehn Sekunden Animation, in denen sich die Marke selbst aufbaut.' },
+        { type:'img', src:RY('tarjeta'), ar:'16/9' },
+        { type:'img', src:RY('poster'), ar:'4/3' }
       ]
     },
   };
@@ -4917,6 +5306,7 @@ arreglarViudasHero();
   const titleEl=document.getElementById('wovTitle'), yearEl=document.getElementById('wovYear'),
     roleEl=document.getElementById('wovRole'), catEl=document.getElementById('wovCat'),
     locationWrapEl=document.getElementById('wovLocationWrap'), locationEl=document.getElementById('wovLocation'),
+    yearWrapEl=document.getElementById('wovYearWrap'),
     blocksEl=document.getElementById('wovBlocks'),
     backBtn=document.getElementById('wovBack'), closeBtn=document.getElementById('wovClose'),
     nextEl=document.getElementById('wovNext');
@@ -5095,7 +5485,9 @@ arreglarViudasHero();
   function renderProject(id, p){
     const lang = currentLang();
     titleEl.innerHTML = p.titleHTML || p.name;
-    yearEl.textContent = p.year;
+    /* Sin ano no se inventa uno: se esconde el bloque, igual que Ubicacion. */
+    yearWrapEl.hidden = !p.year;
+    if(p.year) yearEl.textContent = p.year;
     roleEl.textContent = t(p.role, lang);
     catEl.textContent = t(p.cat, lang);
     locationWrapEl.hidden = !p.location;
@@ -5165,6 +5557,251 @@ arreglarViudasHero();
   if(linkDirecto && PROJECTS[linkDirecto[1]]) openProject(linkDirecto[1], {sinHistorial:true});
 })();
 
+
+/* ---------- TEXTO QUE SE ESCRIBE SOLO (ref project-cult.digital) ----------
+   Solo en los lugares que marco Paula (TW_SEL). Al entrar en pantalla cada bloque se tipea
+   letra por letra con un cursor; si vuelve a quedar ENTERO por debajo de la pantalla (se
+   scrolleo para arriba) se borra, y al bajar se escribe de nuevo, como en cult.
+   Las letras se envuelven en <span class="twc"> invisibles DESPUES de que el sistema de
+   idiomas guardo el ingles (TR), asi el diccionario nunca ve estos spans. setLang llama a
+   twRefrescar() para volver a envolver: el texto nuevo aparece completo, sin re-tipear.
+   Chequeo propio por scroll con setTimeout, NO IntersectionObserver ni requestAnimationFrame:
+   esos dos no disparan con la pestania oculta y el texto quedaba invisible para siempre. */
+(function(){
+  const TW_SEL = ['.hc-role .hlink-txt', '.hc-desc .hlink-txt', '.lfh-mid', '.svl-cue .s',
+                  '.svl-tags', '.about-tag', '.ab-label', '.wfilt-q', '.lfx-txt', '.lt-tag', '.lt-lab', '.lt-social-lab'];
+  const CPS = 45;
+  const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const bloques = [...document.querySelectorAll(TW_SEL.join(','))];
+
+  function envolver(el){
+    const nodos = [], w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+      acceptNode: n => (n.parentElement.closest('svg,.twc,.tw-cur') || !n.nodeValue.length)
+        ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    let n; while((n = w.nextNode())) nodos.push(n);
+    nodos.forEach(t => {
+      const f = document.createDocumentFragment();
+      for(const ch of t.nodeValue){
+        // los espacios comunes quedan como texto para que la linea pueda cortar ahi
+        if(ch === ' ' || ch === '\n' || ch === '\t'){ f.appendChild(document.createTextNode(ch)); continue; }
+        const sp = document.createElement('span'); sp.className = 'twc'; sp.textContent = ch;
+        f.appendChild(sp);
+      }
+      t.replaceWith(f);
+    });
+    el._tw = { letras: [...el.querySelectorAll('.twc')], timer: 0, estado: 'vacio' };
+  }
+  const sinCursor = el => el.querySelectorAll('.tw-cur').forEach(c => c.remove());
+  function mostrarTodo(el){
+    const st = el._tw; clearTimeout(st.timer); sinCursor(el);
+    st.letras.forEach(l => l.classList.add('on')); st.estado = 'lleno';
+  }
+  function borrar(el){
+    const st = el._tw; clearTimeout(st.timer); sinCursor(el);
+    st.letras.forEach(l => l.classList.remove('on')); st.estado = 'vacio';
+  }
+  function escribir(el, demora){
+    const st = el._tw; if(st.estado !== 'vacio') return;
+    st.estado = 'escribiendo';
+    const cur = document.createElement('span'); cur.className = 'tw-cur'; cur.setAttribute('aria-hidden', 'true');
+    let i = 0;
+    const paso = () => {
+      if(i >= st.letras.length){ st.estado = 'lleno'; st.timer = setTimeout(() => cur.remove(), 900); return; }
+      const l = st.letras[i++]; l.classList.add('on'); l.after(cur);
+      st.timer = setTimeout(paso, 1000 / CPS * (0.6 + Math.random() * 0.8));
+    };
+    st.timer = setTimeout(paso, demora || 0);
+  }
+
+  bloques.forEach(envolver);
+  if(QUIETO){ bloques.forEach(mostrarTodo); return; }
+
+  function revisar(){
+    const alto = innerHeight; let k = 0;
+    bloques.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if(!r.width && !r.height) return;                 // oculto segun el ancho de pantalla
+      if(r.bottom > 0 && r.top < alto){ if(el._tw.estado === 'vacio') escribir(el, 140 * k++); }
+      else if(r.top >= alto && el._tw.estado !== 'vacio') borrar(el);
+    });
+  }
+  let pedido = false;
+  const pedir = () => { if(pedido) return; pedido = true;
+    setTimeout(() => { pedido = false; revisar(); }, 60); };
+  addEventListener('scroll', pedir, {passive:true});
+  addEventListener('resize', pedir);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(pedir);
+  setTimeout(revisar, 300);
+
+  window.twRefrescar = () => bloques.forEach(el => {
+    const lleno = el._tw && el._tw.estado !== 'vacio';
+    if(el._tw) clearTimeout(el._tw.timer);
+    envolver(el);
+    if(lleno) mostrarTodo(el);
+  });
+})();
+
+/* ---------- LET'S TALK: formulario ----------
+   El sitio es estatico (no hay servidor propio), asi que los mensajes los recibe
+   Web3Forms (web3forms.com, gratis hasta 250 por mes) y los reenvia al mail de Paula.
+   PARA ACTIVARLO: pegar en LT_KEY el "access key" que Web3Forms le manda por mail a
+   contactdigitalpaula@gmail.com. Esa clave no es secreta: esta hecha para ir en el
+   codigo de la pagina, solo sirve para mandarle mensajes a ESE mail.
+   Mientras LT_KEY este vacia el formulario igual funciona: abre el programa de mail de
+   quien escribe con el mensaje ya armado (mailto). */
+(function(){
+  const LT_KEY = '';
+  const form = document.getElementById('ltForm');
+  if(!form) return;
+  const estado = document.getElementById('ltEstado');
+  const btn = form.querySelector('.lt-send');
+  const TXT = {
+    en:{ faltan:'fill in your name, a valid email and a few words about the project.',
+         enviando:'sending…', ok:'sent. talk soon.', mal:'something failed. write me at contactdigitalpaula@gmail.com',
+         mailto:'opening your mail app…' },
+    es:{ faltan:'completá tu nombre, un email válido y unas palabras sobre el proyecto.',
+         enviando:'enviando…', ok:'enviado. hablamos pronto.', mal:'algo falló. escribime a contactdigitalpaula@gmail.com',
+         mailto:'abriendo tu programa de mail…' },
+    it:{ faltan:'scrivi il tuo nome, una email valida e due parole sul progetto.',
+         enviando:'invio…', ok:'inviato. a presto.', mal:'qualcosa è andato storto. scrivimi a contactdigitalpaula@gmail.com',
+         mailto:'apro la tua app di posta…' },
+    deu:{ faltan:'bitte name, eine gültige e-mail und ein paar worte zum projekt angeben.',
+          enviando:'wird gesendet…', ok:'gesendet. bis bald.', mal:'etwas ist schiefgelaufen. schreib mir an contactdigitalpaula@gmail.com',
+          mailto:'dein mailprogramm wird geöffnet…' }
+  };
+  const t = k => { const l = document.documentElement.lang; return (TXT[l === 'de' ? 'deu' : l] || TXT.en)[k]; };
+  const decir = k => { estado.textContent = t(k); };
+
+  // rotulo-placeholder de asunto y mensaje: se va cuando el campo tiene contenido
+  form.querySelectorAll('.lt-sobre').forEach(f => {
+    const c = f.querySelector('select,textarea');
+    const marcar = () => f.classList.toggle('lleno', !!c.value);
+    c.addEventListener('input', marcar); c.addEventListener('change', marcar);
+  });
+  // el mensaje crece hacia abajo mientras se escribe, en vez de scrollear adentro
+  const ta = form.querySelector('textarea');
+  ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; });
+  form.querySelectorAll('input,textarea,select').forEach(c =>
+    c.addEventListener('input', () => c.closest('.lt-f') && c.closest('.lt-f').classList.remove('mal')));
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(form));
+    if(d.botcheck) return;                                  // lo lleno un bot
+    const malos = [];
+    if(!d.name.trim()) malos.push('name');
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email.trim())) malos.push('email');
+    if(!d.message.trim()) malos.push('message');
+    form.querySelectorAll('.lt-f').forEach(f => f.classList.remove('mal'));
+    if(malos.length){
+      malos.forEach(n => form.querySelector(`[name="${n}"]`).closest('.lt-f').classList.add('mal'));
+      decir('faltan'); return;
+    }
+    const asunto = 'digitalpaula — ' + (d.subject || 'new message') + ' — ' + d.name.trim();
+    const cuerpo = `Name: ${d.name}\nCompany: ${d.company || '-'}\nEmail: ${d.email}\nPhone: ${d.phone || '-'}\nSubject: ${d.subject || '-'}\n\n${d.message}`;
+
+    if(!LT_KEY){
+      decir('mailto');
+      location.href = 'mailto:contactdigitalpaula@gmail.com?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo);
+      return;
+    }
+    btn.disabled = true; decir('enviando');
+    try{
+      const r = await fetch('https://api.web3forms.com/submit', {
+        method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'},
+        body: JSON.stringify({ access_key: LT_KEY, subject: asunto, from_name: 'digitalpaula.com',
+          replyto: d.email, name: d.name, company: d.company, email: d.email, phone: d.phone,
+          topic: d.subject, message: d.message, botcheck: '' })
+      });
+      const j = await r.json().catch(() => ({}));
+      if(r.ok && j.success !== false){
+        decir('ok'); form.reset();
+        form.querySelectorAll('.lt-sobre').forEach(f => f.classList.remove('lleno'));
+        ta.style.height = '';
+      } else decir('mal');
+    } catch(err){ decir('mal'); }
+    btn.disabled = false;
+  });
+})();
+
+/* ---------- filtro de WORK: muestra solo las filas de la categoria elegida ---------- */
+(function(){
+  const grid = document.getElementById('wgrid');
+  const bts = [...document.querySelectorAll('.wfilt-b')];
+  if(!grid || !bts.length) return;
+  function filtrar(f, animar){
+    bts.forEach(b => { const on = b.dataset.f === f; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    const filas = [...grid.querySelectorAll('.wrow')];
+    let primera = null;
+    filas.forEach(r => {
+      const ver = f === 'all' || r.dataset.cat === f;
+      r.classList.toggle('fuera', !ver);
+      r.classList.remove('entra');
+      if(ver){
+        if(animar){ void r.offsetWidth; r.classList.add('entra'); }
+        if(!primera) primera = r;
+      }
+    });
+    // como antes: la primera fila visible arranca desplegada, de pista de que las demas
+    // se abren al pasar el mouse
+    filas.forEach(r => r.classList.remove('is-open'));
+    if(primera) primera.classList.add('is-open');
+    if(window.ScrollTrigger) ScrollTrigger.refresh();
+  }
+  bts.forEach(b => b.addEventListener('click', () => { if(!b.classList.contains('on')) filtrar(b.dataset.f, true); }));
+  filtrar('branding', false);
+})();
+
+/* ---------- acceso al logofolio: recorrer la grilla con el mouse ----------
+   La posicion del mouse dentro de la franja (0..1 en cada eje) decide que parte de la
+   grilla se ve: mouse a la derecha = se ve el borde derecho de la grilla, etc. El
+   movimiento va suavizado (lerp) para que se sienta como flotar sobre el espacio. Los logos
+   se prenden segun la distancia al cursor. En reposo y en tactil la grilla deriva sola.
+   setTimeout de respaldo: si requestAnimationFrame no corre (pestania oculta) igual queda
+   ubicada, nunca en blanco. */
+(function(){
+  const box = document.getElementById('lfx'), world = document.getElementById('lfxWorld');
+  if(!box || !world) return;
+  const cells = [...world.children];
+  let tx = .5, ty = .5, x = .5, y = .5, dentro = false, mx = -1e4, my = -1e4, t0 = performance.now();
+  const RADIO = () => box.clientWidth * .2;
+  box.addEventListener('mousemove', e => {
+    const r = box.getBoundingClientRect();
+    // recorrido acotado al 70% del total, centrado: el mouse en el borde no lleva la grilla
+    // hasta el tope, asi el desplazamiento es mas corto y se siente mas delicado
+    tx = .5 + ((e.clientX - r.left) / r.width - .5) * .7; ty = .5 + ((e.clientY - r.top) / r.height - .5) * .7;
+    mx = e.clientX; my = e.clientY; dentro = true;
+  });
+  box.addEventListener('mouseleave', () => { dentro = false; mx = my = -1e4; });
+  function cuadro(now){
+    if(!dentro){                               // deriva lenta en reposo
+      const t = (now - t0) / 1000;
+      tx = .5 + Math.sin(t * .13) * .42; ty = .5 + Math.cos(t * .17) * .38;
+    }
+    // seguimiento lento (Paula: "muy brusco, mas delicado"): .025 con mouse, .012 en reposo
+    x += (tx - x) * (dentro ? .025 : .012); y += (ty - y) * (dentro ? .025 : .012);
+    const sobraX = world.offsetWidth - box.clientWidth, sobraY = world.offsetHeight - box.clientHeight;
+    world.style.transform = `translate3d(${-x * sobraX}px,${-y * sobraY}px,0)`;
+    const R = RADIO();
+    for(const c of cells){
+      let o = '', z = '';
+      if(dentro){
+        const b = c.getBoundingClientRect();
+        const d = Math.hypot(b.left + b.width / 2 - mx, b.top + b.height / 2 - my);
+        const f = Math.max(0, 1 - d / R);
+        o = (.28 + f * .72).toFixed(3); z = (1 + f * .06).toFixed(3);
+      }
+      c.style.setProperty('--o', o || (c.classList.contains('lfx-cta') ? .5 : .28));
+      if(c.firstElementChild) c.firstElementChild.style.setProperty('--z', z || 1);
+    }
+  }
+  let visible = true;
+  if('IntersectionObserver' in window)
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(box);
+  function loop(now){ if(visible) cuadro(now); requestAnimationFrame(loop); }
+  requestAnimationFrame(loop);
+  cuadro(performance.now());
+})();
 </script>
 
 
