@@ -17,6 +17,7 @@ if('scrollRestoration' in history) history.scrollRestoration = 'manual';
 /* EXCEPCION: si se llega con un ancla de seccion (ej. index.html#contacto, desde el
    "your logo here" o el menu del logofolio) NO se fuerza el hero: hay que bajar a esa
    seccion. Los #work/<proyecto> abren el detalle y siguen arrancando arriba. */
+if(/[?&]sv2/.test(location.search)) document.documentElement.classList.add('ver-sv2');
 window.__anclaSeccion = /^#[a-z]+$/i.test(location.hash) ? location.hash.slice(1) : null;
 window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) window.scrollTo(0,0); });
 </script>
@@ -3134,6 +3135,14 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
     .sv2-item.is-act:not(.abierto) .sv2-num{color:rgba(255,255,255,.4)}
     .sv2-item.is-act:not(.abierto) .sv2-arrow{opacity:0}
   }
+
+  /* SERVICIOS v2 EN ESPERA (Paula: "todavia no lo publiques, falta el material"). Online sigue
+     la lista vieja; la nueva se ve en local con ?sv2 en la URL (ej. localhost:5599/?sv2#servicios).
+     Para lanzarla: sacar el atributo hidden de #sv2 y borrar #svlList. */
+  .sv2[hidden]{display:none !important}
+  html.ver-sv2 .sv2[hidden]{display:grid !important}
+  html.ver-sv2 #svlList{display:none !important}
+  @media(max-width:900px){ html.ver-sv2 .sv2[hidden]{display:block !important} }
 </style>
 </head>
 <body>
@@ -3738,7 +3747,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
            cuadro fijo a la derecha que cambia de video segun el servicio que se apunta. Click
            en un servicio = se despliega su contenido. TEXTOS = BORRADOR: Paula pasa el contenido
            de cada servicio en el formato nuevo. (La lista vieja .svl-row queda comentada abajo.) -->
-      <div class="sv2" id="sv2">
+      <div class="sv2" id="sv2" hidden>
         <ol class="sv2-list">
           <li class="sv2-item is-act" data-i="0">
             <button class="sv2-head" type="button" aria-expanded="false">
@@ -3823,7 +3832,6 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           <span class="sv2-media-n">01</span>
         </div></div>
       </div>
-      <!-- LISTA VIEJA DE SERVICIOS (antes de v2)
       <div class="svl-list" id="svlList">
         <div class="svl-row">
           <span class="svl-bg"><video src="services/branding.mp4" data-angosto="services/branding-mobile.mp4" muted="" loop="" playsinline="" preload="none"></video></span>
@@ -3886,7 +3894,6 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           </span>
         </div>
       </div>
-      -->
       <!-- rediseñado ref "base hero-16.svg" de Paula: ya no es un link chico entre
            corchetes, son dos lineas grandes (Heavy blanco + script rosa, mismo criterio
            que SOFTWARES/TOOLS y LOGO/FOLIO) — "Have another idea?" entra deslizando con
