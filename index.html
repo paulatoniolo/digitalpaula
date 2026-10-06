@@ -3085,6 +3085,55 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
   @media(min-width:901px){ .wov-meta{flex-wrap:nowrap !important} .wov-meta > *{flex:0 1 auto;min-width:0} }
   .wov-meta span{font-size:var(--t5) !important;line-height:1.3}
   .wov-meta b{font-size:var(--t6) !important;color:#8a8a8a;opacity:1 !important;margin-bottom:.55em !important}
+
+  /* ================= SERVICIOS v2 (ref tbp.studio) =================
+     Escritorio: 2 columnas. Izquierda la lista (numero mono + nombre grande + flecha), derecha
+     un cuadro FIJO (sticky) con el video del servicio apuntado; los videos se cruzan con
+     fundido. Hover: el nombre se corre a la derecha, se prende y aparece la flecha. Click:
+     se despliega el contenido del servicio (texto + tags).
+     Telefono: una columna; el video va adentro del desplegable. */
+  .sv2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,3vw,56px);align-items:start;
+    margin-top:clamp(40px,5vw,80px)}
+  .sv2-list{list-style:none;margin:0;padding:0;border-top:1px solid rgba(255,255,255,.16)}
+  .sv2-item{border-bottom:1px solid rgba(255,255,255,.16)}
+  .sv2-head{width:100%;display:grid;grid-template-columns:3.4em minmax(0,1fr) auto;align-items:center;gap:clamp(10px,1.4vw,24px);
+    background:none;border:0;color:#fff;text-align:left;cursor:pointer;padding:clamp(22px,2.6vw,44px) 0;font:inherit}
+  .sv2-num{font-family:"Geist Mono",ui-monospace,monospace;font-size:var(--t6);letter-spacing:.02em;color:rgba(255,255,255,.4);
+    transition:color .35s}
+  .sv2-name{font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;font-size:var(--t3);letter-spacing:-.04em;line-height:1;
+    color:rgba(255,255,255,.55);transition:transform .55s cubic-bezier(.22,1,.36,1),color .35s}
+  .sv2-arrow{width:clamp(20px,1.8vw,30px);height:auto;fill:none;stroke:#fff;stroke-width:1.6;
+    opacity:0;transform:translate(-10px,10px);transition:opacity .35s,transform .45s cubic-bezier(.22,1,.36,1)}
+  .sv2-item.is-act .sv2-name,.sv2-head:hover .sv2-name,.sv2-item.abierto .sv2-name{color:#fff;transform:translateX(clamp(10px,1.6vw,28px))}
+  .sv2-item.is-act .sv2-num,.sv2-head:hover .sv2-num,.sv2-item.abierto .sv2-num{color:#fff}
+  .sv2-item.is-act .sv2-arrow,.sv2-head:hover .sv2-arrow{opacity:1;transform:none}
+  .sv2-item.abierto .sv2-arrow{opacity:1;transform:rotate(135deg)}
+  .sv2-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s cubic-bezier(.22,1,.36,1)}
+  .sv2-item.abierto .sv2-body{grid-template-rows:1fr}
+  .sv2-body-in{overflow:hidden;min-height:0;padding-left:calc(3.4em + clamp(10px,1.4vw,24px))}
+  .sv2-txt{font-size:var(--t5);line-height:1.45;color:rgba(255,255,255,.8);max-width:34em;margin:0 0 18px}
+  .sv2-tags{display:flex;flex-wrap:wrap;gap:8px 22px;padding-bottom:clamp(26px,2.6vw,44px)}
+  .sv2-tag{font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase;font-size:var(--t6);color:rgba(255,255,255,.55)}
+  .sv2-tag::before{content:"// "}
+  .sv2-vid-m{display:none}
+  .sv2-media{position:sticky;top:clamp(90px,12vh,130px)}
+  .sv2-media-in{position:relative;aspect-ratio:1/1;max-height:76vh;margin-left:auto;overflow:hidden;background:#000}
+  .sv2-m{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.04);
+    transition:opacity .6s ease,transform 1.2s cubic-bezier(.22,1,.36,1)}
+  .sv2-m.on{opacity:1;transform:none}
+  .sv2-media-n{position:absolute;left:14px;bottom:12px;font-family:"Geist Mono",ui-monospace,monospace;font-size:var(--t6);color:#fff;
+    mix-blend-mode:difference}
+  @media(max-width:900px){
+    .sv2{grid-template-columns:1fr}
+    .sv2-media{display:none}
+    .sv2-vid-m{display:block;aspect-ratio:16/9;overflow:hidden;margin:0 0 16px}
+    .sv2-vid-m video{width:100%;height:100%;object-fit:cover;display:block}
+    .sv2-head{grid-template-columns:2.6em minmax(0,1fr) auto}
+    .sv2-body-in{padding-left:0}
+    .sv2-item.is-act:not(.abierto) .sv2-name{transform:none;color:rgba(255,255,255,.55)}
+    .sv2-item.is-act:not(.abierto) .sv2-num{color:rgba(255,255,255,.4)}
+    .sv2-item.is-act:not(.abierto) .sv2-arrow{opacity:0}
+  }
 </style>
 </head>
 <body>
@@ -3685,6 +3734,96 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           <span class="s" data-es="Scrolleá para ver mis servicios" data-it="Scorri per vedere i miei servizi" data-deu="Scrolle, um meine Leistungen zu sehen">Scroll to see my services</span>
         </div>
       </div>
+      <!-- SERVICIOS v2 (2026-10-06, ref tbp.studio de Paula): lista grande a la izquierda y un
+           cuadro fijo a la derecha que cambia de video segun el servicio que se apunta. Click
+           en un servicio = se despliega su contenido. TEXTOS = BORRADOR: Paula pasa el contenido
+           de cada servicio en el formato nuevo. (La lista vieja .svl-row queda comentada abajo.) -->
+      <div class="sv2" id="sv2">
+        <ol class="sv2-list">
+          <li class="sv2-item is-act" data-i="0">
+            <button class="sv2-head" type="button" aria-expanded="false">
+              <span class="sv2-num">01</span>
+              <span class="sv2-name" data-es="Branding" data-it="Branding" data-deu="Branding">Branding</span>
+              <svg class="sv2-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18L18 6M8 6h10v10"/></svg>
+            </button>
+            <div class="sv2-body"><div class="sv2-body-in">
+              <div class="sv2-vid-m"><video src="services/branding.mp4" muted="" loop="" playsinline="" preload="none"></video></div>
+              <p class="sv2-txt" data-es="Identidades pensadas como sistema: logo, tipografía, color y las reglas que las mantienen vivas en cada punto de contacto." data-it="Identities built as systems: logo, type, color and the rules that keep them alive across every touchpoint." data-deu="Identities built as systems: logo, type, color and the rules that keep them alive across every touchpoint.">Identities built as systems: logo, type, color and the rules that keep them alive across every touchpoint.</p>
+              <div class="sv2-tags"><span class="sv2-tag" data-es="Sistemas" data-it="Sistemi" data-deu="Systeme">Systems</span><span class="sv2-tag" data-es="Identidad" data-it="Identità" data-deu="Identität">Identity</span><span class="sv2-tag" data-es="Guías" data-it="Linee Guida" data-deu="Richtlinien">Guidelines</span></div>
+            </div></div>
+          </li>
+          <li class="sv2-item" data-i="1">
+            <button class="sv2-head" type="button" aria-expanded="false">
+              <span class="sv2-num">02</span>
+              <span class="sv2-name" data-es="VJ y Visuales en Vivo" data-it="VJ e Visual Live" data-deu="VJ &amp; Live Visuals">VJ &amp; Live Visuals</span>
+              <svg class="sv2-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18L18 6M8 6h10v10"/></svg>
+            </button>
+            <div class="sv2-body"><div class="sv2-body-in">
+              <div class="sv2-vid-m"><video src="services/vj.mp4" muted="" loop="" playsinline="" preload="none"></video></div>
+              <p class="sv2-txt" data-es="Visuales audiorreactivas para shows en vivo, hechas en TouchDesigner y sincronizadas con la música y las luces." data-it="Audioreactive visuals for live shows, built in TouchDesigner and synced to the music and the lights." data-deu="Audioreactive visuals for live shows, built in TouchDesigner and synced to the music and the lights.">Audioreactive visuals for live shows, built in TouchDesigner and synced to the music and the lights.</p>
+              <div class="sv2-tags"><span class="sv2-tag" data-es="Sincro" data-it="Sincro" data-deu="Sync">Sync</span><span class="sv2-tag" data-es="Visuales" data-it="Visual" data-deu="Visuals">Visuals</span><span class="sv2-tag" data-es="Performance" data-it="Performance" data-deu="Performance">Performance</span></div>
+            </div></div>
+          </li>
+          <li class="sv2-item" data-i="2">
+            <button class="sv2-head" type="button" aria-expanded="false">
+              <span class="sv2-num">03</span>
+              <span class="sv2-name" data-es="Dirección Creativa" data-it="Direzione Creativa" data-deu="Kreativ&amp;shy;direktion">Creative Direction</span>
+              <svg class="sv2-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18L18 6M8 6h10v10"/></svg>
+            </button>
+            <div class="sv2-body"><div class="sv2-body-in">
+              <div class="sv2-vid-m"><video src="services/creative-direction.mp4" muted="" loop="" playsinline="" preload="none"></video></div>
+              <p class="sv2-txt" data-es="De la idea al último frame: concepto, narrativa y dirección para que cada pieza hable el mismo idioma." data-it="From the idea to the last frame: concept, narrative and direction so every piece speaks the same language." data-deu="From the idea to the last frame: concept, narrative and direction so every piece speaks the same language.">From the idea to the last frame: concept, narrative and direction so every piece speaks the same language.</p>
+              <div class="sv2-tags"><span class="sv2-tag" data-es="Concepto" data-it="Concept" data-deu="Konzept">Concept</span><span class="sv2-tag" data-es="Narrativa" data-it="Narrativa" data-deu="Narrativ">Narrative</span><span class="sv2-tag" data-es="Dirección" data-it="Direzione" data-deu="Regie">Direction</span></div>
+            </div></div>
+          </li>
+          <li class="sv2-item" data-i="3">
+            <button class="sv2-head" type="button" aria-expanded="false">
+              <span class="sv2-num">04</span>
+              <span class="sv2-name" data-es="Diseño Web" data-it="Web Design" data-deu="Webdesign">Web Design</span>
+              <svg class="sv2-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18L18 6M8 6h10v10"/></svg>
+            </button>
+            <div class="sv2-body"><div class="sv2-body-in">
+              <div class="sv2-vid-m"><video src="services/web-design.mp4" muted="" loop="" playsinline="" preload="none"></video></div>
+              <p class="sv2-txt" data-es="Sitios con movimiento y carácter, diseñados y construidos de punta a punta." data-it="Sites with motion and character, designed and built end to end." data-deu="Sites with motion and character, designed and built end to end.">Sites with motion and character, designed and built end to end.</p>
+              <div class="sv2-tags"><span class="sv2-tag" data-es="Interfaz" data-it="Interfaccia" data-deu="Interface">Interface</span><span class="sv2-tag" data-es="Maquetado" data-it="Layout" data-deu="Layout">Layout</span><span class="sv2-tag" data-es="Código" data-it="Codice" data-deu="Code">Code</span></div>
+            </div></div>
+          </li>
+          <li class="sv2-item" data-i="4">
+            <button class="sv2-head" type="button" aria-expanded="false">
+              <span class="sv2-num">05</span>
+              <span class="sv2-name" data-es="3D y Motion" data-it="3D e Motion" data-deu="3D &amp; Motion">3D &amp; Motion</span>
+              <svg class="sv2-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18L18 6M8 6h10v10"/></svg>
+            </button>
+            <div class="sv2-body"><div class="sv2-body-in">
+              <div class="sv2-vid-m"><video src="services/3d-motion.mp4" muted="" loop="" playsinline="" preload="none"></video></div>
+              <p class="sv2-txt" data-es="Modelado, animación y render para marcas que necesitan moverse." data-it="Modeling, animation and render for brands that need to move." data-deu="Modeling, animation and render for brands that need to move.">Modeling, animation and render for brands that need to move.</p>
+              <div class="sv2-tags"><span class="sv2-tag" data-es="Modelado" data-it="Modellazione" data-deu="Modellierung">Modeling</span><span class="sv2-tag" data-es="Animación" data-it="Animazione" data-deu="Animation">Animation</span><span class="sv2-tag" data-es="Render" data-it="Render" data-deu="Render">Render</span></div>
+            </div></div>
+          </li>
+          <li class="sv2-item" data-i="5">
+            <button class="sv2-head" type="button" aria-expanded="false">
+              <span class="sv2-num">06</span>
+              <span class="sv2-name" data-es="Visualización de Datos" data-it="Visualizzazione Dati" data-deu="Daten&amp;shy;visualisierung">Data Visualization</span>
+              <svg class="sv2-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18L18 6M8 6h10v10"/></svg>
+            </button>
+            <div class="sv2-body"><div class="sv2-body-in">
+              <div class="sv2-vid-m"><video src="services/data-visualization.mp4" muted="" loop="" playsinline="" preload="none"></video></div>
+              <p class="sv2-txt" data-es="Convertir números en imágenes que se entienden de un vistazo." data-it="Turning numbers into images people understand at a glance." data-deu="Turning numbers into images people understand at a glance.">Turning numbers into images people understand at a glance.</p>
+              <div class="sv2-tags"><span class="sv2-tag" data-es="Gráficos" data-it="Grafici" data-deu="Diagramme">Charts</span><span class="sv2-tag" data-es="Patrones" data-it="Pattern" data-deu="Muster">Patterns</span><span class="sv2-tag" data-es="Insight" data-it="Insight" data-deu="Insight">Insight</span></div>
+            </div></div>
+          </li>
+        </ol>
+        <div class="sv2-media" aria-hidden="true"><div class="sv2-media-in">
+          <video class="sv2-m on" src="services/branding.mp4" muted="" loop="" playsinline="" preload="none" aria-hidden="true"></video>
+          <video class="sv2-m" src="services/vj.mp4" muted="" loop="" playsinline="" preload="none" aria-hidden="true"></video>
+          <video class="sv2-m" src="services/creative-direction.mp4" muted="" loop="" playsinline="" preload="none" aria-hidden="true"></video>
+          <video class="sv2-m" src="services/web-design.mp4" muted="" loop="" playsinline="" preload="none" aria-hidden="true"></video>
+          <video class="sv2-m" src="services/3d-motion.mp4" muted="" loop="" playsinline="" preload="none" aria-hidden="true"></video>
+          <video class="sv2-m" src="services/data-visualization.mp4" muted="" loop="" playsinline="" preload="none" aria-hidden="true"></video>
+          <span class="sv2-media-n">01</span>
+        </div></div>
+      </div>
+      <!-- LISTA VIEJA DE SERVICIOS (antes de v2)
       <div class="svl-list" id="svlList">
         <div class="svl-row">
           <span class="svl-bg"><video src="services/branding.mp4" data-angosto="services/branding-mobile.mp4" muted="" loop="" playsinline="" preload="none"></video></span>
@@ -3747,6 +3886,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           </span>
         </div>
       </div>
+      -->
       <!-- rediseñado ref "base hero-16.svg" de Paula: ya no es un link chico entre
            corchetes, son dos lineas grandes (Heavy blanco + script rosa, mismo criterio
            que SOFTWARES/TOOLS y LOGO/FOLIO) — "Have another idea?" entra deslizando con
@@ -6330,6 +6470,43 @@ arreglarViudasHero();
   // al cambiar de idioma el texto elegido se traduce con su opcion
   new MutationObserver(() => { const o = sel.selectedOptions[0]; val.textContent = o && o.value ? o.textContent : ''; })
     .observe(sel, {subtree:true, childList:true, characterData:true});
+})();
+
+/* ---------- SERVICIOS v2 (ver CSS) ---------- */
+(function(){
+  const box = document.getElementById('sv2'); if(!box) return;
+  const items = [...box.querySelectorAll('.sv2-item')], vids = [...box.querySelectorAll('.sv2-m')];
+  const num = box.querySelector('.sv2-media-n');
+  const ancho = () => innerWidth > 900;
+  const play = v => { if(v.preload === 'none') v.preload = 'auto'; const pr = v.play(); if(pr && pr.catch) pr.catch(()=>{}); };
+  function activar(i){
+    items.forEach((it, k) => it.classList.toggle('is-act', k === i));
+    vids.forEach((v, k) => {
+      const on = k === i; v.classList.toggle('on', on);
+      if(on) play(v); else setTimeout(() => { if(!v.classList.contains('on')) v.pause(); }, 650);
+    });
+    if(num) num.textContent = String(i + 1).padStart(2, '0');
+  }
+  items.forEach((it, i) => {
+    const head = it.querySelector('.sv2-head');
+    it.addEventListener('mouseenter', () => { if(ancho()) activar(i); });
+    head.addEventListener('click', () => {
+      const abrir = !it.classList.contains('abierto');
+      items.forEach(o => { if(o !== it){ o.classList.remove('abierto'); o.querySelector('.sv2-head').setAttribute('aria-expanded', 'false');
+        const mv = o.querySelector('.sv2-vid-m video'); if(mv) mv.pause(); } });
+      it.classList.toggle('abierto', abrir); head.setAttribute('aria-expanded', abrir);
+      if(ancho()) activar(i);
+      const mv = it.querySelector('.sv2-vid-m video');
+      if(mv && abrir && !ancho()) play(mv); else if(mv) mv.pause();
+    });
+  });
+  // el video del cuadro corre solo mientras la seccion esta en pantalla
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(es => es.forEach(e => {
+      const v = box.querySelector('.sv2-m.on'); if(!v || !ancho()) return;
+      e.isIntersecting ? play(v) : v.pause();
+    }), {rootMargin: '100px'}).observe(box);
+  }
 })();
 </script>
 

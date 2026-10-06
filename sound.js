@@ -94,7 +94,7 @@
   // cama de ruido de datos + pips sueltos al azar
   function ambiente(){
     const c = ctx(); if(!c) return null;
-    const t = c.currentTime, bus = c.createGain(); bus.gain.setValueAtTime(E, t); bus.gain.exponentialRampToValueAtTime(0.8, t + 3); bus.connect(BUS);
+    const t = c.currentTime, bus = c.createGain(); bus.gain.setValueAtTime(E, t); bus.gain.exponentialRampToValueAtTime(0.28, t + 3);   // bajado de 0.8 (Paula: "muy fuerte") bus.connect(BUS);
     const nodos = [];
     const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 700; lp.Q.value = 4; lp.connect(bus);
     const lfo = c.createOscillator(), lfoG = c.createGain(); lfo.frequency.value = 0.07; lfoG.gain.value = 450;
