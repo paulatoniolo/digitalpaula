@@ -2957,7 +2957,10 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
      de 1400px, llega hasta el margen derecho; cuerpo entre subtitulo y titulo */
   @media(min-width:901px){
     .manifesto .inner{max-width:none !important;padding-right:var(--gmargin)}
-    .ml-line,.ml-line a{font-size:clamp(28px,4.2vw,84px) !important}
+    /* 3.3vw (no 4.2): a 4.2 la primera frase partia dejando "experiences." sola y la
+       segunda quedaba con un renglon corto ("and creating"). text-wrap:balance reparte las
+       palabras parejo entre renglones, y asi no quedan viudas ni lineas cortas. */
+    .ml-line,.ml-line a{font-size:clamp(28px,3.3vw,66px) !important;text-wrap:balance}
   }
 
   /* LET'S / TALK un poco mas separados (Paula): interlineado .73 -> .86 */
@@ -2998,6 +3001,13 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
   .menu-talk{font-size:var(--t5) !important;margin-top:clamp(14px,2vh,24px) !important}
   .menu-mail-copy svg,.contact-mail-copy svg{width:1.1em;height:1.1em}
   .menu-avail{width:9px !important;height:9px !important}
+
+  /* el mail ya NO es link (Paula: "cuando tocas mi mail no pasa nada"; el mailto depende de
+     tener un programa de mail configurado). Texto plano seleccionable + icono de copiar. */
+  .lt-mail,.menu-contact-mail{cursor:text;user-select:text}
+  .lt-mail:hover,.menu-contact-mail:hover{opacity:1 !important;background:none !important;-webkit-text-fill-color:currentColor !important}
+  .lt-mail-copy{position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:.55em;
+    width:.95em;height:.95em;color:#fff}
 </style>
 </head>
 <body>
@@ -3056,7 +3066,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
          disponibilidad, para que el dato de contacto este a mano sin salir del menu -->
     <div class="menu-contact">
       <span class="menu-contact-label" data-es="Contacto" data-it="Contatti" data-deu="Kontakt">Contact</span>
-      <span class="menu-mail-wrap"><a class="menu-contact-mail" href="mailto:contactdigitalpaula@gmail.com" draggable="false">contactdigitalpaula@gmail.com</a><button class="contact-mail-copy menu-mail-copy" type="button" data-mail="contactdigitalpaula@gmail.com" aria-label="Copy email" data-tip-es="Copiar mail" data-tip-it="Copia email" data-tip-deu="E-Mail kopieren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"></rect><path d="M4.5 16.5H4a1.5 1.5 0 0 1-1.5-1.5V4A1.5 1.5 0 0 1 4 2.5h11a1.5 1.5 0 0 1 1.5 1.5v.5"></path></svg></button></span>
+      <span class="menu-mail-wrap"><span class="menu-contact-mail">contactdigitalpaula@gmail.com</span><button class="contact-mail-copy menu-mail-copy" type="button" data-mail="contactdigitalpaula@gmail.com" aria-label="Copy email" data-tip-es="Copiar mail" data-tip-it="Copia email" data-tip-deu="E-Mail kopieren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"></rect><path d="M4.5 16.5H4a1.5 1.5 0 0 1-1.5-1.5V4A1.5 1.5 0 0 1 4 2.5h11a1.5 1.5 0 0 1 1.5 1.5v.5"></path></svg></button></span>
       <span class="menu-contact-ww">[ <span>Working worldwide</span> ]<i class="menu-avail" role="img" aria-label="Disponible" title="Disponible"></i></span>
     </div>
     <a href="#contacto" class="menu-talk" data-es="[ contactame acá ]" data-it="[ scrivi a me ]" data-deu="[ reden wir? ]">[ let's talk ]</a>
@@ -3489,7 +3499,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
       <span class="lfx-c"><img src="work/logofolio/grilla/franja.png" alt="" style="--w:72;--h:43" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/global-spain.png" alt="" style="--w:54;--h:57" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/kimun.png" alt="" style="--w:83;--h:49" decoding="async" draggable="false"></span>
-      <span class="lfx-c"><img src="work/logofolio/grilla/klik.png" alt="" style="--w:85;--h:31" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/klik.png" alt="" style="--w:95;--h:32" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/la-tercera.png" alt="" style="--w:67;--h:45" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/lapa.png" alt="" style="--w:48;--h:62" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/lumen-optics.png" alt="" style="--w:62;--h:62" decoding="async" draggable="false"></span>
@@ -3519,7 +3529,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
       <span class="lfx-c"><img src="work/logofolio/grilla/franja.png" alt="" style="--w:72;--h:43" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/global-spain.png" alt="" style="--w:54;--h:57" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/kimun.png" alt="" style="--w:83;--h:49" decoding="async" draggable="false"></span>
-      <span class="lfx-c"><img src="work/logofolio/grilla/klik.png" alt="" style="--w:85;--h:31" decoding="async" draggable="false"></span>
+      <span class="lfx-c"><img src="work/logofolio/grilla/klik.png" alt="" style="--w:95;--h:32" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/la-tercera.png" alt="" style="--w:67;--h:45" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/lapa.png" alt="" style="--w:48;--h:62" decoding="async" draggable="false"></span>
       <span class="lfx-c"><img src="work/logofolio/grilla/lumen-optics.png" alt="" style="--w:62;--h:62" decoding="async" draggable="false"></span>
@@ -3728,10 +3738,10 @@ Gen-4.5"><img src="work/softwares/logo-31.svg" alt=""></div>
       <span class="sl-left"><b>03</b><span class="sl-sep">/</span><span class="sl-name" data-es="Sobre mí" data-it="Chi Sono" data-deu="Über mich">About</span></span>
       <span class="sl-right"><span data-es="ACTIVA" data-it="ATTIVA" data-deu="AKTIV">ACTIVE</span> <b class="sl-now">01</b><span class="sl-sep">/</span><b>04</b></span>
     </div>
-    <!-- foto reemplazada por el reel de hand tracking en TouchDesigner (Paula 2026-10-05,
-         instagram.com/p/DaqjVEhqwAp). Fuente: D:\identidades 2026\yop\hand track.mp4.
+    <!-- video = el reel "Life's hard. Make it harder" de @digitalpaula_ SIN el texto (Paula lo
+         exporto aparte: D:\DIGITALPAULAideo.mp4). Antes: reel de hand tracking (about-reel.mp4). Fuente: D:\identidades 2026\yop\hand track.mp4.
          Mismo marco, mismo parallax y mismo reveal que tenia la foto. -->
-    <a class="about-photo" href="https://instagram.com/digitalpaula_" target="_blank" rel="noopener" aria-label="Go to Instagram @digitalpaula_"><video class="vid-io" src="about-reel.mp4" poster="about-reel-poster.jpg" muted loop playsinline preload="none" aria-label="Paula — hand tracking en TouchDesigner"></video><span class="ap-go" aria-hidden="true"><span class="ap-go-t" data-es="// ir a" data-it="// vai su" data-deu="// zu">// go to</span><svg class="ap-ig" viewBox="0 0 40.7 40.8" fill="currentColor" aria-hidden="true"><g transform="translate(-118.52 -925.97)"><path d="M147.73,966.78h-17.57c-6.32.01-11.64-5.09-11.64-11.43v-17.98c0-6.19,5.18-11.4,11.37-11.4h18.14c6.07.02,11.23,5.17,11.23,11.24v18.14c.01,6.28-5.22,11.29-11.54,11.43ZM148.11,963.02c3.93,0,7.34-3.36,7.34-7.24l.02-18.56c0-3.89-3.43-7.3-7.26-7.3h-18.62c-3.82,0-7.26,3.41-7.26,7.3l.02,18.55c0,4.03,3.61,7.28,7.58,7.28l18.18-.03Z"></path> <path d="M137.21,935.99c5.93-.95,11.29,3.1,12.18,8.85s-3.05,11.2-8.86,12.1c-5.69.89-11.1-2.97-12.08-8.68s2.81-11.32,8.76-12.27ZM137.65,939.74c-3.83.71-6.15,4.38-5.47,7.96s4.28,6.17,7.99,5.47c3.65-.68,6.11-4.22,5.47-7.87s-4.14-6.28-7.99-5.56Z"></path> <path d="M149.27,933.05c1.45-.33,2.7.57,2.98,1.84.3,1.37-.49,2.71-1.88,3.01-1.29.28-2.6-.46-2.95-1.8-.32-1.25.37-2.71,1.84-3.05Z"></path></g></svg><span class="ap-go-t">digitalpaula_</span></span></a>
+    <a class="about-photo" href="https://instagram.com/digitalpaula_" target="_blank" rel="noopener" aria-label="Go to Instagram @digitalpaula_"><video class="vid-io" src="about-lifes-hard.mp4" poster="about-lifes-hard-poster.jpg" muted loop playsinline preload="none" aria-label="Paula en el FOH del show de Cinturón de Bonadeo"></video><span class="ap-go" aria-hidden="true"><span class="ap-go-t" data-es="// ir a" data-it="// vai su" data-deu="// zu">// go to</span><svg class="ap-ig" viewBox="0 0 40.7 40.8" fill="currentColor" aria-hidden="true"><g transform="translate(-118.52 -925.97)"><path d="M147.73,966.78h-17.57c-6.32.01-11.64-5.09-11.64-11.43v-17.98c0-6.19,5.18-11.4,11.37-11.4h18.14c6.07.02,11.23,5.17,11.23,11.24v18.14c.01,6.28-5.22,11.29-11.54,11.43ZM148.11,963.02c3.93,0,7.34-3.36,7.34-7.24l.02-18.56c0-3.89-3.43-7.3-7.26-7.3h-18.62c-3.82,0-7.26,3.41-7.26,7.3l.02,18.55c0,4.03,3.61,7.28,7.58,7.28l18.18-.03Z"></path> <path d="M137.21,935.99c5.93-.95,11.29,3.1,12.18,8.85s-3.05,11.2-8.86,12.1c-5.69.89-11.1-2.97-12.08-8.68s2.81-11.32,8.76-12.27ZM137.65,939.74c-3.83.71-6.15,4.38-5.47,7.96s4.28,6.17,7.99,5.47c3.65-.68,6.11-4.22,5.47-7.87s-4.14-6.28-7.99-5.56Z"></path> <path d="M149.27,933.05c1.45-.33,2.7.57,2.98,1.84.3,1.37-.49,2.71-1.88,3.01-1.29.28-2.6-.46-2.95-1.8-.32-1.25.37-2.71,1.84-3.05Z"></path></g></svg><span class="ap-go-t">digitalpaula_</span></span></a>
     <div class="about-eye"><video class="vid-io" src="about-eye.mp4" preload="none" muted="" loop="" playsinline="" aria-hidden="true"></video></div>
     <div class="about-tag" data-es="Ojo y gusto&lt;br&gt;por el diseño" data-it="OCCHIO E GUSTO&lt;br&gt;PER IL DESIGN" data-deu="AUGE &amp; GESPÜR&lt;br&gt;FÜR DESIGN">EYE &amp; TASTE<br>FOR DESIGN</div>
     <div class="about-me-tag"><b>[</b> &amp; THIS IS ME <b>]</b></div>
@@ -3782,7 +3792,7 @@ Gen-4.5"><img src="work/softwares/logo-31.svg" alt=""></div>
         <a href="https://www.linkedin.com/in/paula-toniolo-pellegrini/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="lt-ic" viewBox="0 0 32.7 33.1" fill="currentColor" aria-hidden="true"><g transform="translate(-331.99 -928.83)"><path d="M356.47,946.05c-1.36-1-3.51-.77-4.74.23-1.08.88-1.2,2.18-1.42,3.51l-.02,12.1-6.78.02v-21.89s6.56,0,6.56,0c0,.82-.23,1.59.18,2.67,1.64-2.32,4.08-3.33,6.81-3.21,5.01.22,7.05,2.79,7.53,7.72l.07,14.67h-6.71s-.04-12.08-.04-12.08c-.15-1.34-.19-2.82-1.44-3.74Z"></path> <polygon points="339.23 961.88 332.47 961.88 332.46 940.01 339.24 940.01 339.23 961.88"></polygon> <path d="M335.25,929.19c2.32-.36,4.19,1.31,4.47,3.28.31,2.21-1.16,4.13-3.22,4.47-2.2.36-4.12-1.06-4.51-3.13s.95-4.26,3.26-4.62Z"></path></g></svg></a>
         <a href="https://wa.me/5493424064399" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="lt-ic" viewBox="0 0 40.7 40.4" fill="currentColor" aria-hidden="true"><g transform="translate(-443.60 -926.21)"><path d="M466.22,926.21c0,.07.12.15.21.13.39-.09.61.07.93.13,8.65,1.4,15.36,8.16,16.73,16.8l.23.94v4.5l-.22.96c-.62,3.42-1.97,6.61-4.19,9.27l-.42.51c-3.22,3.86-7.79,6.25-12.8,6.87-.47.06-.81.25-1.3.12-.09-.02-.22.08-.21.13h-2.54c-.02-.09-.2-.16-.33-.13-.46.1-.78-.05-1.19-.11-2.47-.39-4.8-1.15-7-2.32-.28-.15-.6-.15-.9-.06l-8.7,2.46c-.12.03-.18.11-.22.16h-.58l2.61-9.28c.15-.53.07-.86-.2-1.32-1.35-2.38-2.1-4.99-2.53-7.61l.07-4.26c.24-1.83.67-3.57,1.37-5.27,2.85-6.92,9.23-11.64,16.58-12.55l4.58-.05ZM453.5,960.85c.39-.11.81-.22,1.15,0,2.98,1.93,6.38,2.79,9.97,2.7,5.82-.14,11.09-3.29,14.17-8.14,4.83-7.62,2.82-17.65-4.55-22.87-2.97-2.11-6.49-3.28-10.22-3.45-6.77-.31-13.05,4.06-15.89,10.05-2.47,5.21-2.12,11.3,1.04,16.1.34.51.55.87.36,1.51-.55,1.85-1.18,3.64-1.65,5.65l5.62-1.53Z"></path> <path d="M468.65,948.99c.19-.21.63-.21.85-.1,1.51.74,2.96,1.42,4.56,1.97.65,1.49.28,3.13-.94,4.14-1.67,1.38-3.73,1.65-5.76.93-2.26-.8-4.41-1.65-6.4-3.05-3.06-2.15-5.5-5-7.15-8.37-1.17-2.38-.66-6.03,1.67-7.34.81-.45,1.78-.41,2.65-.12.69,1.33,1.29,2.64,1.78,4.05.33.96.04,1.91-.61,2.64l-.7.8c-.18.2-.26.51-.11.77,1.6,2.75,4.05,4.76,6.99,5.94.38.15.74.3,1.07-.04l2.09-2.23Z"></path></g></svg></a>
       </div>
-      <a class="lt-mail" href="mailto:contactdigitalpaula@gmail.com">contactdigitalpaula@gmail.com</a>
+      <span class="lt-mail">contactdigitalpaula@gmail.com<button class="contact-mail-copy lt-mail-copy" type="button" data-mail="contactdigitalpaula@gmail.com" aria-label="Copy email" data-tip-es="Copiar mail" data-tip-it="Copia email" data-tip-deu="E-Mail kopieren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"></rect><path d="M4.5 16.5H4a1.5 1.5 0 0 1-1.5-1.5V4A1.5 1.5 0 0 1 4 2.5h11a1.5 1.5 0 0 1 1.5 1.5v.5"></path></svg></button></span>
 
       <form class="lt-form" id="ltForm" novalidate>
         <input type="checkbox" name="botcheck" class="lt-trampa" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -5601,6 +5611,9 @@ arreglarViudasHero();
   grid.querySelectorAll('.wrow').forEach(row=>{
     row.style.cursor = 'pointer';
     row.addEventListener('mouseenter', ()=> row.classList.add('is-open'));
+    // se cierra al salir (Paula: "que se abran solo al hacer hover"), salvo la fila fija
+    // (la primera visible del filtro, que arranca abierta como pista)
+    row.addEventListener('mouseleave', ()=>{ if(!row.dataset.fija) row.classList.remove('is-open'); });
     row.addEventListener('click', e=>{
       // si el click salio de una miniatura hay que resetear su parallax a mano: el overlay
       // la tapa y le come el mouseleave, y al cerrar quedaria trabada en la posicion/zoom
@@ -6055,8 +6068,8 @@ arreglarViudasHero();
     });
     // como antes: la primera fila visible arranca desplegada, de pista de que las demas
     // se abren al pasar el mouse
-    filas.forEach(r => r.classList.remove('is-open'));
-    if(primera) primera.classList.add('is-open');
+    filas.forEach(r => { r.classList.remove('is-open'); delete r.dataset.fija; });
+    if(primera){ primera.classList.add('is-open'); primera.dataset.fija = '1'; }
     if(window.ScrollTrigger) ScrollTrigger.refresh();
   }
   bts.forEach(b => b.addEventListener('click', () => { if(!b.classList.contains('on')) filtrar(b.dataset.f, true); }));
