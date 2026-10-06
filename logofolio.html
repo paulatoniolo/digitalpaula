@@ -346,10 +346,47 @@
   .header-eye-wrap,.lfb-back{isolation:isolate}
 
   /* misma escala tipografica de 6 niveles que index.html (ver alli) */
-  :root{--t4:clamp(19px,1.94vw,36px);--t5:clamp(14px,1.11vw,19px);--t6:clamp(11px,.83vw,14px)}
+  :root{--t4:clamp(19px,1.94vw,36px);--t5:clamp(15px,1.25vw,22px);--t6:clamp(12px,.97vw,17px)}
   .lfg-head,.lfg-gal-tag,.lfg-gal-n,.lfg-prev-n,.lfg-gal-hint{font-size:var(--t6) !important}
   .lfg-cta a{font-size:var(--t5) !important}
   .lfg-gal-name{font-size:var(--t4) !important}
+
+  /* tracking unificado, mismos valores que index.html */
+  .lfg-head,.lfg-gal-tag,.lfg-gal-n,.lfg-prev-n,.lfg-gal-hint{letter-spacing:.04em !important}
+  .lfg-gal-name{letter-spacing:-.07em !important}
+  .lfg-cta a{letter-spacing:0 !important}
+  /* el menu de esta pagina es una copia del de index: mismos valores */
+  .mi-txt{letter-spacing:-.07em !important}
+  .menu-label,.menu-contact-label,.menu-contact-ww,.menu-talk,.mi-sub{letter-spacing:.04em !important}
+  .menu-contact-mail{letter-spacing:0 !important}
+
+  /* logos MAS GRANDES (Paula: "hacer mas grandes"): +50% en escritorio, celdas mas altas;
+     y el margen de la pagina igual al del resto del sitio (5% del ancho) */
+  :root{--gmargin:clamp(20px,5vw,96px)}
+  .lfg-grid{--s:1.5 !important}
+  .lfg-cell{height:clamp(150px,13vw,230px) !important}
+  @media(max-width:1100px){ .lfg-grid{--s:1.25 !important} }
+  @media(max-width:640px){ .lfg-grid{--s:1 !important} .lfg-cell{height:110px !important} }
+
+  /* "// your logo here": mono minuscula que se escribe sola al entrar en pantalla y lleva
+     al let's talk (pedido de Paula). Mismo lenguaje que "// enter the logofolio". */
+  .lfg-cta a{font-family:"Geist Mono",ui-monospace,monospace !important;text-transform:lowercase;
+    text-decoration:none !important;color:#fff !important;letter-spacing:.02em !important;
+    transition:letter-spacing .5s cubic-bezier(.22,.61,.36,1)}
+  .lfg-cta a:hover{letter-spacing:.14em !important}
+  .twc{visibility:hidden}
+  .twc.on{visibility:visible}
+  .tw-cur{display:inline-block;width:.6em;height:1em;margin-left:.04em;vertical-align:-.12em;
+    background:currentColor;animation:twBlink .7s steps(1) infinite}
+  @keyframes twBlink{50%{opacity:0}}
+
+  /* bloque de contacto del menu mas grande (Paula: "quedo muy chico"): rotulos al nivel
+     etiqueta, mail y [ let's talk ] al nivel texto (un poco mas el mail) */
+  .menu-contact-label,.menu-contact-ww{font-size:var(--t6) !important}
+  .menu-contact-mail{font-size:calc(var(--t5) * 1.15) !important}
+  .menu-talk{font-size:var(--t5) !important;margin-top:clamp(14px,2vh,24px) !important}
+  .menu-mail-copy svg,.contact-mail-copy svg{width:1.1em;height:1.1em}
+  .menu-avail{width:9px !important;height:9px !important}
 </style>
 </head>
 <body>
@@ -387,7 +424,7 @@
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/archivo-deportivo-a.jpg" data-b="work/logofolio/img/archivo-deportivo-b.jpg" role="img" aria-label="Archivo Deportivo"><img src="work/logofolio/grilla/archivo-deportivo.png" alt="" style="--w:50px;--h:59px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/belvedere-a.jpg" data-b="work/logofolio/img/belvedere-b.jpg" role="img" aria-label="Belvedere"><img src="work/logofolio/grilla/belvedere.png" alt="" style="--w:123px;--h:37px" decoding="async" draggable="false"></li>
       <li class="lfg-cell tiene-gal" data-slug="boota" data-n="18" data-hover data-a="work/logofolio/img/boota-a.jpg" data-b="work/logofolio/img/boota-b.jpg" role="img" aria-label="Boota"><img src="work/logofolio/grilla/boota-isotipo.png" alt="" style="--w:55px;--h:62px" decoding="async" draggable="false"></li>
-      <li class="lfg-cell lfg-cta"><a href="index.html#contacto" data-hover>Your logo here</a></li>
+      <li class="lfg-cell lfg-cta"><a href="index.html#contacto" data-hover id="lfgCta">// your logo here</a></li>
       <li class="lfg-cell tiene-gal" data-slug="camalote-seeds" data-n="28" data-hover data-a="work/logofolio/img/camalote-seeds-a.jpg" data-b="work/logofolio/img/camalote-seeds-b.jpg" role="img" aria-label="Camalote Seeds"><img src="work/logofolio/grilla/camalote-seeds.png" alt="" style="--w:92px;--h:36px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/coinxbet-a.jpg" data-b="work/logofolio/img/coinxbet-b.jpg" role="img" aria-label="CoinXBet"><img src="work/logofolio/grilla/coinxbet.png" alt="" style="--w:88px;--h:39px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/cwe-lawyers-a.jpg" data-b="work/logofolio/img/cwe-lawyers-b.jpg" role="img" aria-label="CWE"><img src="work/logofolio/grilla/cwe-lawyers.png" alt="" style="--w:83px;--h:32px" decoding="async" draggable="false"></li>
@@ -633,6 +670,29 @@ const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofoli
     abajo = false; track.classList.remove('arrastrando');
     setTimeout(() => { movido = false; }, 0);
   });
+})();
+
+/* tipeo de "// your logo here" (mismo mecanismo que index.html: letras pre-ubicadas e
+   invisibles que se prenden de a una, asi nada se mueve mientras se escribe) */
+(function(){
+  const el = document.getElementById('lfgCta'); if(!el) return;
+  const txt = el.textContent; el.textContent = '';
+  const letras = [...txt].map(ch => { if(ch === ' ') return el.appendChild(document.createTextNode(' ')) && null;
+    const s = document.createElement('span'); s.className = 'twc'; s.textContent = ch; el.appendChild(s); return s; }).filter(Boolean);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ letras.forEach(l => l.classList.add('on')); return; }
+  let hecho = false;
+  function escribir(){
+    if(hecho) return; hecho = true;
+    const cur = document.createElement('span'); cur.className = 'tw-cur'; let i = 0;
+    (function paso(){
+      if(i >= letras.length){ setTimeout(() => cur.remove(), 900); return; }
+      const l = letras[i++]; l.classList.add('on'); l.after(cur);
+      setTimeout(paso, 1000 / 45 * (0.6 + Math.random() * 0.8));
+    })();
+  }
+  function revisar(){ const r = el.getBoundingClientRect(); if(r.top < innerHeight && r.bottom > 0) escribir(); }
+  addEventListener('scroll', () => setTimeout(revisar, 60), {passive:true});
+  setTimeout(revisar, 400);
 })();
 </script>
 </body>

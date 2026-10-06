@@ -14,7 +14,11 @@
    (ej. al final del body) el navegador ya restauro la posicion vieja antes de que lleguemos
    a corregirla. scrollRestoration='manual' hay que setearlo antes de que exista layout. */
 if('scrollRestoration' in history) history.scrollRestoration = 'manual';
-window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
+/* EXCEPCION: si se llega con un ancla de seccion (ej. index.html#contacto, desde el
+   "your logo here" o el menu del logofolio) NO se fuerza el hero: hay que bajar a esa
+   seccion. Los #work/<proyecto> abren el detalle y siguen arrancando arriba. */
+window.__anclaSeccion = /^#[a-z]+$/i.test(location.hash) ? location.hash.slice(1) : null;
+window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) window.scrollTo(0,0); });
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1823,7 +1827,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
   /* 44% -> 38%: le devuelve seis puntos de ancho a la columna de la izquierda, que es
      donde viven el nombre y los datos. */
   .about-photo{position:absolute;top:0;right:0;bottom:0;width:38%;overflow:hidden;z-index:2}
-  .about-photo img{width:100%;height:124%;object-fit:cover;display:block;position:relative}
+  .about-photo img,.about-photo video{width:100%;height:124%;object-fit:cover;display:block;position:relative}
   /* el video ya viene con las proporciones correctas (16:9, mismo ratio que el canvas
      de referencia 1920x1080) — Paula pidio explicitamente NO escalarlo ni recortarlo
      en una caja chica. va full-bleed detras de todo (el fondo del video ya es negro,
@@ -2213,7 +2217,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
       -webkit-mask-image:none;mask-image:none}
     /* la opacidad va en la imagen y no en el marco: el reveal por scroll le escribe
        opacity al marco y se la pisaria. */
-    .about-photo img{opacity:1}
+    .about-photo img,.about-photo video{opacity:1}
     /* el velo se disuelve del todo antes del borde derecho: oscurece SOLO la franja
        izquierda, que es por donde la cruza el nombre. Antes seguia tapando un 12% en el
        extremo derecho y, sumado al 60% de opacidad, la foto no se veia. */
@@ -2770,6 +2774,230 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
   .lt-f select option{font-size:var(--t5) !important}
   /* lo que todavia estaba en Roboto pasa a mono (son etiquetas) */
   .svl-num,footer,footer *{font-family:"Geist Mono",ui-monospace,monospace !important;text-transform:lowercase !important}
+
+  /* ================= TRACKING UNIFICADO (Paula 2026-10-05: "igualalo en todo el sitio,
+     esta muy disparejo"). Habia de -.10em a +.60em. Cuatro valores y nada mas:
+       titulos Helvetica Heavy (niveles 1-4)  -.07em  (la regla de marca: Helvetica -70)
+       tipografia de marca DigitalPaulaContact -.02em (los -20 que pidio para los numeros)
+       texto corrido (nivel 5)                  0
+       etiquetas (nivel 6, mono o mayuscula)    .04em
+     Las letras del hero quedan afuera: salen del .ai. */
+  .lt-title,.wt-work,.svc-title-b,.about-name,.an-w,.wrow-name,.ml-line,.ml-line a,.ml-line b,
+  .svl-cta-a,.svl-name,.wfilt-b,.about-me-tag,.about-me-tag b,.mi-txt,.wov-next-label,
+  .wov-marq-i,.wov-marq-i *,.wov-title,.wov-title *{letter-spacing:-.07em !important}
+  .wt-ch,.svl-cta-b,.ab-num,.wnn-l{letter-spacing:-.02em !important}
+  .hcopy,.hlink-txt,.hlink-txt *,.wrow-v,.lt-mail,.lt-f input,.lt-f textarea,.lt-f select,.lfx-txt,
+  .lfx-cta,.menu-contact-mail{letter-spacing:0 !important}
+  .slabel,.slabel *,.wrow-k,.svl-tag,.svl-cue .k,.svl-cue .s,.svl-num,.hlink-tag,.ab-label,.ab-unit,
+  .ab-more,.ab-more *,.wfilt-q,footer,footer *,header .lang button,.hc-foot-l,.hc-foot-c,.hc-foot-r,
+  .hc-foot-l *,.hc-foot-c *,.hc-foot-r *,.lt-lab,.lt-social-lab,.lt-tag,.lt-estado,.about-credit,
+  .contact-credit,.about-tag,.about-tag *,.menu-label,.menu-contact-label,.menu-contact-ww,.menu-talk,
+  .mi-sub,.wov-meta,.wov-meta *,.wov-back{letter-spacing:.04em !important}
+  /* "what do you want to see?": mas chica que una etiqueta comun, mas pegada a la linea de
+     arriba y con el tracking general (antes .32em) */
+  .wfilt{padding-top:clamp(12px,1.2vw,22px) !important}
+  .wfilt-q{font-size:calc(var(--t6) * .85) !important;margin-bottom:clamp(24px,2.6vw,48px) !important}
+
+  /* LET'S TALK: grilla rearmada (Paula 2026-10-05: "separar mas el formulario de todo el
+     resto, ajustar toda la grilla"). Con la escala y el tracking nuevos el titulo llegaba
+     hasta x=39u y el formulario arrancaba en 41u: se tocaban. Ahora:
+       columna izquierda  5.2u -> ~39u (tag, titulo, redes, mail)
+       calle libre        ~39u -> 50u
+       formulario         50u -> 94.8u, dos columnas de 20.9u con 3u entre ellas
+     94.8u = mismo margen derecho que el izquierdo (5.2u). */
+  @media(min-width:901px){
+    .lt-name,.lt-email{left:calc(50 * var(--u));width:calc(20.9 * var(--u))}
+    .lt-corp,.lt-tel{left:calc(73.9 * var(--u));width:calc(20.9 * var(--u))}
+    .lt-subj,.lt-msg{left:calc(50 * var(--u));width:calc(44.8 * var(--u))}
+    .lt-estado{left:calc(50 * var(--u));max-width:calc(38 * var(--u))}
+    .lt-send{left:calc(91.57 * var(--u))}
+    /* [ got projects? ] a la misma altura que el rotulo "name" (pedido de Paula) */
+    .lt-tag{top:calc(11.56 * var(--u))}
+  }
+
+  /* rotulos de las filas de WORK (CLIENT / INDUSTRY / YEAR / LOCATION / ROLE) un escalon
+     por debajo de las etiquetas (Paula: "quedo muy grande, ponela en una jerarquia menor"):
+     mismo tamano que la pregunta del filtro, sin negrita y en gris */
+  .wrow-k{font-size:calc(var(--t6) * .85) !important;font-weight:400 !important;color:#8a8a8a !important}
+
+  /* filtro en telefono: las tres categorias en UNA linea (Paula: "que no sea en dos lineas").
+     Columnas al ancho de cada palabra (no tercios fijos) y cuerpo un poco menor. */
+  @media(max-width:640px){
+    .wfilt-opts{grid-template-columns:auto auto auto;justify-content:space-evenly}
+    .wfilt-b{white-space:nowrap;font-size:clamp(14px,4.3vw,19px) !important}
+  }
+
+  /* ================= MARGENES UNICOS (Paula 2026-10-05: "respeta estos margenes en todo
+     el sitio con las alineaciones", marco dos lineas a ~5% de cada borde). Antes los
+     bloques arrancaban a 64 / 113 / 190 / 315 / 375 px del borde segun la seccion.
+     Ahora TODO se alinea a --gmargin = 5% del ancho (96px a 1920, 72 a 1440, 20 en tel). */
+  :root{--gmargin:clamp(20px,5vw,96px)}
+  /* el manifiesto queda FUERA: Paula lo quiere con su alineado de antes (ancho propio
+     centrado + corrimiento de 120px) */
+  .inner:not(.manifesto .inner),#work .inner{max-width:none !important}
+  @media(min-width:901px){
+    .about-name,.about-stats{left:var(--gmargin) !important;right:var(--gmargin) !important}
+    .about-photo{right:var(--gmargin) !important}
+    /* contacto: horizontal al margen (antes iba dentro de un lienzo 16:9 que en pantallas
+       apaisadas quedaba angosto y centrado). Lo vertical sigue en unidades del lienzo. */
+    #contacto .lt{left:0 !important;right:0;width:auto !important;transform:translateY(-50%) !important}
+    .lt-tag,.lt-title,.lt-social-lab,.lt-mail{left:var(--gmargin) !important}
+    .lt-social a:nth-child(1){left:calc(var(--gmargin) + .37 * var(--u)) !important}
+    .lt-social a:nth-child(2){left:calc(var(--gmargin) + 8.65 * var(--u)) !important}
+    .lt-social a:nth-child(3){left:calc(var(--gmargin) + 17.2 * var(--u)) !important}
+    .lt-social a:nth-child(4){left:calc(var(--gmargin) + 26.1 * var(--u)) !important}
+    .lt-name,.lt-email{left:50% !important;width:calc((50% - var(--gmargin) - 3vw) / 2) !important}
+    .lt-corp,.lt-tel{left:auto !important;right:var(--gmargin);width:calc((50% - var(--gmargin) - 3vw) / 2) !important}
+    .lt-subj,.lt-msg{left:50% !important;right:var(--gmargin);width:auto !important}
+    .lt-estado{left:50% !important}
+    .lt-send{left:auto !important;right:var(--gmargin)}
+  }
+  @media(max-width:900px){
+    #contacto .lt{padding-left:0 !important;padding-right:0 !important}
+    .about-photo{margin-right:0 !important}
+  }
+
+  /* MAS GRANDE Y MAS AIRE (Paula 2026-10-05: "tipografias demasiado pequenas", "dale mas
+     aire a todo"). Texto 16->18 y etiquetas 12->14 a 1440; los rotulos de las filas y la
+     pregunta del filtro vuelven al tamano de etiqueta (antes iban un escalon por debajo). */
+  :root{--t5:clamp(15px,1.25vw,22px);--t6:clamp(12px,.97vw,17px)}
+  .wrow-k,.wfilt-q{font-size:var(--t6) !important}
+  .wrow-head{padding:clamp(28px,2.8vw,52px) 0 !important;gap:clamp(28px,3.4vw,72px) !important}
+  .wrow-col-meta{gap:.5em}
+  .wrow-thumbs{margin-bottom:clamp(28px,2.8vw,52px) !important}
+  .wfilt{padding:clamp(32px,3.4vw,64px) 0 clamp(36px,3.8vw,72px) !important}
+  .wfilt-q{margin-bottom:clamp(30px,3vw,56px) !important}
+
+  /* filtro: las tres opciones juntas y centradas (como en telefono), con aire a los
+     costados, en vez de repartidas en tercios a todo el ancho (Paula: "queda mal") */
+  .wfilt-opts{display:flex !important;justify-content:center;align-items:center;
+    gap:clamp(28px,4vw,80px)}
+  .wfilt-b{white-space:nowrap}
+
+  /* ---------- lista del asunto propia (ref benorth.studio/es/contacto) ----------
+     La lista nativa del <select> la dibuja el sistema y no se puede disenar. El <select>
+     queda (es el que viaja en el formulario) pero invisible; encima va el valor elegido y,
+     al abrir, una lista con borde fino debajo del campo. La opcion apuntada va en negativo
+     (blanco con letra negra): sigue en blanco y negro, sin grises de fondo. */
+  .lt-subj select{opacity:0 !important;pointer-events:none}
+  .lt-subj{cursor:pointer}
+  .lt-dd-val{position:absolute;left:0;bottom:calc(.55 * var(--u));font-family:"Geist Mono",ui-monospace,monospace;
+    font-size:var(--t5);color:#fff;pointer-events:none;letter-spacing:0}
+  .lt-subj.abierto .lt-chev{transform:rotate(180deg)}
+  .lt-chev{transition:transform .25s ease}
+  .lt-dd{position:absolute !important;left:0;right:0;top:calc(100% + 8px);z-index:20;margin:0;padding:0;
+    list-style:none;background:#000;border:1px solid rgba(255,255,255,.55)}
+  .lt-dd[hidden]{display:none}
+  .lt-dd li{padding:.62em .9em;font-family:"Geist Mono",ui-monospace,monospace;font-size:var(--t5);
+    text-transform:lowercase;letter-spacing:0;color:#fff;cursor:pointer;line-height:1.2}
+  .lt-dd li + li{border-top:1px solid rgba(255,255,255,.12)}
+  .lt-dd li:hover,.lt-dd li.foco{background:#fff;color:#000}
+  .lt-dd li[aria-selected="true"]{text-decoration:underline;text-underline-offset:4px}
+  /* autocompletar del navegador: sin el celeste de Chrome, texto blanco sobre negro */
+  .lt-f input:-webkit-autofill,.lt-f input:-webkit-autofill:hover,.lt-f input:-webkit-autofill:focus{
+    -webkit-text-fill-color:#fff;caret-color:#fff;-webkit-box-shadow:0 0 0 1000px #000 inset;
+    box-shadow:0 0 0 1000px #000 inset;transition:background-color 9999s ease-out 0s;
+    font-family:"Geist Mono",ui-monospace,monospace}
+  @media(max-width:900px){ .lt-dd-val{bottom:10px} }
+
+  /* hover que abre el tracking: el de "// enter the logofolio" (que la regla del tracking
+     unificado habia anulado con su !important) y el mismo gesto en "what do you want to
+     see?" al pasar por las categorias del filtro (pedido de Paula) */
+  .lfx-txt,.wfilt-q{transition:letter-spacing .5s cubic-bezier(.22,.61,.36,1)}
+  .lfx:hover .lfx-txt{letter-spacing:.14em !important}
+  .wfilt:has(.wfilt-b:hover) .wfilt-q{letter-spacing:.14em !important}
+
+  /* "// what do you want to see?" con el MISMO formato que "// enter the logofolio"
+     (pedido de Paula): mismo cuerpo, mismo tracking en reposo y se abre al hover */
+  .wfilt-q{font-size:var(--t5) !important;letter-spacing:.02em !important}
+  .wfilt:has(.wfilt-b:hover) .wfilt-q{letter-spacing:.14em !important}
+  .lfx-txt{font-size:var(--t5) !important;letter-spacing:.02em !important}
+
+  /* HEADER MAS GRANDE (Paula): ~40% mas en escritorio — logo, ojito, idiomas y menu */
+  @media(min-width:901px){
+    .brand-logo{height:112px !important}
+    .header-eye{height:46px !important}
+    header .lang button{font-size:clamp(15px,1.15vw,22px) !important}
+    .waffle{grid-template-columns:repeat(3,5px) !important;grid-template-rows:repeat(3,5px) !important;gap:4.5px !important}
+    .waffle i{width:5px !important;height:5px !important}
+    /* manifiesto: un poco mas de margen (antes 120px) */
+    .manifesto-lines{margin-left:200px !important}
+  }
+
+  /* CTA de servicios: una sola frase en mono, alineada al margen izquierdo y centrada en
+     alto, mismo formato que "// enter the logofolio" (cuerpo, tracking y hover) */
+  .svl-cta-m{position:relative;z-index:1;align-self:flex-start;font-family:"Geist Mono",ui-monospace,monospace;
+    font-size:var(--t5);text-transform:lowercase;color:#fff;text-decoration:none;white-space:nowrap;
+    letter-spacing:.02em;transition:letter-spacing .5s cubic-bezier(.22,.61,.36,1)}
+  .svl-cta-m:hover{letter-spacing:.14em}
+  @media(max-width:640px){ .svl-cta-m{white-space:normal} }
+
+  /* ABOUT (Paula 2026-10-05): todo arranca en el margen (eye & taste, [ & this is me ] y
+     el nombre alineados entre si), el ojo mas a la izquierda y los numeros mas grandes */
+  @media(min-width:901px){
+    #about{--about-x:var(--gmargin)}
+    .about-eye video{object-position:left center;transform:translateX(-6%)}
+  }
+  .ab-num{font-size:var(--t2) !important}
+
+  /* mail del contacto en MONO (minuscula, regla de la mono), grande y del mismo ancho que
+     el bloque de iconos de redes de arriba (de instagram a whatsapp = 28.24u). Geist Mono
+     avanza .6em por caracter: 29 caracteres = 17.4em -> 28.24u / 17.4 = 1.623u */
+  @media(min-width:901px){
+    .lt-mail{font-family:"Geist Mono",ui-monospace,monospace !important;text-transform:lowercase !important;
+      font-weight:400 !important;letter-spacing:0 !important;font-size:calc(1.623 * var(--u)) !important;
+      top:calc(49.3 * var(--u)) !important}
+  }
+  @media(max-width:900px){
+    .lt-mail{font-family:"Geist Mono",ui-monospace,monospace !important;text-transform:lowercase !important;
+      font-weight:400 !important;letter-spacing:0 !important;font-size:clamp(14px,4.4vw,20px) !important}
+  }
+
+  /* manifiesto mas grande y mas largo (Paula: "agrandar o darle mas largo"): sin el tope
+     de 1400px, llega hasta el margen derecho; cuerpo entre subtitulo y titulo */
+  @media(min-width:901px){
+    .manifesto .inner{max-width:none !important;padding-right:var(--gmargin)}
+    .ml-line,.ml-line a{font-size:clamp(28px,4.2vw,84px) !important}
+  }
+
+  /* LET'S / TALK un poco mas separados (Paula): interlineado .73 -> .86 */
+  #contacto .lt-title{line-height:.86 !important}
+
+  /* columna izquierda del contacto rearmada (Paula): la BASE de los iconos de redes cae en
+     la misma linea que el campo "tell me briefly..." (fondo de .lt-msg = 43.89u). Para que
+     entre sin pisar TALK, el titulo sube y su cuerpo queda atado al lienzo (10u) en vez de
+     a 10vw, asi en pantallas bajas no crece de mas y no se encima. */
+  @media(min-width:901px){
+    #contacto .lt-title{top:calc(18.6 * var(--u)) !important;font-size:calc(10 * var(--u)) !important}
+    .lt-social-lab{top:calc(38.7 * var(--u)) !important}
+    .lt-social a:nth-child(1){top:calc(42.03 * var(--u)) !important}
+    .lt-social a:nth-child(2){top:calc(42.66 * var(--u)) !important}
+    .lt-social a:nth-child(3){top:calc(42.45 * var(--u)) !important}
+    .lt-social a:nth-child(4){top:calc(42.03 * var(--u)) !important}
+    .lt-mail{top:calc(46.4 * var(--u)) !important}
+  }
+
+  /* video del About = link a Instagram (Paula): al hover aparece "// go to (ig) digitalpaula_"
+     en mono, centrado, con el mismo gesto de tracking que "// enter the logofolio" */
+  a.about-photo{display:block;cursor:pointer}
+  .ap-go{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;display:flex;
+    align-items:center;gap:.55em;white-space:nowrap;font-family:"Geist Mono",ui-monospace,monospace;
+    font-size:var(--t5);text-transform:lowercase;color:#fff;letter-spacing:.02em;opacity:0;
+    pointer-events:none;transition:opacity .35s ease,letter-spacing .5s cubic-bezier(.22,.61,.36,1)}
+  .ap-ig{width:1.15em;height:1.15em;flex-shrink:0}
+  a.about-photo::before{content:"";position:absolute;inset:0;z-index:2;background:#000;opacity:0;
+    transition:opacity .35s ease;pointer-events:none}
+  a.about-photo:hover::before{opacity:.45}
+  a.about-photo:hover .ap-go{opacity:1;letter-spacing:.14em}
+  @media(hover:none){ .ap-go{display:none} }
+
+  /* bloque de contacto del menu mas grande (Paula: "quedo muy chico"): rotulos al nivel
+     etiqueta, mail y [ let's talk ] al nivel texto (un poco mas el mail) */
+  .menu-contact-label,.menu-contact-ww{font-size:var(--t6) !important}
+  .menu-contact-mail{font-size:calc(var(--t5) * 1.15) !important}
+  .menu-talk{font-size:var(--t5) !important;margin-top:clamp(14px,2vh,24px) !important}
+  .menu-mail-copy svg,.contact-mail-copy svg{width:1.1em;height:1.1em}
+  .menu-avail{width:9px !important;height:9px !important}
 </style>
 </head>
 <body>
@@ -2916,7 +3144,7 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
            Arranca en Brand Identities. La elegida queda nitida y blanca, las otras
            desenfocadas. Filtra por el data-cat de cada .wrow (branding / vj). -->
       <div class="wfilt">
-        <p class="wfilt-q" data-es="¿qué querés ver?" data-it="cosa vuoi vedere?" data-deu="was willst du sehen?">what do you want to see?</p>
+        <p class="wfilt-q" data-es="// ¿qué querés ver?" data-it="// cosa vuoi vedere?" data-deu="// was willst du sehen?">// what do you want to see?</p>
         <div class="wfilt-opts" role="tablist">
           <button class="wfilt-b on" type="button" role="tab" aria-selected="true" data-f="branding" data-es="Identidades de Marca" data-it="Identità di Marca" data-deu="Markenidentitäten">Brand Identities</button>
           <button class="wfilt-b" type="button" role="tab" aria-selected="false" data-f="vj" data-es="Visuales en Vivo" data-it="Visual Live" data-deu="Live Visuals">Live Visuals</button>
@@ -3071,6 +3299,8 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
           </div></div>
         </article>
         -->
+        <!-- SALON DE ARTES VISUALES sacado "por ahora" (Paula 2026-10-05). Fila comentada,
+             entrada en PROJECTS intacta: para volver, descomentarla.
         <article class="wrow" data-project="salon-artes-visuales" data-cat="branding">
           <div class="wrow-head">
             <div class="wrow-col wrow-col-client">
@@ -3091,6 +3321,39 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
             <div class="wrow-thumbs">
               <button class="wrow-thumb"><img src="work/salon-artes-visuales/a.jpg" alt="Salón de Artes Visuales" loading="lazy"></button>
               <button class="wrow-thumb"><img src="work/salon-artes-visuales/b.jpg" alt="Salón de Artes Visuales" loading="lazy"></button>
+            </div>
+          </div></div>
+        </article>
+        -->
+        <!-- CINTURON DE BONADEO (2026-10-05): show completo de la banda, cada tema con su
+             universo en TouchDesigner, disparado por SMPTE desde Resolume. Fragmentos de 8s
+             sacados de los renders finales (D:\CDB sept 26\tracks finales visuals). Las tres
+             de la fila las eligio Paula: Tecnopolis, Vector, Do it. -->
+        <article class="wrow" data-project="cinturon-de-bonadeo" data-cat="vj">
+          <div class="wrow-head">
+            <div class="wrow-col wrow-col-client">
+              <span class="wrow-k" data-es="Cliente" data-it="Cliente" data-deu="Kunde">Client</span>
+              <h3 class="wrow-name">Cinturón de Bonadeo</h3>
+            </div>
+            <div class="wrow-col wrow-col-meta">
+              <span class="wrow-k" data-es="Industria" data-it="Settore" data-deu="Branche">Industry</span>
+              <span class="wrow-v" data-es="Banda" data-it="Band" data-deu="Band">Band</span>
+            </div>
+            <div class="wrow-col wrow-col-meta">
+              <span class="wrow-k" data-es="Año" data-it="Anno" data-deu="Jahr">Year</span>
+              <span class="wrow-v">2026</span>
+            </div>
+            <div class="wrow-col wrow-col-meta wrow-col-loc"><span class="wrow-k" data-es="Ubicación" data-it="Località" data-deu="Standort">Location</span><span class="wrow-v">Santa Fe Capital</span></div>
+            <div class="wrow-col wrow-col-meta wrow-col-role">
+              <span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span>
+              <span class="wrow-v" data-es="VJing, Producción de Visuales Audiorreactivos, Dirección Creativa" data-it="VJing, Produzione di Visual Audioreattivi, Direzione Creativa" data-deu="VJing, Audioreaktive Visual-Produktion, Kreativdirektion">VJing, Audioreactive Visuals Production, Creative Direction</span>
+            </div>
+          </div>
+          <div class="wrow-fold"><div class="wrow-fold-inner">
+            <div class="wrow-thumbs">
+              <button class="wrow-thumb"><video src="work/cinturon-de-bonadeo/tecnopolis.mp4" poster="work/cinturon-de-bonadeo/tecnopolis-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Cinturón de Bonadeo"></video></button>
+              <button class="wrow-thumb"><video src="work/cinturon-de-bonadeo/vector.mp4" poster="work/cinturon-de-bonadeo/vector-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Cinturón de Bonadeo"></video></button>
+              <button class="wrow-thumb"><video src="work/cinturon-de-bonadeo/do-it.mp4" poster="work/cinturon-de-bonadeo/do-it-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Cinturón de Bonadeo"></video></button>
             </div>
           </div></div>
         </article>
@@ -3360,8 +3623,10 @@ window.addEventListener('DOMContentLoaded', ()=> window.scrollTo(0,0));
       <div class="svl-cta">
         <div class="svl-cta-box">
           <video class="svl-cta-bg vid-io" src="svl-cta-bg.mp4" preload="none" muted="" loop="" playsinline="" aria-hidden="true"></video>
-          <span class="svl-cta-a" data-es="¿Tenés otra idea?" data-it="Hai un'altra idea?" data-deu="Hast du eine andere Idee?">Have another idea?</span>
-          <a href="#contacto" id="svlCtaLink" class="svl-cta-b" data-es="Escribime" data-it="Scrivimi" data-deu="Schreib mir">Hit me up</a>
+          <!-- (Paula 2026-10-05) "Have another idea? / Hit me up" en dos tipografias quedaba
+               desalineado: ahora es UNA frase en mono que se escribe sola, con el mismo gesto
+               que "// enter the logofolio". El ojo de fondo queda. -->
+          <a href="#contacto" class="svl-cta-m" data-es="// ¿tenés otra idea? escribime" data-it="// hai un'altra idea? scrivimi" data-deu="// hast du eine andere idee? schreib mir">// have another idea? hit me up</a>
         </div>
       </div>
     </div>
@@ -3463,7 +3728,10 @@ Gen-4.5"><img src="work/softwares/logo-31.svg" alt=""></div>
       <span class="sl-left"><b>03</b><span class="sl-sep">/</span><span class="sl-name" data-es="Sobre mí" data-it="Chi Sono" data-deu="Über mich">About</span></span>
       <span class="sl-right"><span data-es="ACTIVA" data-it="ATTIVA" data-deu="AKTIV">ACTIVE</span> <b class="sl-now">01</b><span class="sl-sep">/</span><b>04</b></span>
     </div>
-    <div class="about-photo"><img src="about-photo.jpg" alt="Paula"></div>
+    <!-- foto reemplazada por el reel de hand tracking en TouchDesigner (Paula 2026-10-05,
+         instagram.com/p/DaqjVEhqwAp). Fuente: D:\identidades 2026\yop\hand track.mp4.
+         Mismo marco, mismo parallax y mismo reveal que tenia la foto. -->
+    <a class="about-photo" href="https://instagram.com/digitalpaula_" target="_blank" rel="noopener" aria-label="Go to Instagram @digitalpaula_"><video class="vid-io" src="about-reel.mp4" poster="about-reel-poster.jpg" muted loop playsinline preload="none" aria-label="Paula — hand tracking en TouchDesigner"></video><span class="ap-go" aria-hidden="true"><span class="ap-go-t" data-es="// ir a" data-it="// vai su" data-deu="// zu">// go to</span><svg class="ap-ig" viewBox="0 0 40.7 40.8" fill="currentColor" aria-hidden="true"><g transform="translate(-118.52 -925.97)"><path d="M147.73,966.78h-17.57c-6.32.01-11.64-5.09-11.64-11.43v-17.98c0-6.19,5.18-11.4,11.37-11.4h18.14c6.07.02,11.23,5.17,11.23,11.24v18.14c.01,6.28-5.22,11.29-11.54,11.43ZM148.11,963.02c3.93,0,7.34-3.36,7.34-7.24l.02-18.56c0-3.89-3.43-7.3-7.26-7.3h-18.62c-3.82,0-7.26,3.41-7.26,7.3l.02,18.55c0,4.03,3.61,7.28,7.58,7.28l18.18-.03Z"></path> <path d="M137.21,935.99c5.93-.95,11.29,3.1,12.18,8.85s-3.05,11.2-8.86,12.1c-5.69.89-11.1-2.97-12.08-8.68s2.81-11.32,8.76-12.27ZM137.65,939.74c-3.83.71-6.15,4.38-5.47,7.96s4.28,6.17,7.99,5.47c3.65-.68,6.11-4.22,5.47-7.87s-4.14-6.28-7.99-5.56Z"></path> <path d="M149.27,933.05c1.45-.33,2.7.57,2.98,1.84.3,1.37-.49,2.71-1.88,3.01-1.29.28-2.6-.46-2.95-1.8-.32-1.25.37-2.71,1.84-3.05Z"></path></g></svg><span class="ap-go-t">digitalpaula_</span></span></a>
     <div class="about-eye"><video class="vid-io" src="about-eye.mp4" preload="none" muted="" loop="" playsinline="" aria-hidden="true"></video></div>
     <div class="about-tag" data-es="Ojo y gusto&lt;br&gt;por el diseño" data-it="OCCHIO E GUSTO&lt;br&gt;PER IL DESIGN" data-deu="AUGE &amp; GESPÜR&lt;br&gt;FÜR DESIGN">EYE &amp; TASTE<br>FOR DESIGN</div>
     <div class="about-me-tag"><b>[</b> &amp; THIS IS ME <b>]</b></div>
@@ -3476,7 +3744,7 @@ Gen-4.5"><img src="work/softwares/logo-31.svg" alt=""></div>
         <span class="ab-label" data-es="TRABAJO" data-it="LAVORO" data-deu="ARBEIT">WORK</span>
         <a class="ab-cell ab-cell-hov ab-cell-link" href="logofolio.html"><b class="ab-num">78</b><em class="ab-unit" data-es="// identidades de marca" data-it="// identità di marca" data-deu="// markenidentitäten">// brand identities</em><span class="ab-more" aria-hidden="true"><i data-es="Ver mi" data-it="Vedi il mio" data-deu="Mein">See my</i><i data-es="Logofolio" data-it="Logofolio" data-deu="Logofolio ansehen">Logofolio</i></span></a>
         <span class="ab-cell"><b class="ab-num">44</b><em class="ab-unit" data-es="// clientes de agencia" data-it="// clienti d’agenzia" data-deu="// agenturkunden">// agency clients</em></span>
-        <span class="ab-cell"><b class="ab-num">12</b><em class="ab-unit" data-es="// shows en vivo" data-it="// show dal vivo" data-deu="// live-shows">// live shows</em></span>
+        <span class="ab-cell"><b class="ab-num">15</b><em class="ab-unit" data-es="// shows en vivo" data-it="// show dal vivo" data-deu="// live-shows">// live shows</em></span>
       </div>
       <div class="ab-row">
         <span class="ab-label" data-es="EXPERIENCIA" data-it="ESPERIENZA" data-deu="ERFAHRUNG">EXPERIENCE</span>
@@ -3537,7 +3805,7 @@ Gen-4.5"><img src="work/softwares/logo-31.svg" alt=""></div>
             <option value="Data visualization" data-es="visualización de datos" data-it="visualizzazione dati" data-deu="datenvisualisierung">data visualization</option>
             <option value="Other" data-es="otra cosa" data-it="altro" data-deu="etwas anderes">something else</option>
           </select>
-          <svg class="lt-chev" viewBox="0 0 14 8" aria-hidden="true"><polyline points="1 1 7 7 13 1"/></svg></label>
+          <span class="lt-dd-val" aria-hidden="true"></span><svg class="lt-chev" viewBox="0 0 14 8" aria-hidden="true"><polyline points="1 1 7 7 13 1"/></svg><ul class="lt-dd" role="listbox" hidden></ul></label>
         <label class="lt-f lt-msg lt-sobre"><span class="lt-lab" data-es="contame brevemente qué tenés en mente *" data-it="raccontami in breve cosa hai in mente *" data-deu="erzähl mir kurz, was du vorhast *">tell me briefly about what you have in mind *</span>
           <textarea name="message" rows="1" required></textarea></label>
         <span class="lt-estado" id="ltEstado" role="status" aria-live="polite"></span>
@@ -4227,6 +4495,13 @@ arreglarViudasHero();
     gsap.ticker.lagSmoothing(0);
     window.__lenis = lenis;
     lenis.scrollTo(0, {immediate:true});
+    // ancla de seccion: bajar recien cuando todo tiene su alto final (imagenes, fuentes)
+    if(window.__anclaSeccion){
+      const ir = ()=>{ const el = document.getElementById(window.__anclaSeccion);
+        if(el){ ScrollTrigger.refresh(); lenis.scrollTo(el, {immediate:true}); } };
+      if(document.readyState === 'complete') setTimeout(ir, 150);
+      else addEventListener('load', ()=> setTimeout(ir, 150));
+    }
   }
 })();
 
@@ -4524,7 +4799,7 @@ arreglarViudasHero();
    });
   }
 
-  const aboutPhotoImg = document.querySelector('.about-photo img');
+  const aboutPhotoImg = document.querySelector('.about-photo img, .about-photo video');
   if(aboutPhotoImg && window.ScrollTrigger){
     // -19 y no -32: yPercent se mide sobre el alto de la PROPIA imagen, que es 124% del
     // marco. Con -32 el recorrido daba 32*1.24 = 39.7% del marco, pero la holgura real
@@ -5160,6 +5435,42 @@ arreglarViudasHero();
         { type:'img', src:B('lockups-three'), ar:'1800/1016' }
       ]
     },
+    'cinturon-de-bonadeo': {
+      name: 'Cinturón de Bonadeo',
+      titleHTML: 'Cinturón <em>de Bonadeo</em>',
+      year: '2026',
+      role: { en:'VJing, audioreactive visuals production, creative direction', es:'VJing, producción de visuales audiorreactivos, dirección creativa', it:'VJing, produzione di visual audioreattivi, direzione creativa', deu:'VJing, audioreaktive Visual-Produktion, Kreativdirektion' },
+      cat: { en:'Live visuals', es:'Visuales en vivo', it:'Visual live', deu:'Live Visuals' },
+      location: 'Santa Fe Capital',
+      // todo en 5:3 (2560x1536, la pantalla del show): fragmentos de 8s de cada tema,
+      // la intro va primero y sola porque es la pieza que Paula quiere destacar
+      blocks: [
+        { type:'text', lede:true, label:{en:'The show',es:'El show'},
+          en:'The full live show of Cinturón de Bonadeo in Santa Fe. Every song got its own visual universe, built in TouchDesigner and fired from Resolume by SMPTE timecode, <b>locked to the music and living alongside the lights.</b>',
+          es:'El show completo de Cinturón de Bonadeo en Santa Fe. Cada canción tuvo su propio universo visual, hecho en TouchDesigner y disparado desde Resolume por código SMPTE, <b>clavado a la música y conviviendo con las luces.</b>',
+          it:'Lo show completo dei Cinturón de Bonadeo a Santa Fe. Ogni canzone ha avuto il suo universo visivo, costruito in TouchDesigner e lanciato da Resolume con timecode SMPTE, <b>agganciato alla musica e in dialogo con le luci.</b>',
+          deu:'Die komplette Live-Show von Cinturón de Bonadeo in Santa Fe. Jeder Song bekam sein eigenes visuelles Universum, gebaut in TouchDesigner und per SMPTE-Timecode aus Resolume gefahren, <b>fest an der Musik und im Zusammenspiel mit dem Licht.</b>' },
+        { type:'img', src:'work/cinturon-de-bonadeo/intro.mp4', ar:'5/3' },
+        { type:'text', col:2, label:{en:'The intro',es:'La intro'},
+          en:'The opening is the most audioreactive piece of the night: a loading screen crossed by waves that answer to the sound in real time, filling up as the band comes in. <b>Everything landed exactly where it had to.</b>',
+          es:'La apertura es la pieza más audiorreactiva de la noche: una pantalla de carga atravesada por ondas que responden al sonido en tiempo real, y que se completa a medida que entra la banda. <b>Salió todo perfecto.</b>',
+          it:'L’apertura è il pezzo più audioreattivo della serata: una schermata di caricamento attraversata da onde che rispondono al suono in tempo reale, e che si riempie mentre entra la band. <b>È andato tutto perfetto.</b>',
+          deu:'Der Opener ist das audioreaktivste Stück des Abends: ein Ladebildschirm, durchzogen von Wellen, die in Echtzeit auf den Sound reagieren, und der sich füllt, während die Band einsetzt. <b>Alles saß genau da, wo es sitzen musste.</b>' },
+        // el show en vivo, con la gente (pedido de Paula: "falta material de la gente")
+        { type:'pair', src:['work/cinturon-de-bonadeo/vivo-psycho.mp4','work/cinturon-de-bonadeo/vivo-vector.mp4'], ar:'1280/592' },
+        { type:'pair', src:['work/cinturon-de-bonadeo/tecnopolis.mp4','work/cinturon-de-bonadeo/tecnopolis-2.mp4'], ar:'5/3' },
+        { type:'trio', src:['work/cinturon-de-bonadeo/vivo-clavos.mp4','work/cinturon-de-bonadeo/vivo-aro.mp4','work/cinturon-de-bonadeo/vivo-azul.mp4'], ar:'9/16' },
+        { type:'text', col:3, label:{en:'One world per song',es:'Un universo por tema'},
+          en:'Tecnópolis, Vector, Gato Negro, Do It: each song speaks a different language — prisms, particles, tunnels, nails — and <b>all of it moves with the music.</b>',
+          es:'Tecnópolis, Vector, Gato Negro, Do It: cada tema habla un idioma distinto — prismas, partículas, túneles, clavos — y <b>todo se mueve con la música.</b>',
+          it:'Tecnópolis, Vector, Gato Negro, Do It: ogni canzone parla una lingua diversa — prismi, particelle, tunnel, chiodi — e <b>tutto si muove con la musica.</b>',
+          deu:'Tecnópolis, Vector, Gato Negro, Do It: jeder Song spricht eine andere Sprache — Prismen, Partikel, Tunnel, Nägel — und <b>alles bewegt sich mit der Musik.</b>' },
+        { type:'pair', src:['work/cinturon-de-bonadeo/vector.mp4','work/cinturon-de-bonadeo/gato-negro.mp4'], ar:'5/3' },
+        { type:'pair', src:['work/cinturon-de-bonadeo/vivo-celulas.mp4','work/cinturon-de-bonadeo/vivo-rojo.mp4'], ar:'1280/592' },
+        { type:'pair', src:['work/cinturon-de-bonadeo/do-it.mp4','work/cinturon-de-bonadeo/do-it-2.mp4'], ar:'5/3' },
+        { type:'img', src:'work/cinturon-de-bonadeo/gato-negro-2.mp4', ar:'5/3' }
+      ]
+    },
     'yotto': {
       name: 'Yotto',
       year: '2026',
@@ -5569,7 +5880,7 @@ arreglarViudasHero();
    esos dos no disparan con la pestania oculta y el texto quedaba invisible para siempre. */
 (function(){
   const TW_SEL = ['.hc-role .hlink-txt', '.hc-desc .hlink-txt', '.lfh-mid', '.svl-cue .s',
-                  '.svl-tags', '.about-tag', '.ab-label', '.wfilt-q', '.lfx-txt', '.lt-tag', '.lt-lab', '.lt-social-lab'];
+                  '.svl-tags', '.about-tag', '.ab-label', '.wfilt-q', '.lfx-txt', '.svl-cta-m', '.lt-tag', '.lt-social-lab'];
   const CPS = 45;
   const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const bloques = [...document.querySelectorAll(TW_SEL.join(','))];
@@ -5650,7 +5961,7 @@ arreglarViudasHero();
    Mientras LT_KEY este vacia el formulario igual funciona: abre el programa de mail de
    quien escribe con el mensaje ya armado (mailto). */
 (function(){
-  const LT_KEY = '';
+  const LT_KEY = 'f1768f37-5760-494a-98e1-5298aedc780e';
   const form = document.getElementById('ltForm');
   if(!form) return;
   const estado = document.getElementById('ltEstado');
@@ -5801,6 +6112,58 @@ arreglarViudasHero();
   function loop(now){ if(visible) cuadro(now); requestAnimationFrame(loop); }
   requestAnimationFrame(loop);
   cuadro(performance.now());
+})();
+
+/* ---------- lista propia del asunto (ver .lt-dd en el CSS) ---------- */
+(function(){
+  const campo = document.querySelector('.lt-subj');
+  if(!campo) return;
+  const sel = campo.querySelector('select'), lista = campo.querySelector('.lt-dd'),
+        val = campo.querySelector('.lt-dd-val');
+  let foco = -1;
+  const opciones = () => [...sel.options].filter(o => o.value);
+  function pintar(){
+    lista.innerHTML = '';
+    opciones().forEach((o, i) => {
+      const li = document.createElement('li');
+      li.setAttribute('role', 'option'); li.textContent = o.textContent;
+      li.setAttribute('aria-selected', o.value === sel.value);
+      li.addEventListener('mousedown', e => { e.preventDefault(); elegir(i); });
+      lista.appendChild(li);
+    });
+  }
+  function abrir(){ pintar(); lista.hidden = false; campo.classList.add('abierto'); foco = -1; }
+  function cerrar(){ lista.hidden = true; campo.classList.remove('abierto'); }
+  function elegir(i){
+    const o = opciones()[i]; if(!o) return;
+    sel.value = o.value; val.textContent = o.textContent;
+    sel.dispatchEvent(new Event('change', {bubbles:true}));   // apaga el rotulo y la marca roja
+    cerrar();
+  }
+  // el campo es un <label>: cada click adentro el navegador lo repite sobre el <select>
+  // oculto. Ese segundo click se ignora (si no, la lista se volvia a abrir al elegir).
+  campo.addEventListener('click', e => {
+    e.preventDefault();
+    if(e.target === sel || e.target.closest('.lt-dd')) return;
+    lista.hidden ? abrir() : cerrar();
+  });
+  campo.tabIndex = 0;
+  campo.addEventListener('keydown', e => {
+    const n = opciones().length;
+    if(e.key === 'Escape'){ cerrar(); return; }
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); if(lista.hidden) abrir(); else if(foco >= 0) elegir(foco); return; }
+    if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+      e.preventDefault(); if(lista.hidden) abrir();
+      foco = (foco + (e.key === 'ArrowDown' ? 1 : -1) + n) % n;
+      [...lista.children].forEach((li, i) => li.classList.toggle('foco', i === foco));
+    }
+  });
+  document.addEventListener('click', e => { if(!campo.contains(e.target)) cerrar(); });
+  // al enviar, el formulario se resetea: el valor mostrado tambien
+  sel.form && sel.form.addEventListener('reset', () => { val.textContent = ''; });
+  // al cambiar de idioma el texto elegido se traduce con su opcion
+  new MutationObserver(() => { const o = sel.selectedOptions[0]; val.textContent = o && o.value ? o.textContent : ''; })
+    .observe(sel, {subtree:true, childList:true, characterData:true});
 })();
 </script>
 
