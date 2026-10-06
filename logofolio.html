@@ -109,7 +109,7 @@
   .lfg-grid{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:14px 18px;--s:1}
   .lfg-cell{height:clamp(104px,9vw,140px);display:flex;align-items:center;justify-content:center}
   .lfg-cell img{display:block;width:calc(var(--w) * var(--s));height:calc(var(--h) * var(--s));
-    object-fit:contain;opacity:.3;transition:opacity .3s ease}
+    object-fit:contain;opacity:.6;transition:opacity .3s ease}
   .lfg-cell:hover img{opacity:1}
   /* la celda "tu logo aca" de la referencia: lleva al contacto */
   .lfg-cta a{font-family:var(--disp);font-size:15px;color:#d4d4d4;
@@ -418,7 +418,7 @@
       grid-template-columns:repeat(8,24vw) !important;grid-auto-rows:30vh}
     html.lfg-mundo .lfg-cell{height:30vh !important;border-right:1px solid rgba(255,255,255,.06);
       border-bottom:1px solid rgba(255,255,255,.06)}
-    html.lfg-mundo .lfg-cell img{opacity:var(--o,.3) !important;transform:scale(var(--z,1));
+    html.lfg-mundo .lfg-cell img{opacity:var(--o,.6) !important;transform:scale(var(--z,1));
       transition:opacity .6s ease,transform .8s cubic-bezier(.22,.61,.36,1)}
     html.lfg-mundo .lfg-cell:hover img{opacity:1 !important}
     /* vineta negra en los bordes: se lee que la grilla sigue mas alla de la pantalla */
@@ -432,6 +432,70 @@
   @media(max-width:1100px){ .lfg-grid{--s:1.15} }
   @media(max-width:640px){ .lfg-grid{--s:.92} .lfg-cell{height:104px} }
   @media(hover:hover) and (pointer:fine) and (min-width:901px){ html.lfg-mundo .lfg-grid{--s:1.6} }
+
+  /* CABECERA DE LA GALERIA (2026-10-06): "Camalote Seeds // seed bank". Nombre en caja
+     normal (no todo mayuscula), industria en Geist Mono minuscula con tipeo. Logo en blanco
+     pleno: antes se leia apagado. */
+  .lfg-gal-logo{filter:brightness(0) invert(1);opacity:1}
+  .lfg-gal-name{text-transform:none !important}
+  .lfg-gal-tag{font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase !important;
+    letter-spacing:.02em !important;opacity:.85;white-space:nowrap}
+  .lfg-gal-tag::before{content:"// "}
+  @media(max-width:640px){ .lfg-gal-tag{display:inline} .lfg-gal-tag:empty{display:none} }
+
+  /* ================= SEGUNDA VISTA: INDEX (2026-10-06) =================
+     Paula: "el logofolio puede ser complicado de navegar asi, proponeme otra vista que se
+     active clickeando la segunda". Selector "// grid  // index" en la cabecera. INDEX = lista
+     de clientes de arriba a abajo (numero, nombre, // industria en mono, logo a la derecha):
+     se recorre con scroll comun. Hover = la misma foto que sigue al mouse; click = la misma
+     galeria (cada fila le pasa los eventos a su logo de la grilla). Se recuerda la eleccion. */
+  .lfg-vista{display:flex;gap:clamp(14px,1.6vw,28px);pointer-events:auto;
+    font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase}
+  .lfg-vista button{background:none;border:0;padding:6px 2px;margin:-6px 0;cursor:pointer;font:inherit;
+    letter-spacing:.02em;text-transform:lowercase;color:rgba(255,255,255,.4);transition:color .25s}
+  .lfg-vista button::before{content:"// "}
+  .lfg-vista button:hover,.lfg-vista button.on{color:#fff}
+  .lfg-idx{display:none;list-style:none;margin:0;padding:0}
+  html.lfg-index .lfg-grid{display:none}
+  html.lfg-index .lfg-idx{display:block}
+  html.lfg-mundo.lfg-index .lfg::after{display:none}
+  html.lfg-mundo.lfg-index .lfg-idx{position:fixed;inset:0;z-index:3;overflow-y:auto;background:#000;
+    padding:calc(clamp(84px,9vh,110px) + clamp(60px,8vh,96px)) var(--gmargin) 96px;overscroll-behavior:contain}
+  .lfg-ir{display:grid;grid-template-columns:3.2em minmax(0,1fr) auto;align-items:center;column-gap:clamp(12px,2vw,32px);
+    padding:clamp(14px,1.6vw,22px) 0;border-top:1px solid rgba(255,255,255,.12);cursor:pointer}
+  .lfg-ir:last-child{border-bottom:1px solid rgba(255,255,255,.12)}
+  .lfg-ir-num,.lfg-ir-tag{font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase;
+    font-size:var(--t6);letter-spacing:.02em;color:rgba(255,255,255,.45)}
+  .lfg-ir-txt{display:flex;align-items:baseline;flex-wrap:wrap;gap:.2em 1.1em;min-width:0}
+  .lfg-ir-name{font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;font-size:clamp(24px,3.06vw,58px);
+    letter-spacing:-.04em;line-height:1;color:rgba(255,255,255,.6);transition:color .3s}
+  .lfg-ir-tag:not(:empty)::before{content:"// "}
+  .lfg-ir-logo{height:clamp(26px,2.6vw,40px);width:clamp(70px,8vw,130px);object-fit:contain;object-position:right center;
+    opacity:.5;transition:opacity .3s}
+  .lfg-ir:hover .lfg-ir-name,.lfg-ir:focus-visible .lfg-ir-name{color:#fff}
+  .lfg-ir:hover .lfg-ir-logo,.lfg-ir:focus-visible .lfg-ir-logo{opacity:1}
+  .lfg-ir:hover .lfg-ir-num{color:#fff}
+  @media(max-width:640px){
+    .lfg-head{flex-wrap:wrap;row-gap:12px}
+    .lfg-ir{grid-template-columns:2.4em minmax(0,1fr) auto}
+    .lfg-ir-txt{flex-direction:column;gap:6px}
+    .lfg-ir-name{font-size:var(--t4)}
+    .lfg-ir-logo{width:64px;height:24px}
+  }
+
+  /* SONIDO: boton "// sound off|on" en el header, al lado del menu (ver sound.js) */
+  .snd-btn{position:absolute;top:50%;right:calc(var(--gmargin) + 52px);transform:translateY(-50%);
+    background:none;border:0;padding:8px 4px;cursor:pointer;color:rgba(255,255,255,.5);
+    font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase;font-size:var(--t6);letter-spacing:.02em;
+    display:flex;align-items:center;gap:.5em;transition:color .25s}
+  .snd-btn:hover,.snd-btn.on{color:#fff}
+  .snd-bars{display:inline-flex;align-items:flex-end;gap:2px;height:.8em}
+  .snd-bars i{display:block;width:2px;height:30%;background:currentColor}
+  .snd-btn.on .snd-bars i{animation:sndBar .9s ease-in-out infinite}
+  .snd-btn.on .snd-bars i:nth-child(2){animation-delay:-.3s}
+  .snd-btn.on .snd-bars i:nth-child(3){animation-delay:-.6s}
+  @keyframes sndBar{0%,100%{height:30%}50%{height:100%}}
+  @media(max-width:640px){ .snd-btn .snd-lab{display:none} .snd-btn{right:calc(var(--gmargin) + 40px)} }
 </style>
 </head>
 <body>
@@ -456,13 +520,14 @@
       <span class="lfb-back-arrow" aria-hidden="true"><i></i></span>
       <img class="lfb-eye" src="header-eye.webp" alt="" aria-hidden="true" decoding="async">
     </a>
+    <button class="snd-btn" type="button" aria-pressed="false" aria-label="Sound"><span class="snd-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="snd-lab">// sound <span class="snd-st">off</span></span></button>
     <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
       <span class="waffle" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
     </button>
   </div>
 
   <main class="lfg">
-    <div class="lfg-head"><span>Logofolio</span><span>+78 clients</span></div>
+    <div class="lfg-head"><span>Logofolio</span><span class="lfg-vista" role="group" aria-label="View"><button type="button" data-v="grid" class="on">grid</button><button type="button" data-v="index">index</button></span><span>+78 clients</span></div>
     <ul class="lfg-grid">
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/2001-a.jpg" data-b="work/logofolio/img/2001-b.jpg" role="img" aria-label="2001"><img src="work/logofolio/grilla/2001.png" alt="" style="--w:76px;--h:47px" decoding="async" draggable="false"></li>
       <li class="lfg-cell tiene-gal" data-slug="492" data-n="16" data-hover data-a="work/logofolio/img/492-a.jpg" data-b="work/logofolio/img/492-b.jpg" role="img" aria-label="492"><img src="work/logofolio/grilla/492.png" alt="" style="--w:87px;--h:42px" decoding="async" draggable="false"></li>
@@ -499,6 +564,7 @@
       <li class="lfg-cell tiene-gal" data-slug="universe" data-n="12" data-hover data-a="work/logofolio/img/universe-a.jpg" data-b="work/logofolio/img/universe-b.jpg" role="img" aria-label="Universe"><img src="work/logofolio/grilla/universe.png" alt="" style="--w:107px;--h:31px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/velco-a.jpg" data-b="work/logofolio/img/velco-b.jpg" role="img" aria-label="Velco"><img src="work/logofolio/grilla/velco.png" alt="" style="--w:103px;--h:41px" decoding="async" draggable="false"></li>
     </ul>
+    <ol class="lfg-idx" id="lfgIdx" aria-label="Clients"></ol>
   </main>
   <div class="lfg-gal" id="lfgGal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="lfg-gal-top">
@@ -610,7 +676,7 @@
 })();
 
 /* ---------- galeria horizontal al click (ver .lfg-gal en el CSS) ---------- */
-const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofolio/492.png", "items": ["work/logofolio/img/492-a.jpg", "work/logofolio/img/492-b.jpg", "work/492-media-group/guidelines.jpg", "work/492-media-group/construction.jpg", "work/492-media-group/logo-black.jpg", "work/492-media-group/logo-white.jpg", "work/492-media-group/signage.jpg", "work/492-media-group/stationery.jpg", "work/492-media-group/id-card.jpg", "work/492-media-group/cards-1.jpg", "work/492-media-group/cards-embossed.jpg", "work/492-media-group/notebooks.jpg", "work/492-media-group/tee.jpg", "work/492-media-group/hoodie.jpg", "work/492-media-group/mug.jpg", "work/492-media-group/tote.jpg"]}, "boota": {"name": "Boota", "tag": "Festival Urbano", "logo": "work/logofolio/boota-isotipo.png", "items": ["work/logofolio/img/boota-a.jpg", "work/logofolio/img/boota-b.jpg", "work/boota/gothic-spray.jpg", "work/boota/star-texture.jpg", "work/boota/pattern-dark.jpg", "work/boota/boceto.jpg", "work/boota/lockups.jpg", "work/boota/icon-grid.jpg", "work/boota/type.jpg", "work/boota/palette.jpg", "work/boota/pattern-blue.jpg", "work/boota/pattern-concrete.jpg", "work/boota/gothic-blue.jpg", "work/boota/gothic-white.jpg", "work/boota/crt.jpg", "work/boota/flare.jpg", "work/boota/chrome.jpg", "work/boota/lockups-three.jpg"]}, "camalote-seeds": {"name": "Camalote Seeds", "tag": "Seed Bank", "logo": "work/logofolio/camalote-seeds.png", "items": ["work/logofolio/img/camalote-seeds-a.jpg", "work/logofolio/img/camalote-seeds-b.jpg", "work/camalote-seeds/stickers.jpg", "work/camalote-seeds/tote-cielo.jpg", "work/camalote-seeds/b.jpg", "work/camalote-seeds/c.jpg", "work/camalote-seeds/genetics.jpg", "work/camalote-seeds/catalogo.jpg", "work/camalote-seeds/proceso.mp4", "work/camalote-seeds/alto-verde.jpg", "work/camalote-seeds/dia-padre.jpg", "work/camalote-seeds/variedad-data.jpg", "work/camalote-seeds/ambiente.jpg", "work/camalote-seeds/terpenos-tipos.jpg", "work/camalote-seeds/terpenos-efecto.jpg", "work/camalote-seeds/mix.jpg", "work/camalote-seeds/cultiva.jpg", "work/camalote-seeds/mayorista.jpg", "work/camalote-seeds/brochure.jpg", "work/camalote-seeds/stand.jpg", "work/camalote-seeds/tote.jpg", "work/camalote-seeds/tees.jpg", "work/camalote-seeds/tote-mano.jpg", "work/camalote-seeds/keychains.jpg", "work/camalote-seeds/keychains-mesa.jpg", "work/camalote-seeds/stand2.jpg", "work/camalote-seeds/rollup.jpg", "work/camalote-seeds/santafesino.jpg"]}, "malika": {"name": "Malika", "tag": "Outdoor and Sport", "logo": "work/logofolio/malika.png", "items": ["work/logofolio/img/malika-a.jpg", "work/logofolio/img/malika-b.jpg", "work/malika/apertura.mp4", "work/malika/submarcas-anim.mp4", "work/malika/logo.jpg", "work/malika/submarcas.jpg", "work/malika/construccion.jpg", "work/malika/paleta.jpg", "work/malika/tipografia.jpg", "work/malika/outdoor.jpg", "work/malika/sports.jpg", "work/malika/travel.jpg", "work/malika/local-noche.jpg", "work/malika/bolsa.jpg", "work/malika/etiquetas.jpg"]}, "klik": {"name": "Klik", "tag": "Vending Machines", "logo": "work/logofolio/grilla/klik.png", "items": ["work/logofolio/klik/klik-final-01.jpg", "work/logofolio/klik/klik-final-02.jpg", "work/logofolio/klik/klik-final-03.jpg", "work/logofolio/klik/klik-final-04.jpg", "work/logofolio/klik/klik-final-05.jpg", "work/logofolio/klik/klik-final-06.jpg", "work/logofolio/klik/klik-final-07.jpg", "work/logofolio/klik/klik-final-08.jpg", "work/logofolio/klik/klik-final-09.jpg"]}, "universe": {"name": "Universe", "tag": "Nail Studio", "logo": "work/logofolio/grilla/universe.png", "items": ["work/logofolio/universe/universe-render-01.jpg", "work/logofolio/universe/universe-render-02.jpg", "work/logofolio/universe/universe-render-03.jpg", "work/logofolio/universe/universe-render-04.jpg", "work/logofolio/universe/universe-render-05.jpg", "work/logofolio/universe/universe-render-06.jpg", "work/logofolio/universe/universe-render-07.jpg", "work/logofolio/universe/universe-render-08.jpg", "work/logofolio/universe/universe-render-09.jpg", "work/logofolio/universe/universe-render-10.jpg", "work/logofolio/universe/universe-render-11.jpg", "work/logofolio/universe/universe-render-12.jpg"]}, "r-o-podcast": {"name": "Ruido y Orden", "tag": "Podcast", "logo": "work/logofolio/r-o-podcast.png", "items": ["work/logofolio/img/r-o-podcast-a.jpg", "work/logofolio/img/r-o-podcast-b.jpg", "work/ruido-y-orden/animation.mp4", "work/ruido-y-orden/campo-glow.jpg", "work/ruido-y-orden/campo-ondas.jpg", "work/ruido-y-orden/construccion.jpg", "work/ruido-y-orden/particulas.jpg", "work/ruido-y-orden/tipografia.jpg", "work/ruido-y-orden/tarjeta.jpg", "work/ruido-y-orden/poster.jpg"]}, "hardtime": {"name": "HARDTIME", "tag": "Hard Techno Rave", "logo": "work/logofolio/grilla/hardtime.png", "items": ["work/logofolio/hardtime/hardtime-01.jpg", "work/logofolio/hardtime/hardtime-02.jpg", "work/logofolio/hardtime/hardtime-03.jpg", "work/logofolio/hardtime/hardtime-04.jpg"]}};
+const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofolio/492.png", "items": ["work/logofolio/img/492-a.jpg", "work/logofolio/img/492-b.jpg", "work/492-media-group/guidelines.jpg", "work/492-media-group/construction.jpg", "work/492-media-group/logo-black.jpg", "work/492-media-group/logo-white.jpg", "work/492-media-group/signage.jpg", "work/492-media-group/stationery.jpg", "work/492-media-group/id-card.jpg", "work/492-media-group/cards-1.jpg", "work/492-media-group/cards-embossed.jpg", "work/492-media-group/notebooks.jpg", "work/492-media-group/tee.jpg", "work/492-media-group/hoodie.jpg", "work/492-media-group/mug.jpg", "work/492-media-group/tote.jpg"]}, "boota": {"name": "Boota", "tag": "Urban Festival", "logo": "work/logofolio/boota-isotipo.png", "items": ["work/logofolio/img/boota-a.jpg", "work/logofolio/img/boota-b.jpg", "work/boota/gothic-spray.jpg", "work/boota/star-texture.jpg", "work/boota/pattern-dark.jpg", "work/boota/boceto.jpg", "work/boota/lockups.jpg", "work/boota/icon-grid.jpg", "work/boota/type.jpg", "work/boota/palette.jpg", "work/boota/pattern-blue.jpg", "work/boota/pattern-concrete.jpg", "work/boota/gothic-blue.jpg", "work/boota/gothic-white.jpg", "work/boota/crt.jpg", "work/boota/flare.jpg", "work/boota/chrome.jpg", "work/boota/lockups-three.jpg"]}, "camalote-seeds": {"name": "Camalote Seeds", "tag": "Seed Bank", "logo": "work/logofolio/camalote-seeds.png", "items": ["work/logofolio/img/camalote-seeds-a.jpg", "work/logofolio/img/camalote-seeds-b.jpg", "work/camalote-seeds/stickers.jpg", "work/camalote-seeds/tote-cielo.jpg", "work/camalote-seeds/b.jpg", "work/camalote-seeds/c.jpg", "work/camalote-seeds/genetics.jpg", "work/camalote-seeds/catalogo.jpg", "work/camalote-seeds/proceso.mp4", "work/camalote-seeds/alto-verde.jpg", "work/camalote-seeds/dia-padre.jpg", "work/camalote-seeds/variedad-data.jpg", "work/camalote-seeds/ambiente.jpg", "work/camalote-seeds/terpenos-tipos.jpg", "work/camalote-seeds/terpenos-efecto.jpg", "work/camalote-seeds/mix.jpg", "work/camalote-seeds/cultiva.jpg", "work/camalote-seeds/mayorista.jpg", "work/camalote-seeds/brochure.jpg", "work/camalote-seeds/stand.jpg", "work/camalote-seeds/tote.jpg", "work/camalote-seeds/tees.jpg", "work/camalote-seeds/tote-mano.jpg", "work/camalote-seeds/keychains.jpg", "work/camalote-seeds/keychains-mesa.jpg", "work/camalote-seeds/stand2.jpg", "work/camalote-seeds/rollup.jpg", "work/camalote-seeds/santafesino.jpg"]}, "malika": {"name": "Malika", "tag": "Outdoor and Sport", "logo": "work/logofolio/malika.png", "items": ["work/logofolio/img/malika-a.jpg", "work/logofolio/img/malika-b.jpg", "work/malika/apertura.mp4", "work/malika/submarcas-anim.mp4", "work/malika/logo.jpg", "work/malika/submarcas.jpg", "work/malika/construccion.jpg", "work/malika/paleta.jpg", "work/malika/tipografia.jpg", "work/malika/outdoor.jpg", "work/malika/sports.jpg", "work/malika/travel.jpg", "work/malika/local-noche.jpg", "work/malika/bolsa.jpg", "work/malika/etiquetas.jpg"]}, "klik": {"name": "Klik", "tag": "Vending Machines", "logo": "work/logofolio/grilla/klik.png", "items": ["work/logofolio/klik/klik-final-01.jpg", "work/logofolio/klik/klik-final-02.jpg", "work/logofolio/klik/klik-final-03.jpg", "work/logofolio/klik/klik-final-04.jpg", "work/logofolio/klik/klik-final-05.jpg", "work/logofolio/klik/klik-final-06.jpg", "work/logofolio/klik/klik-final-07.jpg", "work/logofolio/klik/klik-final-08.jpg", "work/logofolio/klik/klik-final-09.jpg"]}, "universe": {"name": "Universe", "tag": "Nail Studio", "logo": "work/logofolio/grilla/universe.png", "items": ["work/logofolio/universe/universe-render-01.jpg", "work/logofolio/universe/universe-render-02.jpg", "work/logofolio/universe/universe-render-03.jpg", "work/logofolio/universe/universe-render-04.jpg", "work/logofolio/universe/universe-render-05.jpg", "work/logofolio/universe/universe-render-06.jpg", "work/logofolio/universe/universe-render-07.jpg", "work/logofolio/universe/universe-render-08.jpg", "work/logofolio/universe/universe-render-09.jpg", "work/logofolio/universe/universe-render-10.jpg", "work/logofolio/universe/universe-render-11.jpg", "work/logofolio/universe/universe-render-12.jpg"]}, "r-o-podcast": {"name": "Ruido y Orden", "tag": "Podcast", "logo": "work/logofolio/r-o-podcast.png", "items": ["work/logofolio/img/r-o-podcast-a.jpg", "work/logofolio/img/r-o-podcast-b.jpg", "work/ruido-y-orden/animation.mp4", "work/ruido-y-orden/campo-glow.jpg", "work/ruido-y-orden/campo-ondas.jpg", "work/ruido-y-orden/construccion.jpg", "work/ruido-y-orden/particulas.jpg", "work/ruido-y-orden/tipografia.jpg", "work/ruido-y-orden/tarjeta.jpg", "work/ruido-y-orden/poster.jpg"]}, "hardtime": {"name": "HARDTIME", "tag": "Hard Techno Rave", "logo": "work/logofolio/grilla/hardtime.png", "items": ["work/logofolio/hardtime/hardtime-01.jpg", "work/logofolio/hardtime/hardtime-02.jpg", "work/logofolio/hardtime/hardtime-03.jpg", "work/logofolio/hardtime/hardtime-04.jpg"]}};
 (function(){
   const gal = document.getElementById('lfgGal'), track = document.getElementById('lfgTrack');
   const nEl = gal.querySelector('.lfg-gal-n'), prev = document.getElementById('lfgPrev');
@@ -629,11 +695,25 @@ const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofoli
     if(track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) k = items.length - 1;
     nEl.textContent = dos(k + 1) + ' / ' + dos(items.length);
   }
+  /* industria en mono con el efecto de tipeo (Paula: "Camalote Seeds // seed bank") */
+  let tagTimer = 0;
+  function escribirTag(el, txt){
+    clearTimeout(tagTimer); el.textContent = '';
+    if(!txt) return;
+    const letras = [...txt.toLowerCase()].map(ch => { const s = document.createElement('span'); s.className = 'twc'; s.textContent = ch; el.appendChild(s); return s; });
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches){ letras.forEach(l => l.classList.add('on')); return; }
+    const cur = document.createElement('span'); cur.className = 'tw-cur'; let i = 0;
+    (function paso(){
+      if(i >= letras.length){ tagTimer = setTimeout(() => cur.remove(), 900); return; }
+      const l = letras[i++]; l.classList.add('on'); l.after(cur); if(window.dpTick) dpTick();
+      tagTimer = setTimeout(paso, 1000 / 40 * (0.6 + Math.random() * 0.8));
+    })();
+  }
   function abrir(slug){
     const g = typeof slug === 'string' ? GAL[slug] : slug; if(!g) return;
     gal.querySelector('.lfg-gal-logo').src = g.logo;
     gal.querySelector('.lfg-gal-name').textContent = g.name;
-    gal.querySelector('.lfg-gal-tag').textContent = g.tag;
+    escribirTag(gal.querySelector('.lfg-gal-tag'), g.tag);
     track.innerHTML = '';
     g.items.forEach((src, i) => {
       let el;
@@ -768,7 +848,7 @@ const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofoli
     const cur = document.createElement('span'); cur.className = 'tw-cur'; let i = 0;
     (function paso(){
       if(i >= letras.length){ setTimeout(() => cur.remove(), 900); return; }
-      const l = letras[i++]; l.classList.add('on'); l.after(cur);
+      const l = letras[i++]; l.classList.add('on'); l.after(cur); if(window.dpTick) dpTick();
       setTimeout(paso, 1000 / 45 * (0.6 + Math.random() * 0.8));
     })();
   }
@@ -849,8 +929,8 @@ document.querySelectorAll('.contact-mail-copy').forEach(btn=>{
       if(dentro){
         const b = c.getBoundingClientRect(), d = Math.hypot(b.left + b.width / 2 - mx, b.top + b.height / 2 - my);
         const f = Math.max(0, 1 - d / R);
-        img.style.setProperty('--o', (.28 + f * .72).toFixed(3)); img.style.setProperty('--z', (1 + f * .06).toFixed(3));
-      } else { img.style.setProperty('--o', .28); img.style.setProperty('--z', 1); }
+        img.style.setProperty('--o', (.6 + f * .4).toFixed(3)); img.style.setProperty('--z', (1 + f * .06).toFixed(3));
+      } else { img.style.setProperty('--o', .6); img.style.setProperty('--z', 1); }
     }
   }
   (function loop(now){ cuadro(now); requestAnimationFrame(loop); })(performance.now());
@@ -877,6 +957,42 @@ document.querySelectorAll('.contact-mail-copy').forEach(btn=>{
   rellenar();
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(rellenar, 150); });
 })();
+/* ---------- vista INDEX (ver "SEGUNDA VISTA" en el CSS) ---------- */
+(function(){
+  const lista = document.getElementById('lfgIdx'), grid = document.querySelector('.lfg-grid');
+  if(!lista || !grid) return;
+  const EXTRA = {'Candela Mazzei': 'fashion designer'};   // logos sin galeria propia
+  const celdas = [...grid.querySelectorAll('.lfg-cell[data-a]')].filter(c => !c.classList.contains('lfg-copia') && !c.classList.contains('lfg-relleno'));
+  const nombre = c => c.getAttribute('aria-label') || '';
+  celdas.sort((a, b) => nombre(a).localeCompare(nombre(b), 'es', {sensitivity: 'base'}));
+  celdas.forEach((c, i) => {
+    const g = c.dataset.slug && typeof GAL !== 'undefined' ? GAL[c.dataset.slug] : null;
+    const tag = (g && g.tag) || EXTRA[nombre(c)] || '';
+    const li = document.createElement('li'); li.className = 'lfg-ir'; li.tabIndex = 0;
+    li.innerHTML = '<span class="lfg-ir-num"></span><span class="lfg-ir-txt"><span class="lfg-ir-name"></span><span class="lfg-ir-tag"></span></span><img class="lfg-ir-logo" alt="" loading="lazy" decoding="async">';
+    li.querySelector('.lfg-ir-num').textContent = String(i + 1).padStart(2, '0');
+    li.querySelector('.lfg-ir-name').textContent = (g && g.name) || nombre(c);
+    li.querySelector('.lfg-ir-tag').textContent = tag.toLowerCase();
+    li.querySelector('.lfg-ir-logo').src = c.querySelector('img').getAttribute('src');
+    const pasar = tipo => e => c.dispatchEvent(new MouseEvent(tipo, {clientX: e.clientX, clientY: e.clientY}));
+    li.addEventListener('mouseenter', pasar('mouseenter'));
+    li.addEventListener('mouseleave', pasar('mouseleave'));
+    li.addEventListener('click', () => { c.dispatchEvent(new MouseEvent('mouseleave')); c.click(); });
+    li.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); c.click(); } });
+    lista.appendChild(li);
+  });
+  const H = document.documentElement, botones = [...document.querySelectorAll('.lfg-vista button')];
+  function vista(v, guardar){
+    H.classList.toggle('lfg-index', v === 'index');
+    botones.forEach(b => b.classList.toggle('on', b.dataset.v === v));
+    if(v === 'index') lista.scrollTop = 0;
+    if(guardar) try{ localStorage.setItem('lfgVista', v); }catch(e){}
+  }
+  botones.forEach(b => b.addEventListener('click', () => vista(b.dataset.v, true)));
+  let v0 = 'grid'; try{ v0 = localStorage.getItem('lfgVista') || 'grid'; }catch(e){}
+  vista(v0, false);
+})();
 </script>
+<script src="sound.js" defer></script>
 </body>
 </html>

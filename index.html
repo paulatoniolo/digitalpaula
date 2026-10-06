@@ -2721,16 +2721,17 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
   .lfx-c{display:flex;align-items:center;justify-content:center;
     border-right:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
   .lfx-c img{display:block;width:calc(var(--w) * .0694vw);height:calc(var(--h) * .0694vw);
-    object-fit:contain;opacity:var(--o,.28);transform:scale(var(--z,1));
+    object-fit:contain;opacity:var(--o,.6);transform:scale(var(--z,1));
     transition:opacity .6s ease,transform .8s cubic-bezier(.22,.61,.36,1)}
   .lfx-cta{font-family:var(--disp);font-size:clamp(12px,1.1vw,20px);color:#fff;
     text-decoration:underline;text-underline-offset:4px;opacity:var(--o,.5);transition:opacity .25s ease}
   /* fundido a negro arriba y abajo, transparente al medio (el degradado del svg) */
   .lfx-fade{position:absolute;inset:0;pointer-events:none;
-    background:linear-gradient(to bottom,#000 0%,rgba(0,0,0,0) 50%,#000 100%)}
+    background:linear-gradient(to bottom,#000 0%,rgba(0,0,0,0) 32%,rgba(0,0,0,0) 68%,#000 100%)}
   .lfx-txt{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;
     font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase !important;
     font-size:clamp(11px,1.15vw,20px);letter-spacing:.02em;color:#fff;white-space:nowrap;
+    background:#000;padding:.55em 1em;   /* placa negra: la frase ya no se pisa con el logo de abajo */
     transition:letter-spacing .5s cubic-bezier(.22,.61,.36,1)}
   .lfx:hover .lfx-txt{letter-spacing:.14em}
   @media(max-width:640px){
@@ -3047,6 +3048,43 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
     .wrow.is-open .wrow-cta::before{display:none}
     @keyframes wcPulso{0%,100%{opacity:.25}50%{opacity:1}}
   }
+
+  /* PIE DEL PROYECTO: ojo + "eye and taste for design." en UN SOLO BLOQUE (2026-10-06,
+     Paula: "queda muy separado"). Antes el ojo iba al margen y la frase al borde derecho de
+     la columna, con todo el aire del medio. Ahora van juntos y el par se centra. */
+  @media(min-width:761px){
+    .wov-foot-stage{justify-content:center}
+    .wov-next-thumb{margin-left:0 !important}
+    .wov-next-name{margin-left:clamp(12px,1.6vw,32px) !important;margin-right:0 !important;transform:none !important}
+  }
+
+  /* FILTRO de work: las categorias inactivas tenian blur de 5px y no se leian (Paula: "no se
+     llega a entender"). Ahora un desenfoque leve que se sigue leyendo + mas presencia. */
+  .wfilt-b{filter:blur(1.2px);opacity:.45}
+  .wfilt-b:hover{filter:none;opacity:.85}
+  .wfilt-b.on{filter:none;opacity:1}
+  @media(max-width:640px){ .wfilt-b{filter:blur(.8px)} }
+
+  /* SONIDO: boton "// sound off|on" en el header, al lado del menu (ver sound.js) */
+  .snd-btn{position:absolute;top:50%;right:calc(var(--gmargin) + 52px);transform:translateY(-50%);
+    background:none;border:0;padding:8px 4px;cursor:pointer;color:rgba(255,255,255,.5);
+    font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase;font-size:var(--t6);letter-spacing:.02em;
+    display:flex;align-items:center;gap:.5em;transition:color .25s}
+  .snd-btn:hover,.snd-btn.on{color:#fff}
+  .snd-bars{display:inline-flex;align-items:flex-end;gap:2px;height:.8em}
+  .snd-bars i{display:block;width:2px;height:30%;background:currentColor}
+  .snd-btn.on .snd-bars i{animation:sndBar .9s ease-in-out infinite}
+  .snd-btn.on .snd-bars i:nth-child(2){animation-delay:-.3s}
+  .snd-btn.on .snd-bars i:nth-child(3){animation-delay:-.6s}
+  @keyframes sndBar{0%,100%{height:30%}50%{height:100%}}
+  @media(max-width:640px){ .snd-btn .snd-lab{display:none} .snd-btn{right:calc(var(--gmargin) + 40px)} }
+
+  /* DATOS DEL PROYECTO (year / role / category / location) mas grandes (Paula 2026-10-06):
+     mismo tamano que las filas de Selected Work -> etiqueta en t6 gris, valor en t5. */
+  .wov-meta{gap:clamp(24px,3vw,52px) !important;margin-bottom:clamp(70px,7vw,120px)}
+  @media(min-width:901px){ .wov-meta{flex-wrap:nowrap !important} .wov-meta > *{flex:0 1 auto;min-width:0} }
+  .wov-meta span{font-size:var(--t5) !important;line-height:1.3}
+  .wov-meta b{font-size:var(--t6) !important;color:#8a8a8a;opacity:1 !important;margin-bottom:.55em !important}
 </style>
 </head>
 <body>
@@ -3081,6 +3119,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
       <button data-lang="it">IT</button>
       <button data-lang="deu">DEU</button>
     </div>
+    <button class="snd-btn" type="button" aria-pressed="false" aria-label="Sound"><span class="snd-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="snd-lab">// sound <span class="snd-st">off</span></span></button>
     <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="true" aria-label="Menu">
       <span class="waffle" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
     </button>
@@ -6045,7 +6084,7 @@ arreglarViudasHero();
     let i = 0;
     const paso = () => {
       if(i >= st.letras.length){ st.estado = 'lleno'; st.timer = setTimeout(() => cur.remove(), 900); return; }
-      const l = st.letras[i++]; l.classList.add('on'); l.after(cur);
+      const l = st.letras[i++]; l.classList.add('on'); l.after(cur); if(window.dpTick) dpTick();
       st.timer = setTimeout(paso, 1000 / CPS * (0.6 + Math.random() * 0.8));
     };
     st.timer = setTimeout(paso, demora || 0);
@@ -6227,9 +6266,9 @@ arreglarViudasHero();
         const b = c.getBoundingClientRect();
         const d = Math.hypot(b.left + b.width / 2 - mx, b.top + b.height / 2 - my);
         const f = Math.max(0, 1 - d / R);
-        o = (.28 + f * .72).toFixed(3); z = (1 + f * .06).toFixed(3);
+        o = (.6 + f * .4).toFixed(3); z = (1 + f * .06).toFixed(3);
       }
-      c.style.setProperty('--o', o || (c.classList.contains('lfx-cta') ? .5 : .28));
+      c.style.setProperty('--o', o || (c.classList.contains('lfx-cta') ? .8 : .6));   // mas prendido (Paula: "demasiado oscuro, pasa desapercibido")
       if(c.firstElementChild) c.firstElementChild.style.setProperty('--z', z || 1);
     }
   }
@@ -6295,4 +6334,5 @@ arreglarViudasHero();
 </script>
 
 
+<script src="sound.js" defer></script>
 </body></html>
