@@ -3008,6 +3008,19 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
   .lt-mail:hover,.menu-contact-mail:hover{opacity:1 !important;background:none !important;-webkit-text-fill-color:currentColor !important}
   .lt-mail-copy{position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:.55em;
     width:.95em;height:.95em;color:#fff}
+
+  /* HERO un poco mas chico (Paula): todo menos el video del ojo y las letras DIGITALPAULA.
+     Compu: los textos del hero bajan un 15%. Telefono: textos a 12, pie a 11, header mas chico. */
+  .hc-role,.hc-desc,.hc-eyetag,.hc-svcs,.hc-role .hlink-txt,.hc-desc .hlink-txt{font-size:calc(var(--t5) * .85) !important}
+  @media(max-width:900px){
+    .hc-role,.hc-desc,.hc-eyetag,.hc-svcs,.hc-role .hlink-txt,.hc-desc .hlink-txt{font-size:12px !important}
+    .hc-foot-l,.hc-foot-c,.hc-foot-r,.hc-foot-r *{font-size:11px !important}
+    .brand-logo{height:44px !important}
+    header .lang button{font-size:11px !important}
+    .header-eye{height:28px !important}
+    .waffle{grid-template-columns:repeat(3,3px) !important;grid-template-rows:repeat(3,3px) !important;gap:3px !important}
+    .waffle i{width:3px !important;height:3px !important}
+  }
 </style>
 </head>
 <body>
@@ -3245,6 +3258,36 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
               <button class="wrow-thumb"><img src="work/camalote-seeds/b.jpg" alt="Camalote Seeds" loading="lazy"></button>
               <button class="wrow-thumb"><img src="work/camalote-seeds/c.jpg" alt="Camalote Seeds" loading="lazy"></button>
               <button class="wrow-thumb"><img src="work/camalote-seeds/tote-cielo-thumb.jpg" alt="Camalote Seeds" loading="lazy"></button>
+            </div>
+          </div></div>
+        </article>
+        <!-- HARDTIME (2026-10-05): logo + 3D de Paula para una rave de hard techno. La fila usa
+             3 renders de fotos_pro recortados a 16:10 CENTRADOS en el logo (centro de masa del
+             cromo), no el recorte por defecto. Sin ubicacion: la columna no se muestra. -->
+        <article class="wrow" data-project="hardtime" data-cat="branding">
+          <div class="wrow-head">
+            <div class="wrow-col wrow-col-client">
+              <span class="wrow-k" data-es="Cliente" data-it="Cliente" data-deu="Kunde">Client</span>
+              <h3 class="wrow-name">HARDTIME</h3>
+            </div>
+            <div class="wrow-col wrow-col-meta">
+              <span class="wrow-k" data-es="Industria" data-it="Settore" data-deu="Branche">Industry</span>
+              <span class="wrow-v" data-es="Rave de Hard Techno" data-it="Rave Hard Techno" data-deu="Hard-Techno-Rave">Hard Techno Rave</span>
+            </div>
+            <div class="wrow-col wrow-col-meta">
+              <span class="wrow-k" data-es="Año" data-it="Anno" data-deu="Jahr">Year</span>
+              <span class="wrow-v">2026</span>
+            </div>
+            <div class="wrow-col wrow-col-meta wrow-col-role">
+              <span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span>
+              <span class="wrow-v" data-es="Diseño de Logo, Diseño 3D" data-it="Logo Design, 3D Design" data-deu="Logo-Design, 3D-Design">Logo Design, 3D Design</span>
+            </div>
+          </div>
+          <div class="wrow-fold"><div class="wrow-fold-inner">
+            <div class="wrow-thumbs">
+              <button class="wrow-thumb"><img src="work/hardtime/row-1.jpg" alt="HARDTIME" loading="lazy"></button>
+              <button class="wrow-thumb"><img src="work/hardtime/row-2.jpg" alt="HARDTIME" loading="lazy"></button>
+              <button class="wrow-thumb"><img src="work/hardtime/row-3.jpg" alt="HARDTIME" loading="lazy"></button>
             </div>
           </div></div>
         </article>
@@ -5443,6 +5486,28 @@ arreglarViudasHero();
         { type:'pair', src:[B('gothic-white'),B('crt')], ar:'16/9' },
         { type:'pair', src:[B('flare'),B('chrome')], ar:'16/9' },
         { type:'img', src:B('lockups-three'), ar:'1800/1016' }
+      ]
+    },
+    'hardtime': {
+      name: 'HARDTIME',
+      year: '2026',
+      role: { en:'Logo design, 3D design', es:'Diseño de logo, diseño 3D', it:'Logo design, 3D design', deu:'Logo-Design, 3D-Design' },
+      cat: { en:'Hard Techno Rave', es:'Rave de hard techno', it:'Rave hard techno', deu:'Hard-Techno-Rave' },
+      blocks: [
+        { type:'text', lede:true, label:{en:'The piece',es:'La pieza'},
+          en:'HARDTIME is a hard techno rave. I drew the logotype and took it into 3D: a chrome piece modelled, lit and animated in Blender, made to carry the flyer, the stories and the screens. <b>Logo design and 3D, end to end.</b>',
+          es:'HARDTIME es una rave de hard techno. Dibujé el logotipo y lo llevé a 3D: una pieza de cromo modelada, iluminada y animada en Blender, hecha para sostener el flyer, las stories y las pantallas. <b>Diseño de logo y 3D, de punta a punta.</b>',
+          it:'HARDTIME è un rave hard techno. Ho disegnato il logotipo e l’ho portato in 3D: un pezzo di cromo modellato, illuminato e animato in Blender, fatto per reggere il flyer, le stories e gli schermi. <b>Logo design e 3D, dall’inizio alla fine.</b>',
+          deu:'HARDTIME ist ein Hard-Techno-Rave. Ich habe das Logo gezeichnet und in 3D übersetzt: ein Chrom-Objekt, in Blender modelliert, beleuchtet und animiert, gemacht für Flyer, Stories und Screens. <b>Logo-Design und 3D, von Anfang bis Ende.</b>' },
+        { type:'pair', src:['work/hardtime/loop.mp4','work/hardtime/flyer.mp4'], ar:'3/4' },
+        { type:'pair', src:['work/hardtime/general.jpg','work/hardtime/time.jpg'], ar:'3/4' },
+        { type:'text', col:2, label:{en:'The 3D',es:'El 3D'},
+          en:'Spikes that catch the light, scratches in the metal and a red floor that bleeds into everything. <b>Built to feel heavy at any size.</b>',
+          es:'Púas que atrapan la luz, rayones en el metal y un piso rojo que se mete en todo. <b>Hecho para sentirse pesado en cualquier tamaño.</b>',
+          it:'Spine che catturano la luce, graffi nel metallo e un pavimento rosso che entra dappertutto. <b>Fatto per sembrare pesante a qualsiasi dimensione.</b>',
+          deu:'Stacheln, die das Licht fangen, Kratzer im Metall und ein roter Boden, der in alles hineinläuft. <b>Gebaut, um in jeder Größe schwer zu wirken.</b>' },
+        { type:'pair', src:['work/hardtime/puas.jpg','work/hardtime/perfil.jpg'], ar:'3/4' },
+        { type:'trio', src:['work/hardtime/proceso-mesh.jpg','work/hardtime/proceso-clay.jpg','work/hardtime/proceso-nodos.jpg'], ar:'3/4' }
       ]
     },
     'cinturon-de-bonadeo': {

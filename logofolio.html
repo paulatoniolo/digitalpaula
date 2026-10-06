@@ -400,6 +400,31 @@
   .contact-mail-copy:hover,.contact-mail-copy.copied{opacity:1}
   .contact-mail-copy svg{width:100%;height:100%;display:block}
   .lfg-gal-tag:empty{display:none}
+  /* foto del hover mas grande (Paula: "se ven muy chicas") */
+  .lfg-prev{width:clamp(260px,26vw,500px) !important}
+
+  /* ================= NAVEGAR LA GRILLA CON EL MOUSE (como el acceso de la landing) ==========
+     Solo en compu (mouse fino y ancho > 900). La grilla pasa a ser un "mundo" mas grande que
+     la pantalla (8 columnas x 5 filas de celdas de 24vw x 30vh): la posicion del mouse decide
+     que parte se ve, con un seguimiento lento. Los logos se prenden segun la cercania al
+     cursor (--o / --z los pone el JS). Foto al hover y galeria al click siguen igual.
+     En telefono/tablet no aplica: queda la grilla con scroll comun. */
+  @media(hover:hover) and (pointer:fine) and (min-width:901px){
+    html.lfg-mundo,html.lfg-mundo body{overflow:hidden;height:100%}
+    html.lfg-mundo .lfg{position:fixed;inset:0;padding:0;min-height:0;overflow:hidden}
+    html.lfg-mundo .lfg-head{position:fixed;top:clamp(84px,9vh,110px);left:var(--gmargin);right:var(--gmargin);
+      z-index:4;pointer-events:none;margin:0}
+    html.lfg-mundo .lfg-grid{position:absolute;left:0;top:0;gap:0;will-change:transform;
+      grid-template-columns:repeat(8,24vw) !important;grid-auto-rows:30vh}
+    html.lfg-mundo .lfg-cell{height:30vh !important;border-right:1px solid rgba(255,255,255,.06);
+      border-bottom:1px solid rgba(255,255,255,.06)}
+    html.lfg-mundo .lfg-cell img{opacity:var(--o,.3) !important;transform:scale(var(--z,1));
+      transition:opacity .6s ease,transform .8s cubic-bezier(.22,.61,.36,1)}
+    html.lfg-mundo .lfg-cell:hover img{opacity:1 !important}
+    /* vineta negra en los bordes: se lee que la grilla sigue mas alla de la pantalla */
+    html.lfg-mundo .lfg::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:3;
+      background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,#000 100%)}
+  }
 </style>
 </head>
 <body>
@@ -439,7 +464,7 @@
       <li class="lfg-cell tiene-gal" data-slug="boota" data-n="18" data-hover data-a="work/logofolio/img/boota-a.jpg" data-b="work/logofolio/img/boota-b.jpg" role="img" aria-label="Boota"><img src="work/logofolio/grilla/boota-isotipo.png" alt="" style="--w:55px;--h:62px" decoding="async" draggable="false"></li>
       <li class="lfg-cell lfg-cta"><a href="index.html#contacto" data-hover id="lfgCta">// your logo here</a></li>
       <li class="lfg-cell tiene-gal" data-slug="camalote-seeds" data-n="28" data-hover data-a="work/logofolio/img/camalote-seeds-a.jpg" data-b="work/logofolio/img/camalote-seeds-b.jpg" role="img" aria-label="Camalote Seeds"><img src="work/logofolio/grilla/camalote-seeds.png" alt="" style="--w:92px;--h:36px" decoding="async" draggable="false"></li>
-      <li class="lfg-cell tiene-gal" data-slug="candela-mazzei" data-n="8" data-hover data-a="work/logofolio/img/candela-mazzei-a.jpg" data-b="work/logofolio/img/candela-mazzei-b.jpg" role="img" aria-label="Candela Mazzei"><img src="work/logofolio/grilla/candela-mazzei.png" alt="" style="--w:105px;--h:44px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell" data-hover data-a="work/logofolio/img/candela-mazzei-a.jpg" data-b="work/logofolio/img/candela-mazzei-b.jpg" role="img" aria-label="Candela Mazzei"><img src="work/logofolio/grilla/candela-mazzei.png" alt="" style="--w:105px;--h:44px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/coinxbet-a.jpg" data-b="work/logofolio/img/coinxbet-b.jpg" role="img" aria-label="CoinXBet"><img src="work/logofolio/grilla/coinxbet.png" alt="" style="--w:88px;--h:39px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/cwe-lawyers-a.jpg" data-b="work/logofolio/img/cwe-lawyers-b.jpg" role="img" aria-label="CWE"><img src="work/logofolio/grilla/cwe-lawyers.png" alt="" style="--w:83px;--h:32px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/dedicarte-a.jpg" data-b="work/logofolio/img/dedicarte-b.jpg" role="img" aria-label="DedicArte"><img src="work/logofolio/grilla/dedicarte.png" alt="" style="--w:116px;--h:38px" decoding="async" draggable="false"></li>
@@ -463,7 +488,7 @@
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/shot-lab-a.jpg" data-b="work/logofolio/img/shot-lab-b.jpg" role="img" aria-label="Shot Lab"><img src="work/logofolio/grilla/shot-lab.png" alt="" style="--w:69px;--h:46px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/sicilian-a.jpg" data-b="work/logofolio/img/sicilian-b.jpg" role="img" aria-label="Sicilian"><img src="work/logofolio/grilla/sicilian.png" alt="" style="--w:66px;--h:62px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/tierra-clothing-a.jpg" data-b="work/logofolio/img/tierra-clothing-b.jpg" role="img" aria-label="Tierra"><img src="work/logofolio/grilla/tierra-clothing.png" alt="" style="--w:52px;--h:62px" decoding="async" draggable="false"></li>
-      <li class="lfg-cell tiene-gal" data-slug="universe" data-n="17" data-hover data-a="work/logofolio/img/universe-a.jpg" data-b="work/logofolio/img/universe-b.jpg" role="img" aria-label="Universe"><img src="work/logofolio/grilla/universe.png" alt="" style="--w:107px;--h:31px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell tiene-gal" data-slug="universe" data-n="12" data-hover data-a="work/logofolio/img/universe-a.jpg" data-b="work/logofolio/img/universe-b.jpg" role="img" aria-label="Universe"><img src="work/logofolio/grilla/universe.png" alt="" style="--w:107px;--h:31px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/velco-a.jpg" data-b="work/logofolio/img/velco-b.jpg" role="img" aria-label="Velco"><img src="work/logofolio/grilla/velco.png" alt="" style="--w:103px;--h:41px" decoding="async" draggable="false"></li>
     </ul>
   </main>
@@ -577,7 +602,7 @@
 })();
 
 /* ---------- galeria horizontal al click (ver .lfg-gal en el CSS) ---------- */
-const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofolio/492.png", "items": ["work/logofolio/img/492-a.jpg", "work/logofolio/img/492-b.jpg", "work/492-media-group/guidelines.jpg", "work/492-media-group/construction.jpg", "work/492-media-group/logo-black.jpg", "work/492-media-group/logo-white.jpg", "work/492-media-group/signage.jpg", "work/492-media-group/stationery.jpg", "work/492-media-group/id-card.jpg", "work/492-media-group/cards-1.jpg", "work/492-media-group/cards-embossed.jpg", "work/492-media-group/notebooks.jpg", "work/492-media-group/tee.jpg", "work/492-media-group/hoodie.jpg", "work/492-media-group/mug.jpg", "work/492-media-group/tote.jpg"]}, "boota": {"name": "Boota", "tag": "Festival Urbano", "logo": "work/logofolio/boota-isotipo.png", "items": ["work/logofolio/img/boota-a.jpg", "work/logofolio/img/boota-b.jpg", "work/boota/gothic-spray.jpg", "work/boota/star-texture.jpg", "work/boota/pattern-dark.jpg", "work/boota/boceto.jpg", "work/boota/lockups.jpg", "work/boota/icon-grid.jpg", "work/boota/type.jpg", "work/boota/palette.jpg", "work/boota/pattern-blue.jpg", "work/boota/pattern-concrete.jpg", "work/boota/gothic-blue.jpg", "work/boota/gothic-white.jpg", "work/boota/crt.jpg", "work/boota/flare.jpg", "work/boota/chrome.jpg", "work/boota/lockups-three.jpg"]}, "camalote-seeds": {"name": "Camalote Seeds", "tag": "Seed Bank", "logo": "work/logofolio/camalote-seeds.png", "items": ["work/logofolio/img/camalote-seeds-a.jpg", "work/logofolio/img/camalote-seeds-b.jpg", "work/camalote-seeds/stickers.jpg", "work/camalote-seeds/tote-cielo.jpg", "work/camalote-seeds/b.jpg", "work/camalote-seeds/c.jpg", "work/camalote-seeds/genetics.jpg", "work/camalote-seeds/catalogo.jpg", "work/camalote-seeds/proceso.mp4", "work/camalote-seeds/alto-verde.jpg", "work/camalote-seeds/dia-padre.jpg", "work/camalote-seeds/variedad-data.jpg", "work/camalote-seeds/ambiente.jpg", "work/camalote-seeds/terpenos-tipos.jpg", "work/camalote-seeds/terpenos-efecto.jpg", "work/camalote-seeds/mix.jpg", "work/camalote-seeds/cultiva.jpg", "work/camalote-seeds/mayorista.jpg", "work/camalote-seeds/brochure.jpg", "work/camalote-seeds/stand.jpg", "work/camalote-seeds/tote.jpg", "work/camalote-seeds/tees.jpg", "work/camalote-seeds/tote-mano.jpg", "work/camalote-seeds/keychains.jpg", "work/camalote-seeds/keychains-mesa.jpg", "work/camalote-seeds/stand2.jpg", "work/camalote-seeds/rollup.jpg", "work/camalote-seeds/santafesino.jpg"]}, "malika": {"name": "Malika", "tag": "Outdoor and Sport", "logo": "work/logofolio/malika.png", "items": ["work/logofolio/img/malika-a.jpg", "work/logofolio/img/malika-b.jpg", "work/malika/apertura.mp4", "work/malika/submarcas-anim.mp4", "work/malika/logo.jpg", "work/malika/submarcas.jpg", "work/malika/construccion.jpg", "work/malika/paleta.jpg", "work/malika/tipografia.jpg", "work/malika/outdoor.jpg", "work/malika/sports.jpg", "work/malika/travel.jpg", "work/malika/local-noche.jpg", "work/malika/bolsa.jpg", "work/malika/etiquetas.jpg"]}, "klik": {"name": "Klik", "tag": "Vending Machines", "logo": "work/logofolio/grilla/klik.png", "items": ["work/logofolio/klik/klik-final-01.jpg", "work/logofolio/klik/klik-final-02.jpg", "work/logofolio/klik/klik-final-03.jpg", "work/logofolio/klik/klik-final-04.jpg", "work/logofolio/klik/klik-final-05.jpg", "work/logofolio/klik/klik-final-06.jpg", "work/logofolio/klik/klik-final-07.jpg", "work/logofolio/klik/klik-final-08.jpg", "work/logofolio/klik/klik-final-09.jpg"]}, "universe": {"name": "Universe", "tag": "Nail Studio", "logo": "work/logofolio/grilla/universe.png", "items": ["work/logofolio/universe/universe-01.jpg", "work/logofolio/universe/universe-02.jpg", "work/logofolio/universe/universe-03.jpg", "work/logofolio/universe/universe-04.jpg", "work/logofolio/universe/universe-05.jpg", "work/logofolio/universe/universe-06.jpg", "work/logofolio/universe/universe-07.jpg", "work/logofolio/universe/universe-08.jpg", "work/logofolio/universe/universe-09.jpg", "work/logofolio/universe/universe-10.jpg", "work/logofolio/universe/universe-11.jpg", "work/logofolio/universe/universe-12.jpg", "work/logofolio/universe/universe-13.jpg", "work/logofolio/universe/universe-14.jpg", "work/logofolio/universe/universe-15.jpg", "work/logofolio/universe/universe-16.jpg", "work/logofolio/universe/universe-17.jpg"]}, "candela-mazzei": {"name": "Candela Mazzei", "tag": "Fashion Designer", "logo": "work/logofolio/grilla/candela-mazzei.png", "items": ["work/logofolio/candela-mazzei/candela-01.jpg", "work/logofolio/candela-mazzei/candela-02.jpg", "work/logofolio/candela-mazzei/candela-03.jpg", "work/logofolio/candela-mazzei/candela-04.jpg", "work/logofolio/candela-mazzei/candela-05.jpg", "work/logofolio/candela-mazzei/candela-06.jpg", "work/logofolio/candela-mazzei/candela-07.jpg", "work/logofolio/candela-mazzei/candela-08.jpg"]}, "r-o-podcast": {"name": "Ruido y Orden", "tag": "Podcast", "logo": "work/logofolio/r-o-podcast.png", "items": ["work/logofolio/img/r-o-podcast-a.jpg", "work/logofolio/img/r-o-podcast-b.jpg", "work/ruido-y-orden/animation.mp4", "work/ruido-y-orden/campo-glow.jpg", "work/ruido-y-orden/campo-ondas.jpg", "work/ruido-y-orden/construccion.jpg", "work/ruido-y-orden/particulas.jpg", "work/ruido-y-orden/tipografia.jpg", "work/ruido-y-orden/tarjeta.jpg", "work/ruido-y-orden/poster.jpg"]}};
+const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofolio/492.png", "items": ["work/logofolio/img/492-a.jpg", "work/logofolio/img/492-b.jpg", "work/492-media-group/guidelines.jpg", "work/492-media-group/construction.jpg", "work/492-media-group/logo-black.jpg", "work/492-media-group/logo-white.jpg", "work/492-media-group/signage.jpg", "work/492-media-group/stationery.jpg", "work/492-media-group/id-card.jpg", "work/492-media-group/cards-1.jpg", "work/492-media-group/cards-embossed.jpg", "work/492-media-group/notebooks.jpg", "work/492-media-group/tee.jpg", "work/492-media-group/hoodie.jpg", "work/492-media-group/mug.jpg", "work/492-media-group/tote.jpg"]}, "boota": {"name": "Boota", "tag": "Festival Urbano", "logo": "work/logofolio/boota-isotipo.png", "items": ["work/logofolio/img/boota-a.jpg", "work/logofolio/img/boota-b.jpg", "work/boota/gothic-spray.jpg", "work/boota/star-texture.jpg", "work/boota/pattern-dark.jpg", "work/boota/boceto.jpg", "work/boota/lockups.jpg", "work/boota/icon-grid.jpg", "work/boota/type.jpg", "work/boota/palette.jpg", "work/boota/pattern-blue.jpg", "work/boota/pattern-concrete.jpg", "work/boota/gothic-blue.jpg", "work/boota/gothic-white.jpg", "work/boota/crt.jpg", "work/boota/flare.jpg", "work/boota/chrome.jpg", "work/boota/lockups-three.jpg"]}, "camalote-seeds": {"name": "Camalote Seeds", "tag": "Seed Bank", "logo": "work/logofolio/camalote-seeds.png", "items": ["work/logofolio/img/camalote-seeds-a.jpg", "work/logofolio/img/camalote-seeds-b.jpg", "work/camalote-seeds/stickers.jpg", "work/camalote-seeds/tote-cielo.jpg", "work/camalote-seeds/b.jpg", "work/camalote-seeds/c.jpg", "work/camalote-seeds/genetics.jpg", "work/camalote-seeds/catalogo.jpg", "work/camalote-seeds/proceso.mp4", "work/camalote-seeds/alto-verde.jpg", "work/camalote-seeds/dia-padre.jpg", "work/camalote-seeds/variedad-data.jpg", "work/camalote-seeds/ambiente.jpg", "work/camalote-seeds/terpenos-tipos.jpg", "work/camalote-seeds/terpenos-efecto.jpg", "work/camalote-seeds/mix.jpg", "work/camalote-seeds/cultiva.jpg", "work/camalote-seeds/mayorista.jpg", "work/camalote-seeds/brochure.jpg", "work/camalote-seeds/stand.jpg", "work/camalote-seeds/tote.jpg", "work/camalote-seeds/tees.jpg", "work/camalote-seeds/tote-mano.jpg", "work/camalote-seeds/keychains.jpg", "work/camalote-seeds/keychains-mesa.jpg", "work/camalote-seeds/stand2.jpg", "work/camalote-seeds/rollup.jpg", "work/camalote-seeds/santafesino.jpg"]}, "malika": {"name": "Malika", "tag": "Outdoor and Sport", "logo": "work/logofolio/malika.png", "items": ["work/logofolio/img/malika-a.jpg", "work/logofolio/img/malika-b.jpg", "work/malika/apertura.mp4", "work/malika/submarcas-anim.mp4", "work/malika/logo.jpg", "work/malika/submarcas.jpg", "work/malika/construccion.jpg", "work/malika/paleta.jpg", "work/malika/tipografia.jpg", "work/malika/outdoor.jpg", "work/malika/sports.jpg", "work/malika/travel.jpg", "work/malika/local-noche.jpg", "work/malika/bolsa.jpg", "work/malika/etiquetas.jpg"]}, "klik": {"name": "Klik", "tag": "Vending Machines", "logo": "work/logofolio/grilla/klik.png", "items": ["work/logofolio/klik/klik-final-01.jpg", "work/logofolio/klik/klik-final-02.jpg", "work/logofolio/klik/klik-final-03.jpg", "work/logofolio/klik/klik-final-04.jpg", "work/logofolio/klik/klik-final-05.jpg", "work/logofolio/klik/klik-final-06.jpg", "work/logofolio/klik/klik-final-07.jpg", "work/logofolio/klik/klik-final-08.jpg", "work/logofolio/klik/klik-final-09.jpg"]}, "universe": {"name": "Universe", "tag": "Nail Studio", "logo": "work/logofolio/grilla/universe.png", "items": ["work/logofolio/universe/universe-render-01.jpg", "work/logofolio/universe/universe-render-02.jpg", "work/logofolio/universe/universe-render-03.jpg", "work/logofolio/universe/universe-render-04.jpg", "work/logofolio/universe/universe-render-05.jpg", "work/logofolio/universe/universe-render-06.jpg", "work/logofolio/universe/universe-render-07.jpg", "work/logofolio/universe/universe-render-08.jpg", "work/logofolio/universe/universe-render-09.jpg", "work/logofolio/universe/universe-render-10.jpg", "work/logofolio/universe/universe-render-11.jpg", "work/logofolio/universe/universe-render-12.jpg"]}, "r-o-podcast": {"name": "Ruido y Orden", "tag": "Podcast", "logo": "work/logofolio/r-o-podcast.png", "items": ["work/logofolio/img/r-o-podcast-a.jpg", "work/logofolio/img/r-o-podcast-b.jpg", "work/ruido-y-orden/animation.mp4", "work/ruido-y-orden/campo-glow.jpg", "work/ruido-y-orden/campo-ondas.jpg", "work/ruido-y-orden/construccion.jpg", "work/ruido-y-orden/particulas.jpg", "work/ruido-y-orden/tipografia.jpg", "work/ruido-y-orden/tarjeta.jpg", "work/ruido-y-orden/poster.jpg"]}};
 (function(){
   const gal = document.getElementById('lfgGal'), track = document.getElementById('lfgTrack');
   const nEl = gal.querySelector('.lfg-gal-n'), prev = document.getElementById('lfgPrev');
@@ -722,6 +747,60 @@ document.querySelectorAll('.contact-mail-copy').forEach(btn=>{
       document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} ta.remove(); }
   });
 });
+
+/* ---------- navegar la grilla con el mouse (ver "NAVEGAR LA GRILLA" en el CSS) ---------- */
+(function(){
+  if(!matchMedia('(hover:hover) and (pointer:fine)').matches || innerWidth <= 900) return;
+  document.documentElement.classList.add('lfg-mundo');
+  const grid = document.querySelector('.lfg-grid'); if(!grid) return;
+  /* los MEJORES al centro del mundo (pedido de Paula): se ordenan las 40 casillas (8x5) por
+     distancia al centro; los principales ocupan las mas cercanas, el resto sigue alrededor en
+     su orden alfabetico y las casillas mas lejanas (rincones) quedan vacias. Solo en este
+     modo: en telefono la grilla sigue alfabetica. */
+  const MEJORES = ['boota-isotipo','klik','universe','492','camalote-seeds','malika','r-o-podcast','candela-mazzei'];
+  const COLS = 8, FILAS = 5;
+  const clave = c => { const i = c.querySelector('img'); return i ? i.getAttribute('src').split('/').pop().replace('.png','') : 'cta'; };
+  const todas = [...grid.children];
+  const top = MEJORES.map(k => todas.find(c => clave(c) === k)).filter(Boolean);
+  const resto = todas.filter(c => !top.includes(c));
+  const casillas = [];
+  for(let f = 0; f < FILAS; f++) for(let k = 0; k < COLS; k++) casillas.push({f, k, d: Math.hypot((f - (FILAS - 1) / 2) * 1.25, k - (COLS - 1) / 2)});
+  const porCercania = casillas.slice().sort((a, b) => a.d - b.d);
+  const orden = [...top, ...resto];
+  porCercania.forEach((c, i) => { c.el = orden[i] || null; });
+  grid.innerHTML = '';
+  casillas.forEach(c => {
+    if(c.el) grid.appendChild(c.el);
+    else { const v = document.createElement('li'); v.className = 'lfg-cell lfg-vacia'; v.setAttribute('aria-hidden', 'true'); grid.appendChild(v); }
+  });
+  const cells = [...grid.children];
+  let tx = .5, ty = .5, x = .5, y = .5, dentro = false, mx = -1e4, my = -1e4, t0 = performance.now();
+  addEventListener('mousemove', e => {
+    // un pequeno margen en los bordes: no hace falta llevar el mouse al limite para ver la ultima fila
+    const k = v => Math.min(1, Math.max(0, (v - .08) / .84));
+    tx = k(e.clientX / innerWidth); ty = k(e.clientY / innerHeight);
+    mx = e.clientX; my = e.clientY; dentro = true;
+  });
+  document.addEventListener('mouseleave', () => { dentro = false; mx = my = -1e4; });
+  function cuadro(now){
+    if(document.documentElement.classList.contains('gal-abierta')) return;   // galeria abierta: quieto
+    if(!dentro){ const s = (now - t0) / 1000; tx = .5 + Math.sin(s * .09) * .45; ty = .5 + Math.cos(s * .12) * .4; }
+    x += (tx - x) * (dentro ? .045 : .012); y += (ty - y) * (dentro ? .045 : .012);
+    const sx = grid.offsetWidth - innerWidth, sy = grid.offsetHeight - innerHeight;
+    grid.style.transform = `translate3d(${-x * Math.max(0, sx)}px,${-y * Math.max(0, sy)}px,0)`;
+    const R = innerWidth * .22;
+    for(const c of cells){
+      const img = c.querySelector('img'); if(!img) continue;
+      if(dentro){
+        const b = c.getBoundingClientRect(), d = Math.hypot(b.left + b.width / 2 - mx, b.top + b.height / 2 - my);
+        const f = Math.max(0, 1 - d / R);
+        img.style.setProperty('--o', (.28 + f * .72).toFixed(3)); img.style.setProperty('--z', (1 + f * .06).toFixed(3));
+      } else { img.style.setProperty('--o', .28); img.style.setProperty('--z', 1); }
+    }
+  }
+  (function loop(now){ cuadro(now); requestAnimationFrame(loop); })(performance.now());
+  setTimeout(() => cuadro(performance.now()), 50);
+})();
 </script>
 </body>
 </html>
