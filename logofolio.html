@@ -425,6 +425,13 @@
     html.lfg-mundo .lfg::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:3;
       background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,#000 100%)}
   }
+
+  /* LOGOS MAS GRANDES (2026-10-06, Paula: "hacelos mas grandes"): solo se sube el
+     multiplicador --s, el peso optico relativo entre logos queda igual */
+  .lfg-grid{--s:1.3}
+  @media(max-width:1100px){ .lfg-grid{--s:1.15} }
+  @media(max-width:640px){ .lfg-grid{--s:.92} .lfg-cell{height:104px} }
+  @media(hover:hover) and (pointer:fine) and (min-width:901px){ html.lfg-mundo .lfg-grid{--s:1.6} }
 </style>
 </head>
 <body>
@@ -471,7 +478,7 @@
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/divino-a.jpg" data-b="work/logofolio/img/divino-b.jpg" role="img" aria-label="Divino"><img src="work/logofolio/grilla/divino.png" alt="" style="--w:111px;--h:35px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/franja-a.jpg" data-b="work/logofolio/img/franja-b.jpg" role="img" aria-label="Franja"><img src="work/logofolio/grilla/franja.png" alt="" style="--w:72px;--h:43px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/global-spain-a.jpg" data-b="work/logofolio/img/global-spain-b.jpg" role="img" aria-label="Global Spain"><img src="work/logofolio/grilla/global-spain.png" alt="" style="--w:54px;--h:57px" decoding="async" draggable="false"></li>
-      <li class="lfg-cell tiene-gal" data-slug="hardtime" data-n="4" data-hover data-a="work/logofolio/img/hardtime-a.jpg" data-b="work/logofolio/img/hardtime-b.jpg" role="img" aria-label="HARDTIME"><img src="work/logofolio/grilla/hardtime.png" alt="" style="--w:62px;--h:55px" decoding="async" draggable="false"></li>
+      <li class="lfg-cell tiene-gal" data-slug="hardtime" data-n="4" data-hover data-a="work/logofolio/img/hardtime-a.jpg" data-b="work/logofolio/img/hardtime-b.jpg" role="img" aria-label="HARDTIME"><img src="work/logofolio/grilla/hardtime.png" alt="" style="--w:85px;--h:46px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/kimun-a.jpg" data-b="work/logofolio/img/kimun-b.jpg" role="img" aria-label="Kimun"><img src="work/logofolio/grilla/kimun.png" alt="" style="--w:83px;--h:49px" decoding="async" draggable="false"></li>
       <li class="lfg-cell tiene-gal" data-slug="klik" data-n="9" data-hover data-a="work/logofolio/img/klik-a.jpg" data-b="work/logofolio/img/klik-b.jpg" role="img" aria-label="Klik"><img src="work/logofolio/grilla/klik.png" alt="" style="--w:95px;--h:32px" decoding="async" draggable="false"></li>
       <li class="lfg-cell" data-hover data-a="work/logofolio/img/la-tercera-a.jpg" data-b="work/logofolio/img/la-tercera-b.jpg" role="img" aria-label="La Tercera"><img src="work/logofolio/grilla/la-tercera.png" alt="" style="--w:67px;--h:45px" decoding="async" draggable="false"></li>
@@ -804,9 +811,22 @@ document.querySelectorAll('.contact-mail-copy').forEach(btn=>{
   const orden = [...top, ...resto];
   porCercania.forEach((c, i) => { c.el = orden[i] || null; });
   grid.innerHTML = '';
+  /* SIN HUECOS (2026-10-06, Paula: "que no queden espacios vacios, que se vaya rellenando
+     la grilla"): las casillas que sobran se llenan repitiendo logos (los que no estan entre
+     los MEJORES, en orden), lejos del centro. La copia no tiene listeners propios: le pasa
+     el hover y el click a la original, asi abre la misma foto y la misma galeria. */
+  const repetibles = resto.filter(c => c.querySelector('img') && c.dataset.a);
+  let r = 0;
   casillas.forEach(c => {
-    if(c.el) grid.appendChild(c.el);
-    else { const v = document.createElement('li'); v.className = 'lfg-cell lfg-vacia'; v.setAttribute('aria-hidden', 'true'); grid.appendChild(v); }
+    if(c.el){ grid.appendChild(c.el); return; }
+    const orig = repetibles[r++ % repetibles.length];
+    if(!orig){ const v = document.createElement('li'); v.className = 'lfg-cell lfg-vacia'; v.setAttribute('aria-hidden', 'true'); grid.appendChild(v); return; }
+    const cp = orig.cloneNode(true); cp.classList.add('lfg-copia'); cp.setAttribute('aria-hidden', 'true'); cp.removeAttribute('role');
+    const pasar = tipo => e => orig.dispatchEvent(new MouseEvent(tipo, {clientX: e.clientX, clientY: e.clientY}));
+    cp.addEventListener('mouseenter', pasar('mouseenter'));
+    cp.addEventListener('mouseleave', pasar('mouseleave'));
+    cp.addEventListener('click', () => orig.click());
+    grid.appendChild(cp);
   });
   const cells = [...grid.children];
   let tx = .5, ty = .5, x = .5, y = .5, dentro = false, mx = -1e4, my = -1e4, t0 = performance.now();
@@ -835,6 +855,27 @@ document.querySelectorAll('.contact-mail-copy').forEach(btn=>{
   }
   (function loop(now){ cuadro(now); requestAnimationFrame(loop); })(performance.now());
   setTimeout(() => cuadro(performance.now()), 50);
+})();
+/* SIN HUECOS fuera del modo mundo (telefono/tablet): la ultima fila de la grilla se completa
+   repitiendo logos, segun cuantas columnas haya en ese ancho. Tocar la copia abre lo mismo
+   que la original. */
+(function(){
+  if(document.documentElement.classList.contains('lfg-mundo')) return;
+  const grid = document.querySelector('.lfg-grid'); if(!grid) return;
+  const originales = [...grid.children].filter(c => c.querySelector('img') && c.dataset.a);
+  function rellenar(){
+    grid.querySelectorAll('.lfg-relleno').forEach(c => c.remove());
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    const faltan = (cols - grid.children.length % cols) % cols;
+    for(let i = 0; i < faltan; i++){
+      const orig = originales[(originales.length - 1 - i * 3 + originales.length * 9) % originales.length];
+      const cp = orig.cloneNode(true); cp.classList.add('lfg-relleno'); cp.setAttribute('aria-hidden', 'true'); cp.removeAttribute('role');
+      cp.addEventListener('click', () => orig.click());
+      grid.appendChild(cp);
+    }
+  }
+  rellenar();
+  let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(rellenar, 150); });
 })();
 </script>
 </body>
