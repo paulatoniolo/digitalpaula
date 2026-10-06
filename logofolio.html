@@ -622,7 +622,7 @@ const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofoli
     nEl.textContent = dos(k + 1) + ' / ' + dos(items.length);
   }
   function abrir(slug){
-    const g = GAL[slug]; if(!g) return;
+    const g = typeof slug === 'string' ? GAL[slug] : slug; if(!g) return;
     gal.querySelector('.lfg-gal-logo').src = g.logo;
     gal.querySelector('.lfg-gal-name').textContent = g.name;
     gal.querySelector('.lfg-gal-tag').textContent = g.tag;
@@ -655,6 +655,17 @@ const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofoli
     setTimeout(() => { if(!gal.classList.contains('open')) track.innerHTML = ''; }, 500);
   }
   document.querySelectorAll('.lfg-cell.tiene-gal').forEach(c => c.addEventListener('click', () => abrir(c.dataset.slug)));
+  // telefono/tablet: no hay hover, asi que la foto que acompana al mouse nunca se ve. Ahi
+  // tocar CUALQUIER logo abre sus fotos en la galeria (los que no tienen galeria propia
+  // muestran sus 2 fotos del hover).
+  if(matchMedia('(hover:none)').matches){
+    document.querySelectorAll('.lfg-cell[data-a]:not(.tiene-gal)').forEach(c => {
+      c.style.cursor = 'pointer';
+      c.addEventListener('click', () => abrir({ name: c.getAttribute('aria-label') || '', tag: '',
+        logo: (c.querySelector('img') || {}).getAttribute ? c.querySelector('img').getAttribute('src') : '',
+        items: [c.dataset.a, c.dataset.b].filter(Boolean) }));
+    });
+  }
   gal.querySelector('.lfg-gal-x').addEventListener('click', cerrar);
   gal.addEventListener('click', e => {
     if(movido) return;

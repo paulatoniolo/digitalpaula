@@ -1044,7 +1044,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
   /* el nombre del cliente arranca atenuado y llega a blanco pleno al abrir — pista clara
      de "esta fila esta activa" incluso antes de que termine de bajar el contenido. */
   .wrow .wrow-name{opacity:.55;transition:opacity .55s cubic-bezier(.22,1,.36,1)}
-  .wrow.is-open .wrow-name,.wrow:focus-within .wrow-name{opacity:1}
+  .wrow.is-open .wrow-name,.wrow:has(:focus-visible) .wrow-name{opacity:1}
   /* flex-wrap:nowrap es CLAVE aca: con wrap, las columnas de meta se bajaban enteras a una
      segunda linea (CLIENT arriba solo, el resto abajo) — exactamente lo que Paula marco
      tres veces. Las 4 columnas son HERMANAS directas de .wrow-head (no hay contenedor
@@ -1075,7 +1075,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
   .wrow-col-meta{opacity:0;filter:blur(16px);transform:translate3d(26px,0,-110px);
     transition:opacity .65s cubic-bezier(.22,1,.36,1),filter .65s cubic-bezier(.22,1,.36,1),
       transform .65s cubic-bezier(.22,1,.36,1)}
-  .wrow:focus-within .wrow-col-meta,.wrow.is-open .wrow-col-meta{
+  .wrow:has(:focus-visible) .wrow-col-meta,.wrow.is-open .wrow-col-meta{
     opacity:1;filter:blur(0px);transform:translate3d(0,0,0)}
   .wrow-col-meta:nth-of-type(2){transition-delay:.07s}
   .wrow-col-meta:nth-of-type(3){transition-delay:.14s}
@@ -1083,12 +1083,12 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
   .wrow-col-meta:nth-of-type(5){transition-delay:.28s}
   .wrow-fold{display:grid;grid-template-rows:0fr;
     transition:grid-template-rows .7s cubic-bezier(.22,1,.36,1)}
-  .wrow:focus-within .wrow-fold,.wrow.is-open .wrow-fold{grid-template-rows:1fr}
+  .wrow:has(:focus-visible) .wrow-fold,.wrow.is-open .wrow-fold{grid-template-rows:1fr}
   .wrow-fold-inner{overflow:hidden;min-height:0;
     opacity:0;filter:blur(22px);transform:translateY(-26px) translateZ(-150px);
     transition:opacity .75s cubic-bezier(.22,1,.36,1),filter .75s cubic-bezier(.22,1,.36,1),
       transform .75s cubic-bezier(.22,1,.36,1)}
-  .wrow:focus-within .wrow-fold-inner,.wrow.is-open .wrow-fold-inner{
+  .wrow:has(:focus-visible) .wrow-fold-inner,.wrow.is-open .wrow-fold-inner{
     opacity:1;filter:blur(0px);transform:translateY(0) translateZ(0)}
   .wrow-thumbs{margin-bottom:26px}
   .wrow-col{display:flex;flex-direction:column}
@@ -3021,6 +3021,15 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
     .waffle{grid-template-columns:repeat(3,3px) !important;grid-template-rows:repeat(3,3px) !important;gap:3px !important}
     .waffle i{width:3px !important;height:3px !important}
   }
+
+  /* telefono/tablet: las filas CERRADAS salvo la primera (y la que se toca). Antes se
+     forzaba todo abierto y la seccion ocupaba muchisimo. El nombre y los datos siguen a la
+     vista; lo que se pliega son las fotos. */
+  @media(max-width:820px){
+    .wrow:not(.is-open) .wrow-fold{grid-template-rows:0fr !important}
+    .wrow:not(.is-open) .wrow-fold-inner{opacity:0 !important}
+    .wrow:not(.is-open) .wrow-name{opacity:.55 !important}
+  }
 </style>
 </head>
 <body>
@@ -3288,6 +3297,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
               <button class="wrow-thumb"><img src="work/hardtime/row-1.jpg" alt="HARDTIME" loading="lazy"></button>
               <button class="wrow-thumb"><img src="work/hardtime/row-2.jpg" alt="HARDTIME" loading="lazy"></button>
               <button class="wrow-thumb"><img src="work/hardtime/row-3.jpg" alt="HARDTIME" loading="lazy"></button>
+              <button class="wrow-thumb"><img src="work/hardtime/row-4.jpg" alt="HARDTIME" loading="lazy"></button>
             </div>
           </div></div>
         </article>
@@ -3407,6 +3417,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
               <button class="wrow-thumb"><video src="work/cinturon-de-bonadeo/tecnopolis.mp4" poster="work/cinturon-de-bonadeo/tecnopolis-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Cinturón de Bonadeo"></video></button>
               <button class="wrow-thumb"><video src="work/cinturon-de-bonadeo/vector.mp4" poster="work/cinturon-de-bonadeo/vector-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Cinturón de Bonadeo"></video></button>
               <button class="wrow-thumb"><video src="work/cinturon-de-bonadeo/do-it.mp4" poster="work/cinturon-de-bonadeo/do-it-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Cinturón de Bonadeo"></video></button>
+              <button class="wrow-thumb"><video src="work/cinturon-de-bonadeo/gato-negro.mp4" poster="work/cinturon-de-bonadeo/gato-negro-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Cinturón de Bonadeo"></video></button>
             </div>
           </div></div>
         </article>
@@ -5675,11 +5686,20 @@ arreglarViudasHero();
      filas se abren al pasar el mouse y quedan abiertas, que era el pedido original. */
   grid.querySelectorAll('.wrow').forEach(row=>{
     row.style.cursor = 'pointer';
-    row.addEventListener('mouseenter', ()=> row.classList.add('is-open'));
+    // TOQUE = telefono/tablet: no hay hover real (y el navegador simula un mouseenter justo
+    // antes del click, que abriria y entraria de un solo toque). Ahi: primer toque abre la
+    // fila, segundo toque entra al proyecto. En compu: hover abre, salir cierra, click entra.
+    const TOQUE = ()=> matchMedia('(hover:none)').matches || innerWidth <= 820;
+    row.addEventListener('mouseenter', ()=>{ if(!TOQUE()) row.classList.add('is-open'); });
     // se cierra al salir (Paula: "que se abran solo al hacer hover"), salvo la fila fija
     // (la primera visible del filtro, que arranca abierta como pista)
-    row.addEventListener('mouseleave', ()=>{ if(!row.dataset.fija) row.classList.remove('is-open'); });
+    row.addEventListener('mouseleave', ()=>{ if(!TOQUE() && !row.dataset.fija) row.classList.remove('is-open'); });
     row.addEventListener('click', e=>{
+      if(TOQUE() && !row.classList.contains('is-open')){
+        grid.querySelectorAll('.wrow.is-open').forEach(r=>{ if(!r.dataset.fija) r.classList.remove('is-open'); });
+        row.classList.add('is-open');
+        return;
+      }
       // si el click salio de una miniatura hay que resetear su parallax a mano: el overlay
       // la tapa y le come el mouseleave, y al cerrar quedaria trabada en la posicion/zoom
       // que tenia el mouse al hacer click.
