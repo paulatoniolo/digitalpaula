@@ -3315,6 +3315,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
               <span class="wrow-k" data-es="Año" data-it="Anno" data-deu="Jahr">Year</span>
               <span class="wrow-v">2026</span>
             </div>
+            <div class="wrow-col wrow-col-meta wrow-col-loc"><span class="wrow-k" data-es="Ubicación" data-it="Località" data-deu="Standort">Location</span><span class="wrow-v">Rosario</span></div>
             <div class="wrow-col wrow-col-meta wrow-col-role">
               <span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span>
               <span class="wrow-v" data-es="Identidad de marca, Diseño 3D, Motion" data-it="Identità di Marca, 3D Design, Motion" data-deu="Markenidentität, 3D-Design, Motion">Brand Identity, 3D Design, Motion</span>
@@ -3511,8 +3512,6 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           <div class="wrow-cta" aria-hidden="true"><span class="wc-abrir" data-es="// tocá para ver" data-it="// tocca per vedere" data-deu="// tippen zum ansehen">// tap to see</span><span class="wc-entrar" data-es="// ver proyecto →" data-it="// vedi progetto →" data-deu="// projekt ansehen →">// view project →</span></div>
         </article>
         -->
-        <!-- UNIVERSE NAILS (2026-10-12): sin columna de Ubicacion a proposito, Paula no la paso
-             (mismo criterio que HARDTIME: no se inventa). Abre con el loop 3D. -->
         <!-- SALON DE ARTES VISUALES sacado "por ahora" (Paula 2026-10-05). Fila comentada,
              entrada en PROJECTS intacta: para volver, descomentarla.
         <article class="wrow" data-project="salon-artes-visuales" data-cat="branding">
@@ -5905,30 +5904,31 @@ arreglarViudasHero();
       year: '2026',
       role: { en:'Brand identity, 3D design, motion', es:'Identidad de marca, diseño 3D, motion', it:'Identità di marca, 3D design, motion', deu:'Markenidentität, 3D-Design, Motion' },
       cat: { en:'Branding', es:'Branding', it:'Branding', deu:'Branding' },
+      location: 'Rosario',
       blocks: [
         // (2026-10-12, orden de Paula) abre el loop original horizontal, despues los close-ups de la version vidrio (las imagenes importantes), despues el resto.
         // + los renders nuevos con fondo plateado. c-* = placas del carrusel, p-* = renders plateado, v-* = close-ups version vidrio.
-        { type:'text', lede:true, label:{en:'The brand',es:'La marca'},
-          en:'Universe Nails is the nail art studio of Yael Crespo. Its identity crosses <b>space aesthetics with the Japanese graphics of the 2000s</b>: chrome, orbits, and a palette of electric green and violet.',
-          es:'Universe Nails es el estudio de nail art de Yael Crespo. Su identidad cruza <b>la estética espacial con la gráfica japonesa de los 2000</b>: cromo, órbitas y una paleta de verde y violeta eléctricos.',
-          it:'Universe Nails è lo studio di nail art di Yael Crespo. La sua identità incrocia <b>l’estetica spaziale con la grafica giapponese degli anni 2000</b>: cromo, orbite e una palette di verde e viola elettrici.',
-          deu:'Universe Nails ist das Nail-Art-Studio von Yael Crespo. Die Identität kreuzt <b>Weltraum-Ästhetik mit der japanischen Grafik der 2000er</b>: Chrom, Umlaufbahnen und eine Palette aus elektrischem Grün und Violett.' },
+        { type:'text', lede:true, label:{en:'What they wanted',es:'Qué quería el cliente'},
+          en:'Universe is a nail art studio in Rosario. It already had a logo and a look it loved — chrome, outer space, the Japanese graphics of the 2000s. The brief was a rebrand that <b>kept that world and made it work as a brand.</b>',
+          es:'Universe es un estudio de nail art de Rosario. Ya tenía un logo y una estética que le encantaba: cromo, espacio, la gráfica japonesa de los 2000. El pedido fue un rebranding que <b>conservara ese mundo y lo hiciera funcionar como marca.</b>',
+          it:'Universe è uno studio di nail art di Rosario. Aveva già un logo e un’estetica che amava: cromo, spazio, la grafica giapponese degli anni 2000. La richiesta era un rebranding che <b>conservasse quel mondo e lo facesse funzionare come marchio.</b>',
+          deu:'Universe ist ein Nail-Art-Studio in Rosario. Es hatte schon ein Logo und eine Ästhetik, die es liebte: Chrom, Weltraum, die japanische Grafik der 2000er. Gefragt war ein Rebranding, das <b>diese Welt bewahrt und als Marke funktionieren lässt.</b>' },
         { type:'img', src:'work/universe/loop.mp4', ar:'16/9' },
         { type:'img', src:UN('v-neiru'), ar:'16/9' },
         { type:'pair', src:[UN('v-nails'),UN('v-universe')], ar:'16/9' },
         { type:'text', col:2, label:{en:'How I solved it',es:'Cómo lo resolví'},
-          en:'The logo started as a hand drawing and was redrawn into a system: mirrored diagonals, one stem weight, two corner radii. Above the name sits ネイル, “nails” in katakana, and an orbit crosses the whole word. <b>The small blocks behave like stickers stuck on top of UNIVERSE</b> — and that is exactly how the brand gets used.',
-          es:'El logo arrancó como un dibujo a mano y se redibujó como sistema: diagonales espejadas, un solo grosor de fuste, dos radios de esquina. Arriba del nombre va ネイル, “uñas” en katakana, y una órbita cruza toda la palabra. <b>Los bloques chicos se comportan como stickers pegados encima de UNIVERSE</b> — y así es como se usa la marca.',
-          it:'Il logo è nato come disegno a mano ed è stato ridisegnato come sistema: diagonali specchiate, un solo spessore d’asta, due raggi d’angolo. Sopra il nome c’è ネイル, “unghie” in katakana, e un’orbita attraversa tutta la parola. <b>I blocchi piccoli si comportano come sticker incollati sopra UNIVERSE</b> — ed è così che si usa il marchio.',
-          deu:'Das Logo begann als Handzeichnung und wurde als System neu gezeichnet: gespiegelte Diagonalen, eine Stammstärke, zwei Eckradien. Über dem Namen steht ネイル, „Nägel“ in Katakana, und eine Umlaufbahn kreuzt das ganze Wort. <b>Die kleinen Blöcke verhalten sich wie Sticker, die auf UNIVERSE kleben</b> — und genau so wird die Marke benutzt.' },
+          en:'The style stayed; what changed is everything holding it up. The name became a logotype drawn letter by letter — mirrored diagonals, a single stroke weight, two corner radii — with ネイル on top and an orbit crossing the word. <b>One piece turned into a system</b>: horizontal, stacked and secondary versions, each in its own inks, so the brand reads the same on a sticker, a profile picture or a shop window.',
+          es:'El estilo se quedó; lo que cambió es todo lo que lo sostiene. El nombre pasó a ser un logotipo dibujado letra por letra — diagonales espejadas, un solo grosor, dos radios de esquina — con ネイル arriba y una órbita que cruza la palabra. <b>De una sola pieza pasó a un sistema</b>: versión horizontal, apilada y secundaria, cada una en sus tintas, para que la marca se lea igual en un sticker, en una foto de perfil o en una vidriera.',
+          it:'Lo stile è rimasto; è cambiato tutto ciò che lo sostiene. Il nome è diventato un logotipo disegnato lettera per lettera — diagonali specchiate, un solo spessore, due raggi d’angolo — con ネイル sopra e un’orbita che attraversa la parola. <b>Da un pezzo unico a un sistema</b>: versione orizzontale, impilata e secondaria, ognuna nei suoi inchiostri, perché il marchio si legga uguale su uno sticker, in una foto profilo o in una vetrina.',
+          deu:'Der Stil ist geblieben; geändert hat sich alles, was ihn trägt. Der Name wurde zu einem Buchstabe für Buchstabe gezeichneten Schriftzug — gespiegelte Diagonalen, eine Strichstärke, zwei Eckradien — mit ネイル darüber und einer Umlaufbahn, die das Wort kreuzt. <b>Aus einem Einzelstück wurde ein System</b>: horizontale, gestapelte und sekundäre Version, jede in ihren Farben, damit die Marke auf einem Sticker, einem Profilbild oder einem Schaufenster gleich lesbar ist.' },
         { type:'img', src:UN('pano-plateado'), ar:'9/4' },
         { type:'trio', src:[UN('c-sistema'),UN('c-antes-despues'),UN('c-secundario')], ar:'3/4' },
         { type:'pair', src:[UN('p-tres-cuartos'),UN('p-macro-neiru')], ar:'16/9' },
-        { type:'text', col:3, label:{en:'The rollout',es:'El despliegue'},
-          en:'The 3D version was built straight from the vector: glossy green letters, a violet base and <b>a chrome edge that closes every piece</b>, in a horizontal and a stacked lockup, with stills and loops for social. Around it, the full pack: logo set in four inks, brand manual, stickers, story backgrounds and highlight covers.',
-          es:'La versión 3D se construyó directo desde el vector: letras verdes brillantes, base violeta y <b>un canto cromado que cierra cada pieza</b>, en versión horizontal y apilada, con fotos y loops para redes. Alrededor, el pack completo: set de logos en cuatro tintas, manual de marca, stickers, fondos para stories y covers de destacadas.',
-          it:'La versione 3D è stata costruita direttamente dal vettoriale: lettere verdi lucide, base viola e <b>un bordo cromato che chiude ogni pezzo</b>, in versione orizzontale e impilata, con still e loop per i social. Intorno, il pack completo: set di loghi in quattro inchiostri, manuale di marca, sticker, sfondi per le stories e cover in evidenza.',
-          deu:'Die 3D-Version wurde direkt aus dem Vektor gebaut: glänzend grüne Buchstaben, violette Basis und <b>eine Chromkante, die jedes Teil abschließt</b>, als horizontale und gestapelte Version, mit Stills und Loops für Social Media. Drumherum das ganze Paket: Logo-Set in vier Farben, Brand Manual, Sticker, Story-Hintergründe und Highlight-Cover.' },
+        { type:'text', col:3, label:{en:'The 3D',es:'El 3D'},
+          en:'The look of the brand lives in 3D. The logo was modelled straight from the vector and rendered in two materials: <b>mirror chrome with solid colour letters, and translucent green and violet glass.</b> Stills, close-ups and loops all come from there. The flat logo is the signature; the 3D is the face.',
+          es:'La estética de la marca vive en el 3D. El logo se modeló directo desde el vector y se renderizó en dos materiales: <b>cromo espejo con letras de color pleno, y vidrio translúcido verde y violeta.</b> De ahí salen las fotos, los close-ups y los loops. El logo plano es la firma; el 3D es la cara.',
+          it:'L’estetica del marchio vive nel 3D. Il logo è stato modellato direttamente dal vettoriale e renderizzato in due materiali: <b>cromo a specchio con lettere a colore pieno, e vetro traslucido verde e viola.</b> Da lì nascono le foto, i close-up e i loop. Il logo piatto è la firma; il 3D è il volto.',
+          deu:'Die Ästhetik der Marke lebt im 3D. Das Logo wurde direkt aus dem Vektor modelliert und in zwei Materialien gerendert: <b>Spiegelchrom mit Buchstaben in Vollfarbe und transluzentes grünes und violettes Glas.</b> Daraus entstehen die Stills, Close-ups und Loops. Das flache Logo ist die Signatur; das 3D ist das Gesicht.' },
         { type:'trio', src:[UN('c-proceso'),'work/universe/loop-plateado.mp4',UN('c-nodos')], ar:'3/4' },
         { type:'pair', src:[UN('p-apilado'),UN('p-macro-nails')], ar:'16/9' }
       ]
