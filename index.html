@@ -3859,9 +3859,9 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           <span class="sv2-media-n">01</span>
         </div></div>
       </div>
+      <!-- (2026-10-12, Paula) sin videos por ahora: solo la categoria y las 3 palabras clave. Los archivos siguen en services/. -->
       <div class="svl-list" id="svlList">
         <div class="svl-row">
-          <span class="svl-bg"><video src="services/branding.mp4" data-angosto="services/branding-mobile.mp4" muted="" loop="" playsinline="" preload="none"></video></span>
           <span class="svl-num">[01]</span>
           <span class="svl-name">Branding</span>
           <span class="svl-tags">
@@ -3871,7 +3871,6 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           </span>
         </div>
         <div class="svl-row">
-          <span class="svl-bg"><video src="services/vj.mp4" muted="" loop="" playsinline="" preload="none"></video></span>
           <span class="svl-num">[02]</span>
           <span class="svl-name" data-es="VJ y Visuales en Vivo" data-it="VJ e Visual Live" data-deu="VJ &amp; Live Visuals">VJ &amp; Live Visuals</span>
           <span class="svl-tags">
@@ -3881,7 +3880,6 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           </span>
         </div>
         <div class="svl-row">
-          <span class="svl-bg"><video src="services/creative-direction.mp4" muted="" loop="" playsinline="" preload="none"></video></span>
           <span class="svl-num">[03]</span>
           <span class="svl-name" data-es="Dirección Creativa" data-it="Direzione Creativa" data-deu="Kreativ&amp;shy;direktion">Creative Direction</span>
           <span class="svl-tags">
@@ -3891,7 +3889,6 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           </span>
         </div>
         <div class="svl-row">
-          <span class="svl-bg"><video src="services/web-design.mp4" muted="" loop="" playsinline="" preload="none"></video></span>
           <span class="svl-num">[04]</span>
           <span class="svl-name" data-es="Diseño Web" data-it="Web Design" data-deu="Webdesign">Web Design</span>
           <span class="svl-tags">
@@ -3901,7 +3898,6 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           </span>
         </div>
         <div class="svl-row">
-          <span class="svl-bg"><video src="services/3d-motion.mp4" muted="" loop="" playsinline="" preload="none"></video></span>
           <span class="svl-num">[05]</span>
           <span class="svl-name" data-es="3D y Motion" data-it="3D e Motion" data-deu="3D &amp; Motion">3D &amp; Motion</span>
           <span class="svl-tags">
@@ -3911,7 +3907,6 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           </span>
         </div>
         <div class="svl-row">
-          <span class="svl-bg"><video src="services/data-visualization.mp4" data-angosto="services/data-visualization-mobile.mp4" muted="" loop="" playsinline="" preload="none"></video></span>
           <span class="svl-num">[06]</span>
           <span class="svl-name" data-es="Visualización de Datos" data-it="Visualiz&amp;shy;zazione Dati" data-deu="Daten&amp;shy;visualisierung">Data Visual&shy;ization</span>
           <span class="svl-tags">
@@ -6608,6 +6603,9 @@ arreglarViudasHero();
     font-family:"Geist Mono",ui-monospace,monospace}
   html.wgal-abierta{overflow:hidden}
   @media(max-width:640px){ .wgal-track{height:50vh;gap:8px} .wgal-name{font-size:16px} }
+  /* ===== (2026-10-12, Paula) titulos de cliente: Helvetica Black, tracking -50, todo blanco (sin la segunda palabra en gris) ===== */
+  .wov-title em{color:inherit !important}
+  .wov-title,.wov-title *,.wrow-name,.wgal-name{letter-spacing:-.05em !important}
 </style>
 <div class="wgal" id="wgal" aria-hidden="true" data-lenis-prevent="">
   <div class="wgal-top"><span class="wgal-name"></span><span class="wgal-n"></span><button class="wgal-x" type="button" aria-label="Close">&#10005;</button></div>
