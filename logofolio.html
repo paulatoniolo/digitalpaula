@@ -11,7 +11,7 @@
 </script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>logofolio — digitalpaula</title>
+<title>logofolio | digitalpaula</title>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
 <link rel="preload" href="fonts/DigitalPaulaContact.woff2?v=5" as="font" type="font/woff2" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -685,7 +685,7 @@ const GAL = {"492": {"name": "492", "tag": "Media Group", "logo": "work/logofoli
 
   // la foto del hover avisa cuantas hay, para que se sepa que hay galeria
   if(matchMedia('(hover:hover)').matches) document.querySelectorAll('.lfg-cell[data-a]').forEach(c => c.addEventListener('mouseenter', () => {
-    prev.querySelector('.lfg-prev-n').textContent = c.dataset.n ? c.dataset.n + ' photos — click' : '';
+    prev.querySelector('.lfg-prev-n').textContent = c.dataset.n ? c.dataset.n + ' photos // click' : '';
   }));
 
   function contador(){
