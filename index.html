@@ -6584,5 +6584,116 @@ arreglarViudasHero();
 </script>
 
 
+<!-- ============ GALERIA AMPLIADA DEL PROYECTO (2026-10-12, pedido de Paula) ============
+     Al tocar cualquier pieza del interior de un proyecto se abre esta galeria: todas las piezas
+     del proyecto en una fila horizontal, a su proporcion real, sobre el fondo desenfocado.
+     Mismo lenguaje que la galeria del logofolio (.lfg-gal). Rueda / arrastre / flechas; Esc o X cierra. -->
+<style>
+  .wov-blocks .wov-media{cursor:zoom-in}
+  .wgal{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;justify-content:center;
+    background:rgba(0,0,0,.5);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);
+    opacity:0;visibility:hidden;transition:opacity .4s ease,visibility 0s linear .4s}
+  .wgal.open{opacity:1;visibility:visible;transition:opacity .4s ease}
+  .wgal-top{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:16px;padding:22px var(--gmargin)}
+  .wgal-name{font-family:"HelveticaNeueHeavy",var(--disp);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:-.07em}
+  .wgal-n{margin-left:auto;font-size:12px;letter-spacing:.12em;opacity:.8;font-variant-numeric:tabular-nums}
+  .wgal-x{background:none;border:1px solid rgba(255,255,255,.35);color:#fff;width:34px;height:34px;font-size:14px;cursor:pointer;transition:.2s}
+  .wgal-x:hover{background:#fff;color:#000}
+  .wgal-track{display:flex;align-items:center;gap:14px;height:68vh;overflow-x:auto;overflow-y:hidden;padding:0 var(--gmargin);
+    scrollbar-width:none;cursor:grab;user-select:none;-webkit-user-select:none}
+  .wgal-track::-webkit-scrollbar{display:none}
+  .wgal-track.arrastrando{cursor:grabbing}
+  .wgal-track > *{height:100%;width:auto;max-width:none;flex:0 0 auto;display:block;background:#000;-webkit-user-drag:none}
+  .wgal-hint{position:absolute;bottom:22px;left:var(--gmargin);font-size:11px;letter-spacing:.14em;text-transform:lowercase;opacity:.55;
+    font-family:"Geist Mono",ui-monospace,monospace}
+  html.wgal-abierta{overflow:hidden}
+  @media(max-width:640px){ .wgal-track{height:50vh;gap:8px} .wgal-name{font-size:16px} }
+</style>
+<div class="wgal" id="wgal" aria-hidden="true" data-lenis-prevent="">
+  <div class="wgal-top"><span class="wgal-name"></span><span class="wgal-n"></span><button class="wgal-x" type="button" aria-label="Close">&#10005;</button></div>
+  <div class="wgal-track" id="wgalTrack"></div>
+  <div class="wgal-hint">// scroll or drag</div>
+</div>
+<script>
+(function(){
+  const ov = document.getElementById('workOverlay'), bloques = document.getElementById('wovBlocks');
+  const gal = document.getElementById('wgal'), track = document.getElementById('wgalTrack');
+  if(!ov || !bloques || !gal) return;
+  const nEl = gal.querySelector('.wgal-n'), nomEl = gal.querySelector('.wgal-name');
+  const dos = n => String(n).padStart(2, '0');
+  let objetivo = 0, anim = 0, movido = false;
+  const abierta = () => gal.classList.contains('open');
+  function contador(){
+    const items = [...track.children]; if(!items.length) return;
+    const centro = innerWidth / 2; let k = 0, mejor = 1e9;
+    items.forEach((it, i) => { const r = it.getBoundingClientRect(); const d = Math.abs((r.left + r.right) / 2 - centro); if(d < mejor){ mejor = d; k = i; } });
+    nEl.textContent = dos(k + 1) + ' / ' + dos(items.length);
+  }
+  function centrar(el, suave){
+    const x = el.offsetLeft - (track.clientWidth - el.offsetWidth) / 2;
+    if(suave) ir(x); else { track.scrollLeft = objetivo = Math.max(0, x); contador(); }
+  }
+  function abrir(medio){
+    const medios = [...bloques.querySelectorAll('.wov-media > img, .wov-media > video')]; if(!medios.length) return;
+    track.innerHTML = ''; let elegido = null;
+    medios.forEach(m => {
+      const src = m.getAttribute('src') || m.dataset.src; if(!src) return;
+      const caja = m.getBoundingClientRect();
+      const ar = m.tagName === 'VIDEO' ? (m.videoWidth ? m.videoWidth / m.videoHeight : caja.width / caja.height)
+                                       : (m.naturalWidth ? m.naturalWidth / m.naturalHeight : caja.width / caja.height);
+      let el;
+      if(m.tagName === 'VIDEO'){ el = document.createElement('video'); el.muted = true; el.loop = true; el.playsInline = true; el.autoplay = true; el.setAttribute('muted', ''); el.src = src; }
+      else { el = document.createElement('img'); el.alt = m.alt || ''; el.decoding = 'async'; el.draggable = false; el.src = src; }
+      if(ar) el.style.aspectRatio = String(ar);          // el ancho queda reservado antes de que cargue: la fila no salta
+      track.appendChild(el); if(m === medio) elegido = el;
+    });
+    nomEl.textContent = (ov.querySelector('.wov-title, #wovTitle, h1, h2') || {}).textContent || '';
+    document.documentElement.classList.add('wgal-abierta'); gal.setAttribute('aria-hidden', 'false');
+    void gal.offsetWidth; gal.classList.add('open');
+    centrar(elegido || track.firstElementChild, false);
+    if(window.dpTick) try{ dpTick(); }catch(e){}
+  }
+  function cerrar(){
+    gal.classList.remove('open'); gal.setAttribute('aria-hidden', 'true'); document.documentElement.classList.remove('wgal-abierta');
+    track.querySelectorAll('video').forEach(v => v.pause());
+    setTimeout(() => { if(!abierta()) track.innerHTML = ''; }, 450);
+  }
+  bloques.addEventListener('click', e => {
+    const caja = e.target.closest('.wov-media'); if(!caja) return;
+    const medio = caja.querySelector('img, video'); if(!medio) return;
+    e.preventDefault(); e.stopPropagation(); abrir(medio);
+  });
+  gal.querySelector('.wgal-x').addEventListener('click', cerrar);
+  gal.addEventListener('click', e => { if(movido) return; if(e.target === gal || e.target === track) cerrar(); });
+  function ir(x){ objetivo = Math.max(0, Math.min(track.scrollWidth - track.clientWidth, x)); if(!anim) anim = requestAnimationFrame(paso); }
+  function paso(){
+    const d = objetivo - track.scrollLeft;
+    if(Math.abs(d) < 0.6){ track.scrollLeft = objetivo; anim = 0; contador(); return; }
+    track.scrollLeft += d * 0.16; contador(); anim = requestAnimationFrame(paso);
+  }
+  gal.addEventListener('wheel', e => { if(!abierta()) return; e.preventDefault(); e.stopPropagation();
+    ir((anim ? objetivo : track.scrollLeft) + (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * 1.4); }, { passive:false });
+  // Esc y flechas: en captura, para que el Esc cierre SOLO la galeria y no el proyecto que esta debajo
+  document.addEventListener('keydown', e => {
+    if(!abierta()) return;
+    if(e.key === 'Escape'){ e.preventDefault(); e.stopImmediatePropagation(); cerrar(); return; }
+    if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+      e.preventDefault(); e.stopImmediatePropagation();
+      const items = [...track.children], centro = innerWidth / 2; let k = 0, mejor = 1e9;
+      items.forEach((it, i) => { const r = it.getBoundingClientRect(); const d = Math.abs((r.left + r.right) / 2 - centro); if(d < mejor){ mejor = d; k = i; } });
+      const sig = items[Math.max(0, Math.min(items.length - 1, k + (e.key === 'ArrowRight' ? 1 : -1)))]; if(sig) centrar(sig, true);
+    }
+  }, true);
+  // arrastre con mouse (en tactil la fila ya se desliza sola con el dedo)
+  let x0 = 0, s0 = 0, baja = false;
+  track.addEventListener('pointerdown', e => { if(e.pointerType !== 'mouse') return; baja = true; movido = false; x0 = e.clientX; s0 = track.scrollLeft; cancelAnimationFrame(anim); anim = 0; });
+  addEventListener('pointermove', e => { if(!baja) return; const dx = e.clientX - x0; if(Math.abs(dx) > 4){ movido = true; track.classList.add('arrastrando'); }
+    track.scrollLeft = s0 - dx; objetivo = track.scrollLeft; contador(); });
+  addEventListener('pointerup', () => { if(!baja) return; baja = false; track.classList.remove('arrastrando'); setTimeout(() => { movido = false; }, 60); });
+  track.addEventListener('scroll', () => { if(!anim) contador(); }, { passive:true });
+  // si se cierra o cambia el proyecto con la galeria abierta, se cierra tambien
+  new MutationObserver(() => { if(abierta() && !ov.classList.contains('open')) cerrar(); }).observe(ov, { attributes:true, attributeFilter:['class'] });
+})();
+</script>
 <script src="sound.js" defer></script>
 </body></html>
