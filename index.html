@@ -3184,22 +3184,24 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
 
 <style>
 /* ---------- ARCHIVO de Work (Paula 2026-11-08): proyectos que dejan de ser principales ----------
-   Van al FINAL de #wgrid con .es-archivo: una sola linea (nombre, rubro, anio, flecha), sin
-   miniaturas ni rol. Siguen abriendo el proyecto con click (misma logica de fila). El rotulo
-   "// archive" sale del ::before de la PRIMERA fila archivada. */
-.wrow.es-archivo .wrow-fold,.wrow.es-archivo .wrow-cta,.wrow.es-archivo .wrow-col-loc,
-.wrow.es-archivo .wrow-col-role,.wrow.es-archivo .wrow-k{display:none !important}
-.wrow.es-archivo{background:none !important;border-top-color:rgba(255,255,255,.14) !important}
-.wrow.es-archivo .wrow-head{padding:14px 0 !important;align-items:baseline !important;flex-wrap:nowrap !important;
-  gap:clamp(14px,3vw,48px) !important}
-.wrow.es-archivo .wrow-col-client{flex:1 1 auto !important}
-.wrow.es-archivo .wrow-name{font-size:var(--t5) !important;opacity:.75 !important}
-.wrow.es-archivo:hover .wrow-name{opacity:1 !important}
-.wrow.es-archivo .wrow-col-meta{opacity:.6 !important;filter:none !important;transform:none !important;flex:0 0 auto !important}
-.wrow.es-archivo .wrow-col-meta .wrow-v::before{content:none !important}
-.wrow.es-archivo .wrow-head::after{content:"→";font-family:"Geist Mono",ui-monospace,monospace;opacity:.6}
+   Van al FINAL de #wgrid con .es-archivo. Misma fila y MISMAS columnas que los principales
+   (alineado con todo lo de arriba, incluido el rol), pero sin miniaturas, sin rotulos y con
+   el nombre un nivel mas chico. El rotulo "// archive" sale del ::before de la primera. */
+.wrow.es-archivo .wrow-fold,.wrow.es-archivo .wrow-cta,.wrow.es-archivo .wrow-k{display:none !important}
+.wrow.es-archivo{background:none !important}
+.wrow.es-archivo .wrow-name{font-size:var(--t4) !important}
+.wrow.es-archivo .wrow-head{display:grid !important;grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr) minmax(0,.45fr) minmax(0,.7fr) minmax(0,2fr);
+  column-gap:clamp(14px,2vw,32px) !important;align-items:baseline !important;padding:clamp(16px,1.6vw,26px) 0 !important}
+.wrow.es-archivo .wrow-col{min-width:0}
+.wrow.es-archivo .wrow-v{white-space:normal !important}
+@media(max-width:820px){
+  /* telefono: nombre arriba, abajo una linea "rubro · anio · lugar" y el rol (como las filas principales) */
+  .wrow.es-archivo .wrow-head{display:flex !important;flex-wrap:wrap !important;row-gap:6px !important;column-gap:0 !important}
+}
+.wrow.es-archivo .wrow-col-meta{opacity:1 !important;filter:none !important;transform:none !important}
+.wrow.es-archivo .wrow-v{color:rgba(255,255,255,.7)}
 .wrow:not(.es-archivo) + .wrow.es-archivo{margin-top:clamp(40px,5vw,90px)}
-.wrow:not(.es-archivo) + .wrow.es-archivo::before{content:"// archive";display:block;padding-bottom:12px;
+.wrow:not(.es-archivo) + .wrow.es-archivo::before{content:"// archive";display:block;padding-top:14px;
   font-family:"Geist Mono",ui-monospace,monospace;text-transform:lowercase;font-size:var(--t6);
   letter-spacing:.04em;color:#8a8a8a}
 </style>
@@ -6013,7 +6015,9 @@ arreglarViudasHero();
         // el reel real de la fecha (9:16, grabado en vertical): va como bloque angosto
         // para que se vea en su proporcion. Estaba en la fila del archivo, pero ahi la
         // celda es 16/10 y lo recortaba a una franja del medio.
-        { type:'img', src:'work/yotto/reel-thumb.mp4', ar:'9/16', w:'330px' },
+        // lo que mas garpa (Paula 2026-11-08): el vivo, grande y arriba. Solo los segundos del reel
+        // en que se ve la pantalla: escenario violeta, CCTV en vivo, rojo.
+        { type:'trio', src:['work/yotto/vivo-violeta.mp4','work/yotto/vivo-cctv.mp4','work/yotto/vivo-rojo.mp4'], ar:'9/16' },
         { type:'img', src:Y('blades'), ar:'3/1' },
         { type:'img', src:Y('cora'), ar:'3/1' },
         { type:'text', col:2, label:{en:'How it was built',es:'Cómo se construyó'},
