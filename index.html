@@ -3771,6 +3771,19 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           </div>
           <div class="wrow-fold"><div class="wrow-fold-inner"><div class="wrow-thumbs"></div></div></div>
         </article>
+<article class="wrow es-archivo" data-project="klik" data-cat="branding">
+          <div class="wrow-head">
+            <div class="wrow-col wrow-col-client">
+              <span class="wrow-k" data-es="Cliente" data-it="Cliente" data-deu="Kunde">Client</span>
+              <h3 class="wrow-name">KLIK</h3>
+            </div>
+            <div class="wrow-col wrow-col-meta"><span class="wrow-k" data-es="Industria" data-it="Settore" data-deu="Branche">Industry</span><span class="wrow-v" data-es="Máquinas Expendedoras" data-it="Vending Machines" data-deu="Vending Machines">Vending Machines</span></div>
+            <div class="wrow-col wrow-col-meta"><span class="wrow-k" data-es="Año" data-it="Anno" data-deu="Jahr">Year</span><span class="wrow-v">&nbsp;</span></div>
+            <div class="wrow-col wrow-col-meta wrow-col-loc"><span class="wrow-k" data-es="Ubicación" data-it="Località" data-deu="Standort">Location</span><span class="wrow-v">&nbsp;</span></div>
+            <div class="wrow-col wrow-col-meta wrow-col-role"><span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span><span class="wrow-v" data-es="Identidad de Marca, Brand Guidelines" data-it="Brand Identity, Brand Guidelines" data-deu="Brand Identity, Brand Guidelines">Brand Identity, Brand Guidelines</span></div>
+          </div>
+          <div class="wrow-fold"><div class="wrow-fold-inner"><div class="wrow-thumbs"></div></div></div>
+        </article>
       </div>
     </div>
 
@@ -5693,6 +5706,19 @@ arreglarViudasHero();
   const RY = l => `work/ruido-y-orden/${l}.jpg`;
   const UN = l => `work/universe/${l}.jpg`;
   const PROJECTS = {
+    'klik': {
+      name: 'KLIK', year: '',
+      role: { en:'Brand identity, brand guidelines', es:'Identidad de marca, manual de marca', it:'Identità di marca, brand guidelines', deu:'Markenidentität, Brand Guidelines' },
+      cat: { en:'Vending machines', es:'Máquinas expendedoras', it:'Distributori automatici', deu:'Verkaufsautomaten' },
+      // solo las laminas FINALES del manual (Klik_Branding.pdf); las exploraciones de agosto no van
+      blocks: [
+        { type:'img', src:'work/logofolio/klik/klik-final-01.jpg', ar:'16/9' },
+        { type:'pair', src:['work/logofolio/klik/klik-final-02.jpg','work/logofolio/klik/klik-final-03.jpg'], ar:'16/9' },
+        { type:'pair', src:['work/logofolio/klik/klik-final-04.jpg','work/logofolio/klik/klik-final-05.jpg'], ar:'16/9' },
+        { type:'pair', src:['work/logofolio/klik/klik-final-06.jpg','work/logofolio/klik/klik-final-07.jpg'], ar:'16/9' },
+        { type:'pair', src:['work/logofolio/klik/klik-final-08.jpg','work/logofolio/klik/klik-final-09.jpg'], ar:'16/9' }
+      ]
+    },
     'franja': {
       name: 'Franja', year: '',
       role: { en:'Brand identity', es:'Identidad de marca', it:'Identità di marca', deu:'Markenidentität' },
