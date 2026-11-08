@@ -3256,6 +3256,13 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
 /* telefono: celda de dato vacia (&nbsp;) no lleva separador ni ocupa lugar */
 @media(max-width:820px){ .wrow-col-meta:has(.wrow-v:empty), .wrow-col-meta.vacia{display:none !important} }
 </style>
+<style>
+/* link al logofolio al pie de more projects (Paula 2026-11-08) */
+.wsee-all{display:inline-block;margin-top:clamp(22px,2.4vw,40px);font-family:"Geist Mono",ui-monospace,monospace;
+  text-transform:lowercase;font-size:var(--t5);letter-spacing:.04em;color:#fff;text-decoration:none;
+  border-bottom:1px solid rgba(255,255,255,.35);padding-bottom:4px;transition:opacity .2s ease,letter-spacing .4s ease}
+.wsee-all:hover{opacity:.6;letter-spacing:.1em}
+</style>
 </head>
 <body>
   <div class="header-blur" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -3788,6 +3795,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
           </div>
           <div class="wrow-fold"><div class="wrow-fold-inner"><div class="wrow-thumbs"></div></div></div>
         </article>
+        <a class="wsee-all" href="logofolio.html" data-es="// ver todos los proyectos →" data-it="// vedi tutti i progetti →" data-deu="// alle projekte ansehen →">// see all projects →</a>
       </div>
     </div>
 
@@ -5728,8 +5736,12 @@ arreglarViudasHero();
       role: { en:'Brand identity', es:'Identidad de marca', it:'Identità di marca', deu:'Markenidentität' },
       cat: { en:'Sport brand', es:'Marca deportiva', it:'Marchio sportivo', deu:'Sportmarke' },
       blocks: [
-        { type:'img', src:'work/logofolio/img/franja-b.jpg', ar:'900/492' },
-        { type:'img', src:'work/logofolio/img/franja-a.jpg', ar:'900/720' }
+        { type:'img', src:'work/franja/f-01.jpg', ar:'16/9' },
+        { type:'pair', src:['work/franja/f-02.jpg','work/franja/f-03.jpg'], ar:'16/9' },
+        { type:'pair', src:['work/franja/f-04.jpg','work/franja/f-05.jpg'], ar:'16/9' },
+        { type:'pair', src:['work/franja/f-06.jpg','work/franja/f-07.jpg'], ar:'16/9' },
+        { type:'pair', src:['work/franja/f-08.jpg','work/franja/f-09.jpg'], ar:'16/9' },
+        { type:'img', src:'work/franja/f-10.jpg', ar:'16/9' }
       ]
     },
     'divino': {
@@ -5737,7 +5749,11 @@ arreglarViudasHero();
       role: { en:'Brand identity', es:'Identidad de marca', it:'Identità di marca', deu:'Markenidentität' },
       cat: { en:'Productions', es:'Productora', it:'Produzioni', deu:'Produktionen' },
       blocks: [
-        { type:'pair', src:['work/logofolio/img/divino-a.jpg','work/logofolio/img/divino-b.jpg'], ar:'900/495' }
+        { type:'img', src:'work/divino/d-01.jpg', ar:'16/9' },
+        { type:'pair', src:['work/divino/d-02.jpg','work/divino/d-03.jpg'], ar:'16/9' },
+        { type:'pair', src:['work/divino/d-04.jpg','work/divino/d-05.jpg'], ar:'16/9' },
+        { type:'pair', src:['work/divino/d-06.jpg','work/divino/d-07.jpg'], ar:'16/9' },
+        { type:'pair', src:['work/divino/d-08.jpg','work/divino/d-09.jpg'], ar:'16/9' }
       ]
     },
     'bob-tosh': {
@@ -5997,7 +6013,8 @@ arreglarViudasHero();
           es:'HARDTIME es una rave de hard techno. Dibujé el logotipo y lo llevé a 3D: una pieza de cromo modelada, iluminada y animada en Blender, hecha para sostener el flyer, las stories y las pantallas. <b>Diseño de logo y 3D, de punta a punta.</b>',
           it:'HARDTIME è un rave hard techno. Ho disegnato il logotipo e l’ho portato in 3D: un pezzo di cromo modellato, illuminato e animato in Blender, fatto per reggere il flyer, le stories e gli schermi. <b>Logo design e 3D, dall’inizio alla fine.</b>',
           deu:'HARDTIME ist ein Hard-Techno-Rave. Ich habe das Logo gezeichnet und in 3D übersetzt: ein Chrom-Objekt, in Blender modelliert, beleuchtet und animiert, gemacht für Flyer, Stories und Screens. <b>Logo-Design und 3D, von Anfang bis Ende.</b>' },
-        { type:'pair', src:['work/hardtime/loop.mp4','work/hardtime/flyer.mp4'], ar:'3/4' },
+        // SOLO el final (Paula 2026-11-08): la version techno en stories, no el flyer del 10/10 ni el loop
+        { type:'img', src:'work/hardtime/final.mp4', ar:'9/16', w:'420px' },
         { type:'pair', src:['work/hardtime/general.jpg','work/hardtime/time.jpg'], ar:'3/4' },
         { type:'text', col:2, label:{en:'The 3D',es:'El 3D'},
           en:'Spikes that catch the light, scratches in the metal and a red floor that bleeds into everything. <b>Built to feel heavy at any size.</b>',
@@ -6005,7 +6022,7 @@ arreglarViudasHero();
           it:'Spine che catturano la luce, graffi nel metallo e un pavimento rosso che entra dappertutto. <b>Fatto per sembrare pesante a qualsiasi dimensione.</b>',
           deu:'Stacheln, die das Licht fangen, Kratzer im Metall und ein roter Boden, der in alles hineinläuft. <b>Gebaut, um in jeder Größe schwer zu wirken.</b>' },
         { type:'pair', src:['work/hardtime/puas.jpg','work/hardtime/perfil.jpg'], ar:'3/4' },
-        { type:'trio', src:['work/hardtime/proceso-mesh.jpg','work/hardtime/proceso-clay.jpg','work/hardtime/proceso-nodos.jpg'], ar:'3/4' }
+        { type:'pair', src:['work/hardtime/proceso-clay.jpg','work/hardtime/proceso-nodos.jpg'], ar:'3/4' }
       ]
     },
     'cinturon-de-bonadeo': {
@@ -6046,7 +6063,9 @@ arreglarViudasHero();
           it:'A novembre lo show è passato a Demos, con un palco nuovo: un soffitto LED che corre sopra il pubblico e uno schermo sul fondo. <b>Ogni canzone è stata ricostruita per quello spazio</b>, soffitto e fondo che suonano insieme.',
           deu:'Im November zog die Show ins Demos, mit einer neuen Bühne: eine LED-Decke über dem Publikum und eine Wand im Hintergrund. <b>Jeder Song wurde für diesen Raum neu gebaut</b>, Decke und Wand spielen zusammen.' },
         { type:'trio', src:['work/cinturon-de-bonadeo/demos-acid.mp4','work/cinturon-de-bonadeo/demos-datos.mp4','work/cinturon-de-bonadeo/demos-palitos.mp4'], ar:'9/16' },
-        { type:'trio', src:['work/cinturon-de-bonadeo/demos-robot.mp4','work/cinturon-de-bonadeo/demos-acid-sala.mp4','work/cinturon-de-bonadeo/demos-sala-azul.mp4'], ar:'9/16' },
+        { type:'pair', src:['work/cinturon-de-bonadeo/demos-robot.mp4','work/cinturon-de-bonadeo/demos-acid-sala.mp4'], ar:'9/16', w:'760px' },
+        // el show entero (IMG_5276, 37 min desde el balcon): solo los momentos con pantalla
+        { type:'img', src:'work/cinturon-de-bonadeo/demos-show.mp4', ar:'1280/720' },
         { type:'img', src:'work/cinturon-de-bonadeo/vivo-rojo.mp4', ar:'1280/592' }
       ]
     },
