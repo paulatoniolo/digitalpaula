@@ -3292,16 +3292,46 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
       <div class="wfilt">
         <p class="wfilt-q" data-es="// ¿qué querés ver?" data-it="// cosa vuoi vedere?" data-deu="// was willst du sehen?">// what do you want to see?</p>
         <div class="wfilt-opts" role="tablist">
-          <button class="wfilt-b on" type="button" role="tab" aria-selected="true" data-f="branding" data-es="Identidades de Marca y Motion" data-it="Identità di Marca &amp; Motion" data-deu="Markenidentitäten &amp; Motion">Brand Identities &amp; Motion</button>
+          <button class="wfilt-b" type="button" role="tab" aria-selected="false" data-f="branding" data-es="Identidades de Marca y Motion" data-it="Identità di Marca &amp; Motion" data-deu="Markenidentitäten &amp; Motion">Brand Identities &amp; Motion</button>
           <button class="wfilt-b" type="button" role="tab" aria-selected="false" data-f="vj" data-es="Visuales en Vivo" data-it="Visual Live" data-deu="Live Visuals">Live Visuals</button>
-          <button class="wfilt-b" type="button" role="tab" aria-selected="false" data-f="all" data-es="Todo" data-it="Tutto" data-deu="Alles">All</button>
+          <button class="wfilt-b on" type="button" role="tab" aria-selected="true" data-f="all" data-es="Todo" data-it="Tutto" data-deu="Alles">All</button>
         </div>
       </div>
       <div class="wlist" id="wgrid">
         <!-- is-open: el primer proyecto arranca ya desplegado, como pista de que el resto
              de las filas hace lo mismo al pasar el mouse (pedido de Paula). -->
         <!-- orden elegido por Paula (2026-10-12): Universe, 492, Boota, Ruido y Orden, Malika, Camalote -->
-        <article class="wrow is-open" data-project="universe" data-cat="branding">
+        <article class="wrow is-open" data-project="bob-tosh" data-cat="vj">
+          <div class="wrow-head">
+            <div class="wrow-col wrow-col-client">
+              <span class="wrow-k" data-es="Cliente" data-it="Cliente" data-deu="Kunde">Client</span>
+              <h3 class="wrow-name">Bob Tosh × 4GET</h3>
+            </div>
+            <div class="wrow-col wrow-col-meta">
+              <span class="wrow-k" data-es="Industria" data-it="Settore" data-deu="Branche">Industry</span>
+              <span class="wrow-v" data-es="Fiesta Electrónica" data-it="Evento Elettronico" data-deu="Elektronik-Event">Electronic Event</span>
+            </div>
+            <div class="wrow-col wrow-col-meta">
+              <span class="wrow-k" data-es="Año" data-it="Anno" data-deu="Jahr">Year</span>
+              <span class="wrow-v">2026</span>
+            </div>
+            <div class="wrow-col wrow-col-meta wrow-col-loc"><span class="wrow-k" data-es="Ubicación" data-it="Località" data-deu="Standort">Location</span><span class="wrow-v">Santa Fe</span></div>
+            <div class="wrow-col wrow-col-meta wrow-col-role">
+              <span class="wrow-k" data-es="Rol" data-it="Ruolo" data-deu="Rolle">Role</span>
+              <span class="wrow-v" data-es="Visuales en Vivo, Diseño 3D, VJing, Dirección Creativa" data-it="Visual Live, 3D Design, VJing, Direzione Creativa" data-deu="Live Visuals, 3D-Design, VJing, Kreativdirektion">Live Visuals, 3D Design, VJing, Creative Direction</span>
+            </div>
+          </div>
+          <div class="wrow-fold"><div class="wrow-fold-inner">
+            <div class="wrow-thumbs">
+              <button class="wrow-thumb"><video src="work/bob-tosh/t-bob-estatua.mp4" poster="work/bob-tosh/t-bob-estatua-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Bob Tosh"></video></button>
+              <button class="wrow-thumb"><video src="work/bob-tosh/t-ariel-alambres.mp4" poster="work/bob-tosh/t-ariel-alambres-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Bob Tosh"></video></button>
+              <button class="wrow-thumb"><video src="work/bob-tosh/t-outlaws-cadenas.mp4" poster="work/bob-tosh/t-outlaws-cadenas-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Bob Tosh"></video></button>
+              <button class="wrow-thumb"><video src="work/bob-tosh/t-bob-ventanales.mp4" poster="work/bob-tosh/t-bob-ventanales-poster.jpg" muted="" loop="" playsinline="" preload="none" aria-label="Bob Tosh"></video></button>
+            </div>
+          </div></div>
+          <div class="wrow-cta" aria-hidden="true"><span class="wc-abrir" data-es="// tocá para ver" data-it="// tocca per vedere" data-deu="// tippen zum ansehen">// tap to see</span><span class="wc-entrar" data-es="// ver proyecto →" data-it="// vedi progetto →" data-deu="// projekt ansehen →">// view project →</span></div>
+        </article>
+        <article class="wrow" data-project="universe" data-cat="branding">
           <div class="wrow-head">
             <div class="wrow-col wrow-col-client">
               <span class="wrow-k" data-es="Cliente" data-it="Cliente" data-deu="Kunde">Client</span>
@@ -5557,6 +5587,71 @@ arreglarViudasHero();
   const RY = l => `work/ruido-y-orden/${l}.jpg`;
   const UN = l => `work/universe/${l}.jpg`;
   const PROJECTS = {
+    'bob-tosh': {
+      name: 'Bob Tosh × 4GET',
+      titleHTML: 'Bob Tosh <em>× 4GET</em>',
+      year: '2026',
+      role: { en:'Live visuals, 3D design, VJing, creative direction', es:'Visuales en vivo, diseño 3D, VJing, dirección creativa', it:'Visual live, 3D design, VJing, direzione creativa', deu:'Live Visuals, 3D-Design, VJing, Kreativdirektion' },
+      cat: { en:'Live visuals', es:'Visuales en vivo', it:'Visual live', deu:'Live Visuals' },
+      location: 'Santa Fe',
+      // especial Halloween 31/10/2026. Pantalla BACK 2560x768 + frente de cabina BOOTH 2560x256.
+      // vivo-* = aftermovie de 4GET (credito en el texto). cel-* = celu de Paula. foto-* = fotos de la noche.
+      // hall-estatuas, alambres, etc. = combinaciones reales de la receta de Resolume montadas sobre el render del escenario.
+      // vp-* = capturas CRUDAS del viewport de Blender (Solid gris, con interfaz). Paula: nunca malla, nunca calabazas, nada de pixel map.
+      blocks: [
+        { type:'text', lede:true, label:{en:'The night',es:'La noche'},
+          en:'A Halloween special by 4GET in Santa Fe, with Bob Tosh headlining next to Outlaws and Ariel Rodz. Four acts in one night, <b>a different visual world for each of them</b>, all built in 3D and played live.',
+          es:'Un especial de Halloween de 4GET en Santa Fe, con Bob Tosh como cabeza de cartel junto a Outlaws y Ariel Rodz. Cuatro actos en una noche, <b>un mundo visual distinto para cada uno</b>, todo hecho en 3D y tocado en vivo.',
+          it:'Uno speciale di Halloween di 4GET a Santa Fe, con Bob Tosh come headliner insieme a Outlaws e Ariel Rodz. Quattro atti in una notte, <b>un mondo visivo diverso per ognuno</b>, tutto costruito in 3D e suonato dal vivo.',
+          deu:'Ein Halloween-Special von 4GET in Santa Fe, mit Bob Tosh als Headliner neben Outlaws und Ariel Rodz. Vier Acts in einer Nacht, <b>für jeden eine eigene visuelle Welt</b>, alles in 3D gebaut und live gespielt.' },
+        { type:'img', src:'work/bob-tosh/vivo-final.mp4', ar:'16/9' },
+        { type:'img', src:'work/bob-tosh/vivo-bob-tosh.mp4', ar:'16/9' },
+        { type:'pair', src:['work/bob-tosh/foto-bob-tosh.jpg','work/bob-tosh/foto-cctv.jpg'], ar:'16/9' },
+        { type:'text', col:2, label:{en:'Four acts',es:'Cuatro actos'},
+          en:'Cathedral windows, chains, spiders, statues, barbed wire and liquid chrome, each act with its own palette. On top of the clips, <b>a live CCTV feed from the booth</b> put the DJs inside the screen. [ aftermovie: 4GET ]',
+          es:'Ventanales de catedral, cadenas, arañas, estatuas, alambre de púas y cromo líquido, cada acto con su paleta. Encima de los clips, <b>un CCTV en vivo de la cabina</b> metía a los DJs dentro de la pantalla. [ aftermovie: 4GET ]',
+          it:'Vetrate da cattedrale, catene, ragni, statue, filo spinato e cromo liquido, ogni atto con la sua palette. Sopra le clip, <b>un CCTV live dalla consolle</b> portava i DJ dentro lo schermo. [ aftermovie: 4GET ]',
+          deu:'Kathedralenfenster, Ketten, Spinnen, Statuen, Stacheldraht und flüssiges Chrom, jeder Act mit eigener Palette. Über den Clips holte <b>ein Live-CCTV-Feed aus der Booth</b> die DJs mit auf den Screen. [ Aftermovie: 4GET ]' },
+        { type:'pair', src:['work/bob-tosh/vivo-outlaws.mp4','work/bob-tosh/vivo-ariel-rodz.mp4'], ar:'16/9' },
+        { type:'trio', src:['work/bob-tosh/cel-outlaws.mp4','work/bob-tosh/cel-bob-tosh.mp4','work/bob-tosh/cel-outlaws-rosa.mp4'], ar:'9/16' },
+        { type:'img', src:'work/bob-tosh/vivo-co2.mp4', ar:'16/9' },
+        { type:'text', col:3, label:{en:'Stage first',es:'Primero el escenario'},
+          en:'Before any image, the stage: a 10 x 3 m LED wall and a 10 m booth front, read from the technical drawings. Then <b>every combination was tested on a render of the real stage</b>, the wall and the booth moving together.',
+          es:'Antes de cualquier imagen, el escenario: una pared LED de 10 x 3 m y un frente de cabina de 10 m, leídos de los planos técnicos. Después <b>cada combinación se probó sobre un render del escenario real</b>, la pared y la cabina moviéndose juntas.',
+          it:'Prima di qualsiasi immagine, il palco: un ledwall di 10 x 3 m e un fronte consolle di 10 m, letti dai disegni tecnici. Poi <b>ogni combinazione è stata provata su un render del palco reale</b>, la parete e la consolle che si muovono insieme.',
+          deu:'Vor jedem Bild die Bühne: eine 10 x 3 m LED-Wand und eine 10 m Booth-Front, aus den technischen Plänen gelesen. Danach wurde <b>jede Kombination auf einem Render der echten Bühne getestet</b>, Wand und Booth in Bewegung.' },
+        { type:'img', src:'work/bob-tosh/plano.jpg', ar:'1100/765', w:'900px' },
+        { type:'img', src:'work/bob-tosh/hall-estatuas.mp4', ar:'1982/792' },
+        { type:'img', src:'work/bob-tosh/outlaws-violeta.mp4', ar:'1982/792' },
+        { type:'img', src:'work/bob-tosh/alambres.mp4', ar:'1982/792' },
+        { type:'img', src:'work/bob-tosh/cadenas-aranas.mp4', ar:'1982/792' },
+        { type:'img', src:'work/bob-tosh/cierre-nave.mp4', ar:'1982/792' },
+        { type:'text', col:2, label:{en:'Inside Blender',es:'Adentro de Blender'},
+          en:'Every piece was modelled, lit and rendered in Blender, in loops locked to 120 BPM: statues, chains, spiders, cathedral windows, barbed wire and the chrome logos. <b>Straight from the viewport</b>, before any light or material.',
+          es:'Cada pieza se modeló, iluminó y renderizó en Blender, en loops clavados a 120 BPM: estatuas, cadenas, arañas, ventanales, alambre de púas y los logos cromados. <b>Tal cual en el viewport</b>, antes de la luz y el material.',
+          it:'Ogni pezzo è stato modellato, illuminato e renderizzato in Blender, in loop agganciati a 120 BPM: statue, catene, ragni, vetrate, filo spinato e i loghi cromati. <b>Così com’è nel viewport</b>, prima di luci e materiali.',
+          deu:'Jedes Stück wurde in Blender modelliert, beleuchtet und gerendert, in Loops auf 120 BPM: Statuen, Ketten, Spinnen, Kathedralenfenster, Stacheldraht und die Chrom-Logos. <b>Direkt aus dem Viewport</b>, vor Licht und Material.' },
+        { type:'trio', src:['work/bob-tosh/proc-logo.mp4','work/bob-tosh/proc-split.mp4','work/bob-tosh/proc-cadenas.mp4'], ar:'9/16' },
+        { type:'img', src:'work/bob-tosh/vp-logo.jpg', ar:'1920/982' },
+        { type:'pair', src:['work/bob-tosh/vp-hall.jpg','work/bob-tosh/vp-estatua.jpg'], ar:'1920/982' },
+        { type:'pair', src:['work/bob-tosh/vp-aranas.jpg','work/bob-tosh/vp-angel.jpg'], ar:'1920/982' },
+        { type:'pair', src:['work/bob-tosh/vp-ventanales.jpg','work/bob-tosh/vp-cadenas.jpg'], ar:'1920/982' },
+        { type:'img', src:'work/bob-tosh/vp-nodos.jpg', ar:'1920/982' },
+        { type:'text', col:3, label:{en:'What stayed out',es:'Lo que quedó afuera'},
+          en:'A first round of spiders, an orange angel. <b>Tests that did not make it</b>, and that helped find the ones that did.',
+          es:'Una primera tanda de arañas, un ángel naranja. <b>Pruebas que no llegaron</b>, y que sirvieron para encontrar las que sí.',
+          it:'Un primo giro di ragni, un angelo arancione. <b>Prove che non sono arrivate</b>, e che sono servite a trovare quelle giuste.',
+          deu:'Eine erste Runde Spinnen, ein oranger Engel. <b>Tests, die es nicht geschafft haben</b>, und die geholfen haben, die richtigen zu finden.' },
+        { type:'pair', src:['work/bob-tosh/descarte-aranas-v1.jpg','work/bob-tosh/descarte-angel-naranja.jpg'], ar:'10/3' },
+        { type:'text', col:2, label:{en:'Tested, then played live',es:'Probado y tocado en vivo'},
+          en:'Every loop went out of After Effects and was checked on the LED wall before the night. Then, in Resolume, every act had its own recipe of layers [ background, light pass, alpha layer, logo, booth ], mixed on the spot with the music. <b>Nothing was pre-timed.</b>',
+          es:'Cada loop salió de After Effects y se probó en la pantalla LED antes de la noche. Después, en Resolume, cada acto tenía su receta de capas [ fondo, pasada de luz, capa alfa, logo, cabina ], mezcladas en el momento con la música. <b>Nada estaba cronometrado.</b>',
+          it:'Ogni loop è uscito da After Effects ed è stato provato sul ledwall prima della serata. Poi, in Resolume, ogni atto aveva la sua ricetta di layer [ sfondo, passata di luce, layer alfa, logo, consolle ], mixati al momento con la musica. <b>Niente era pre-programmato.</b>',
+          deu:'Jeder Loop kam aus After Effects und wurde vor der Nacht auf der LED-Wand geprüft. Dann hatte in Resolume jeder Act sein eigenes Ebenen-Rezept [ Hintergrund, Lichtpass, Alpha-Ebene, Logo, Booth ], live zur Musik gemischt. <b>Nichts war vorgetaktet.</b>' },
+        { type:'img', src:'work/bob-tosh/led-prueba.mp4', ar:'1280/720' },
+        { type:'trio', src:['work/bob-tosh/proc-ventanales.mp4','work/bob-tosh/cel-paula-compu.mp4','work/bob-tosh/cel-resolume-2.mp4'], ar:'9/16' }
+      ]
+    },
     '492-media-group': {
       name: '492 Media Group',
       titleHTML: '492 <em>Media Group</em>',
@@ -6037,7 +6132,8 @@ arreglarViudasHero();
       const est = b.w ? ` style="max-width:${b.w}"` : '';
       return `<div class="${cls}"${est}>${media(b.src, b.ar)}</div>`;
     }
-    if(b.type==='pair') return `<div class="wov-b-pair">${b.src.map(s=>media(s, b.ar)).join('')}</div>`;
+    // 'w' opcional = ancho maximo centrado (dos verticales a media pagina quedan enormes)
+    if(b.type==='pair') return `<div class="wov-b-pair"${b.w ? ` style="max-width:${b.w};margin-inline:auto;width:100%"` : ''}>${b.src.map(s=>media(s, b.ar)).join('')}</div>`;
     if(b.type==='trio') return `<div class="wov-b-trio">${b.src.map(s=>media(s, b.ar)).join('')}</div>`;
     // 'video' = mismo marco/reveal que 'img' pero a ancho completo (proyectos de VJ)
     if(b.type==='video') return `<div class="wov-b-img">${media(b.src, b.ar)}</div>`;
@@ -6435,7 +6531,7 @@ arreglarViudasHero();
     if(window.ScrollTrigger) ScrollTrigger.refresh();
   }
   bts.forEach(b => b.addEventListener('click', () => { if(!b.classList.contains('on')) filtrar(b.dataset.f, true); }));
-  filtrar('branding', false);
+  filtrar('all', false);
 })();
 
 /* ---------- acceso al logofolio: recorrer la grilla con el mouse ----------
