@@ -3263,6 +3263,15 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!window.__anclaSeccion) win
   border-bottom:1px solid rgba(255,255,255,.35);padding-bottom:4px;transition:opacity .2s ease,letter-spacing .4s ease}
 .wsee-all:hover{opacity:.6;letter-spacing:.1em}
 </style>
+<style>
+/* Paula 2026-11-08: see all projects del ancho del texto (otra regla lo hacia block y el subrayado cruzaba todo)
+   + more projects 20% mas chico */
+#wgrid .wsee-all{display:inline-block !important;width:max-content !important;justify-self:start !important;align-self:start !important;margin:clamp(56px,6vw,110px) 0 clamp(80px,8vw,150px) !important}
+.wrow.es-archivo .wrow-name{font-size:calc(var(--t4) * .8) !important}
+.wrow.es-archivo .wrow-v{font-size:calc(var(--t5) * .8) !important}
+.wrow:not(.es-archivo) + .wrow.es-archivo::before{font-size:calc(var(--t6) * .9) !important}
+.wsee-all{font-size:calc(var(--t5) * .8) !important}
+</style>
 </head>
 <body>
   <div class="header-blur" aria-hidden="true"><i></i><i></i><i></i></div>
